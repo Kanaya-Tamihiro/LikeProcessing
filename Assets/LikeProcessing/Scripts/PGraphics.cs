@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityStandardAssets.ImageEffects;
 
 namespace LikeProcessing
 {
@@ -23,6 +24,7 @@ namespace LikeProcessing
             PSketch.setupCamera(camera, height);
             camera.cullingMask = 1 << layer;
             camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = Color.black;
             Camera.main.cullingMask &= ~(1 << layer);
 
             renderTexture = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
@@ -42,6 +44,17 @@ namespace LikeProcessing
             Material material = new Material(Shader.Find("Standard"));
             material.SetTexture("_MainTex", this.renderTexture);
             meshRenderer.material = material;
+        }
+
+        public void blur()
+        {
+            BlurOptimized blurComp = cameraObj.AddComponent<BlurOptimized>();
+            blurComp.blurShader = Shader.Find("Hidden/FastBlur");
+        }
+
+        public void background(Color color)
+        {
+            cameraObj.GetComponent<Camera>().backgroundColor = color;
         }
 
     }

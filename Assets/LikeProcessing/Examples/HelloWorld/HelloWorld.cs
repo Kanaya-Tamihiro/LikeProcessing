@@ -8,8 +8,10 @@ namespace LikeProcessing.Examples
         // Use this for initialization
         void Start()
         {
+            background(Color.blue);
             GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             obj.transform.localScale = new Vector3(200, 200, 200);
+            //blur();
         }
 
         // Update is called once per frame

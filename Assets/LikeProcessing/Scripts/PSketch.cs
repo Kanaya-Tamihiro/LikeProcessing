@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityStandardAssets.ImageEffects;
 
 namespace LikeProcessing
 {
@@ -15,6 +16,8 @@ namespace LikeProcessing
             cameraObj = new GameObject("PSketch MainCamera");
             Camera camera = cameraObj.AddComponent<Camera>();
             camera.tag = "MainCamera";
+            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = Color.gray;
             setupCamera();
 
             lightObj = new GameObject("PSketch Light");
@@ -47,6 +50,17 @@ namespace LikeProcessing
             Camera.main.transform.rotation = Quaternion.identity;
             Vector3 rotateV = new Vector3(Input.mousePosition.y - Screen.height / 2, Input.mousePosition.x - Screen.width / 2);
             Camera.main.transform.Rotate(rotateV * sensitivity);
+        }
+
+        public void blur()
+        {
+            BlurOptimized blurComp = cameraObj.AddComponent<BlurOptimized>();
+            blurComp.blurShader = Shader.Find("Hidden/FastBlur");
+        }
+
+        public void background(Color color)
+        {
+            cameraObj.GetComponent<Camera>().backgroundColor = color;
         }
 
     }
