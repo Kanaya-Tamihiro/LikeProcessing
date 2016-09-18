@@ -25,6 +25,7 @@ namespace LikeProcessing
             camera.cullingMask = 1 << layer;
             camera.clearFlags = CameraClearFlags.SolidColor;
             camera.backgroundColor = Color.black;
+			camera.farClipPlane = this.height / 2.0f * 10;
             Camera.main.cullingMask &= ~(1 << layer);
 
             renderTexture = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
