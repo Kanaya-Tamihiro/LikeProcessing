@@ -25,7 +25,14 @@ namespace LikeProcessing
             Light light = lightObj.AddComponent<Light>();
             light.type = LightType.Directional;
             lightObj.transform.Rotate(15, 15, 0);
+			light.shadows = LightShadows.Soft;
+
+			QualitySettings.shadowDistance = Screen.height / 2.0f * 10;
         }
+
+//		public PSketch() {
+//			this.gameObject.name = "PSketch";
+//		}
 
         public static void setupCamera(bool origin = false)
         {
@@ -63,6 +70,22 @@ namespace LikeProcessing
         {
             cameraObj.GetComponent<Camera>().backgroundColor = color;
         }
+
+		public static Vector3 randomVector() {
+			float angle = Random.value * Mathf.PI * 2;
+			float vz = Random.value * 2 - 1;
+			float vx = Mathf.Sqrt(1-vz*vz) * Mathf.Cos(angle);
+			float vy = Mathf.Sqrt(1-vz*vz) * Mathf.Sin(angle);
+			return new Vector3(vx, vy, vz);
+		}
+
+		public static void fill(GameObject obj, Color color) {
+			if (obj.GetComponent<MeshRenderer>() == null) obj.AddComponent<MeshRenderer>();
+			MeshRenderer meshRenderer = obj.GetComponent<MeshRenderer> ();
+			Material material = new Material(Shader.Find("Standard"));
+			material.color = color;
+			meshRenderer.material = material;
+		}
 
     }
 
