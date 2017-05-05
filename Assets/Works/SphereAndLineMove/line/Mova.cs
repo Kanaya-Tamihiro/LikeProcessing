@@ -51,14 +51,14 @@ namespace N20170311.Line {
 		}
 
 		void reset(bool pre) {
-			pa_amount = Random.Range(500.0f,500.0f);
+			pa_amount = Random.Range(5.0f,5.0f);
 			pb_amount = 0;
 			t = 0;
 			tt = 0;
 			dt = Random.Range(.01f,.01f);
 			da = pa_amount * dt / 2;
 			mode = Mode.FORWARD;
-			float r = 250.0f;	//random(100,300);
+			float r = 2.5f;	//random(100,300);
 			p1 = pre ? p2 : PSketch.randomVector() * r;
 			p2 = PSketch.randomVector() * r;
 //			p1p2 = (p1 + p1) * -.05f;
@@ -69,7 +69,7 @@ namespace N20170311.Line {
 			fill_color = Color.HSVToRGB(hue, .5f, 1.0f);
 			sphereFrom.GetComponent<Renderer> ().material.color = fill_color;
 			sphereTo.GetComponent<Renderer> ().material.color = fill_color;
-			line_weight = 1.0f;
+			line_weight = 0.01f;
 			pline.setWeight (line_weight);
 		}
 
@@ -136,7 +136,7 @@ namespace N20170311.Line {
 //			pg.fill(fill_color);
 //			pg.noStroke();
 			if (pa_amount > 0) {
-				float r = 2 * Mathf.Sqrt (pa_amount / Mathf.PI);
+				float r = 0.02f * Mathf.Sqrt (pa_amount / Mathf.PI);
 				sphereFrom.SetActive (true);
 				sphereFrom.transform.position = p1;
 				sphereFrom.transform.localScale = new Vector3 (1, 1, 1) * r;
@@ -150,7 +150,7 @@ namespace N20170311.Line {
 		}
 		void drawMove() {
 			drawForward();
-			float r = 2 * Mathf.Sqrt(pb_amount / Mathf.PI);
+			float r = 0.02f * Mathf.Sqrt(pb_amount / Mathf.PI);
 //			pg.pushMatrix();
 //			pg.translate(p2.x,p2.y,p2.z);
 //			pg.sphere(r);
@@ -180,7 +180,7 @@ namespace N20170311.Line {
 //			}
 //			pg.fill(fill_color);
 //			pg.noStroke();
-			float r = 2 * Mathf.Sqrt(pb_amount / Mathf.PI);
+			float r = 0.02f * Mathf.Sqrt(pb_amount / Mathf.PI);
 //			pg.pushMatrix();
 //			pg.translate(p2.x,p2.y,p2.z);
 //			pg.sphere(r);

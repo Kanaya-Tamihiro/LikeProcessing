@@ -16,9 +16,11 @@ namespace LikeProcessing
             cameraObj = new GameObject("PSketch MainCamera");
             Camera camera = cameraObj.AddComponent<Camera>();
             camera.tag = "MainCamera";
-            camera.clearFlags = CameraClearFlags.SolidColor;
-            camera.backgroundColor = Color.gray;
-			camera.farClipPlane = Screen.height / 2.0f * 10;
+//            camera.clearFlags = CameraClearFlags.SolidColor;
+//            camera.backgroundColor = Color.gray;
+//			camera.farClipPlane = (Screen.height/10.0f) / 2.0f * 10;
+			camera.hdr = true;
+			cameraObj.AddComponent<PCamera> ();
             setupCamera();
 
             lightObj = new GameObject("PSketch Light");
@@ -27,7 +29,7 @@ namespace LikeProcessing
             lightObj.transform.Rotate(15, 15, 0);
 			light.shadows = LightShadows.Soft;
 
-			QualitySettings.shadowDistance = Screen.height / 2.0f * 10;
+			QualitySettings.shadowDistance = (Screen.height/100.0f) / 2.0f * 10;
         }
 
 //		public PSketch() {
@@ -41,14 +43,15 @@ namespace LikeProcessing
 
         public static void setupCamera(Camera camera, bool origin = false)
         {
-            setupCamera(camera, Screen.height, origin);
+            setupCamera(camera, Screen.height/100.0f, origin);
         }
 
-        public static void setupCamera(Camera camera, int height, bool origin = false)
+        public static void setupCamera(Camera camera, float height, bool origin = false)
         {
+			camera.farClipPlane = height / 2.0f * 10;
             camera.fieldOfView = Mathf.Rad2Deg * Mathf.PI / 3.0f;
             if (!origin)
-                camera.transform.position = new Vector3(0, 0, -1 * ((height / 2.0f) / Mathf.Tan(Mathf.PI * 30.0f / 180.0f)));
+                camera.transform.position = new Vector3(0, 1, -1 * ((height / 2.0f) / Mathf.Tan(Mathf.PI * 30.0f / 180.0f)));
             else
                 camera.transform.position = new Vector3(0, 0, 0);
         }
@@ -74,6 +77,14 @@ namespace LikeProcessing
 		public static Vector3 randomVector() {
 			float angle = Random.value * Mathf.PI * 2;
 			float vz = Random.value * 2 - 1;
+			float vx = Mathf.Sqrt(1-vz*vz) * Mathf.Cos(angle);
+			float vy = Mathf.Sqrt(1-vz*vz) * Mathf.Sin(angle);
+			return new Vector3(vx, vy, vz);
+		}
+
+		public static Vector3 randomVector(float noise1, float noise2) {
+			float angle = noise1 * Mathf.PI * 2;
+			float vz = noise2 * 2 - 1;
 			float vx = Mathf.Sqrt(1-vz*vz) * Mathf.Cos(angle);
 			float vy = Mathf.Sqrt(1-vz*vz) * Mathf.Sin(angle);
 			return new Vector3(vx, vy, vz);

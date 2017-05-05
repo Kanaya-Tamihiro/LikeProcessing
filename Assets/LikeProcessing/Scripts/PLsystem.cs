@@ -20,31 +20,34 @@ namespace LikeProcessing.Lsystem {
 			generation = 0;
 		}
 
-		public void generate() {
-			// An empty StringBuffer that we will fill
-			StringBuilder nextgen = new StringBuilder();
-			// For every character in the sentence
-			for (int i = 0; i < sentence.Length; i++) {
-				// What is the character
-				char curr = sentence[i];
-				// We will replace it with itself unless it matches one of our rules
-				string replace = "" + curr;
-				// Check every rule
-				for (int j = 0; j < ruleset.Length; j++) {
-					char a = ruleset[j].getA();
-					// if we match the Rule, get the replacement String out of the Rule
-					if (a == curr) {
-						replace = ruleset[j].getB();
-						break; 
+		public void generate(int cycle) {
+			for(int c=0; c<cycle; c++) {
+				// An empty StringBuffer that we will fill
+				StringBuilder nextgen = new StringBuilder();
+				// For every character in the sentence
+				for (int i = 0; i < sentence.Length; i++) {
+					// What is the character
+					char curr = sentence[i];
+					// We will replace it with itself unless it matches one of our rules
+					string replace = "" + curr;
+					// Check every rule
+					for (int j = 0; j < ruleset.Length; j++) {
+						char a = ruleset[j].getA();
+						// if we match the Rule, get the replacement String out of the Rule
+						if (a == curr) {
+							replace = ruleset[j].getB();
+							break; 
+						}
 					}
+					// Append replacement String
+					nextgen.Append(replace);
 				}
-				// Append replacement String
-				nextgen.Append(replace);
+				// Replace sentence
+				sentence = nextgen.ToString();
+				// Increment generation
+				generation++;
 			}
-			// Replace sentence
-			sentence = nextgen.ToString();
-			// Increment generation
-			generation++;
+
 		}
 
 		public string getSentence() {
@@ -105,7 +108,7 @@ namespace LikeProcessing.Lsystem {
 				if (c == 'F' || c == 'G') {
 					Vector3 from = matrix.m.MultiplyPoint3x4(Vector3.zero);
 					Vector3 to = matrix.m.MultiplyPoint3x4(Vector3.up * len);
-					PLine line = new PLine (gameObj, from, to, 3.0f);
+					PLine line = new PLine (gameObj, from, to, 0.03f);
 					plines.Add (line);
 					matrix.translate(Vector3.up*len);
 				} else if (c == '+') {

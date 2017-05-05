@@ -10,7 +10,9 @@ namespace LikeProcessing
         public GameObject cameraObj;
         public int width;
         public int height;
-        public RenderTexture renderTexture;
+		public RenderTexture renderTexture;
+		private int widthInPixel;
+		private int heightInPixel;
 
         public PGraphics(int width, int height)
         {
@@ -18,6 +20,8 @@ namespace LikeProcessing
             nextLayer++;
             this.width = width;
             this.height = height;
+			this.widthInPixel = width * 100;
+			this.heightInPixel = height * 100;
 
             cameraObj = new GameObject("PGraphics Camera " + layer);
             Camera camera = cameraObj.AddComponent<Camera>();
@@ -25,10 +29,10 @@ namespace LikeProcessing
             camera.cullingMask = 1 << layer;
             camera.clearFlags = CameraClearFlags.SolidColor;
             camera.backgroundColor = Color.black;
-			camera.farClipPlane = this.height / 2.0f * 10;
+//			camera.farClipPlane = this.height / 2.0f * 10;
             Camera.main.cullingMask &= ~(1 << layer);
 
-            renderTexture = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
+			renderTexture = new RenderTexture(this.widthInPixel, this.heightInPixel, 24, RenderTextureFormat.ARGB32);
             renderTexture.antiAliasing = 4;
             //renderTexture.Create();
             camera.targetTexture = renderTexture;

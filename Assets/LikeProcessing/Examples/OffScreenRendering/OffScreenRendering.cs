@@ -6,19 +6,19 @@ namespace LikeProcessing.Examples
     public class OffScreenRendering : PSketch
     {
         PGraphics graphics;
-        GameObject cube;
+        GameObject cube, centerCube;
         GameObject screen;
 
         // Use this for initialization
         void Start()
         {
-            graphics = PGraphics.createGraphics(300, 300);
+            graphics = PGraphics.createGraphics(3, 3);
             cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            cube.transform.localScale *= 100;
+            cube.transform.localScale *= 1;
             cube.layer = graphics.layer;
 
             screen = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            screen.transform.localScale = new Vector3(300, 300, 300);
+            screen.transform.localScale = new Vector3(3, 3, 3);
             graphics.renderTo(screen);
         }
 

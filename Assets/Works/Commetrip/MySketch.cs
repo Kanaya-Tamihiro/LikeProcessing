@@ -23,7 +23,7 @@ public class MySketch : PSketch {
         //texture.Apply();
         //lineTexturex = texture;
 
-        graphics = new CommetsGraphics(600, 600, lineGraphics);
+        graphics = new CommetsGraphics(6, 6, lineGraphics);
         graphics.Start();
 
         //GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -58,9 +58,9 @@ public class MySketch : PSketch {
             lineRenderer.material = new Material(Shader.Find("Particles/Additive"));
             lineRenderer.SetColors(Color.white, Color.white);
             lineRenderer.SetVertexCount(2);
-            lineRenderer.SetPosition(0, new Vector3(0, -120, 0));
-            lineRenderer.SetPosition(1, new Vector3(0, 120, 0));
-            lineRenderer.SetWidth(100f, 100f);
+            lineRenderer.SetPosition(0, new Vector3(0, -1.2f, 0));
+            lineRenderer.SetPosition(1, new Vector3(0, 1.2f, 0));
+            lineRenderer.SetWidth(1f, 1f);
         }
     }
 
@@ -75,7 +75,7 @@ public class MySketch : PSketch {
         int activeStarIdx = 0;
         Vector3 activeStar;
 
-        float maxCommetSpeed = 20f;
+        float maxCommetSpeed = 0.2f;
 
         LineGraphics lineGraphics;
 
@@ -95,7 +95,7 @@ public class MySketch : PSketch {
             }
 
             stars = new Vector3[starcnt];
-            int range = Screen.width / 2;
+            float range = Screen.width / 200.0f;
             for (int i = 0; i < starcnt; i++)
             {
                 Vector3 v = new Vector3(Random.Range(-range, range),
@@ -145,10 +145,10 @@ public class MySketch : PSketch {
                 //lineRenderer.SetVertexCount(2);
                 //lineRenderer.SetPosition(0, new Vector3(0, 0, 0));
                 //lineRenderer.SetPosition(1, new Vector3(-200, 200, 0));
-                lineRenderer.SetWidth(10f, 10f);
-                loc = new Vector3(Random.Range(-Screen.width / 1, Screen.width / 1),
-                                  Random.Range(-Screen.height / 1, Screen.height / 1),
-                                  Random.Range(-Screen.height / 1, Screen.height / 1));
+                lineRenderer.SetWidth(0.1f, 0.1f);
+				loc = new Vector3(Random.Range(-Screen.width / 100.0f, Screen.width / 100.0f),
+					Random.Range(-Screen.height / 100.0f, Screen.height / 100.0f),
+					Random.Range(-Screen.height / 100.0f, Screen.height / 100.0f));
                 //float scale = Random.Range(3, 10);
                 //obj.transform.localScale = new Vector3(scale, scale, scale);
             }

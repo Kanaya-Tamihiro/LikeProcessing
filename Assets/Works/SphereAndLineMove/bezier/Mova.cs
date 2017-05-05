@@ -51,14 +51,14 @@ namespace N20170311.Bezier {
 		}
 
 		void reset(bool pre) {
-			pa_amount = Random.Range(100.0f,600.0f);
+			pa_amount = Random.Range(1.0f,6.0f);
 			pb_amount = 0;
 			t = 0;
 			tt = 0;
 			dt = Random.Range(.01f,.05f);
 			da = pa_amount * dt / 2;
 			mode = Mode.FORWARD;
-			float r = 250.0f;	//random(100,300);
+			float r = 2.5f;	//random(100,300);
 			p1 = pre ? p2 : PSketch.randomVector() * r;
 			p2 = PSketch.randomVector() * r;
 			p1p2 = (p1 + p1) * -.05f;
@@ -69,9 +69,9 @@ namespace N20170311.Bezier {
 			fill_color = Color.HSVToRGB(hue, .5f, 1.0f);
 			sphereFrom.GetComponent<Renderer> ().material.color = fill_color;
 			sphereTo.GetComponent<Renderer> ().material.color = fill_color;
-			line_weight = 1.0f;
+			line_weight = 0.01f;
 //			pline.setWeight (line_weight);
-			pBezierLine.setup(p1, p1p2, p1p2, p2, 1.0f, 10);
+			pBezierLine.setup(p1, p1p2, p1p2, p2, .01f, 10);
 		}
 
 		public void update() {
@@ -139,7 +139,7 @@ namespace N20170311.Bezier {
 //			pg.fill(fill_color);
 //			pg.noStroke();
 			if (pa_amount > 0) {
-				float r = 2 * Mathf.Sqrt (pa_amount / Mathf.PI);
+				float r = .2f * Mathf.Sqrt (pa_amount / Mathf.PI);
 				sphereFrom.SetActive (true);
 				sphereFrom.transform.position = p1;
 				sphereFrom.transform.localScale = new Vector3 (1, 1, 1) * r;
@@ -153,7 +153,7 @@ namespace N20170311.Bezier {
 		}
 		void drawMove() {
 			drawForward();
-			float r = 2 * Mathf.Sqrt(pb_amount / Mathf.PI);
+			float r = .2f * Mathf.Sqrt(pb_amount / Mathf.PI);
 //			pg.pushMatrix();
 //			pg.translate(p2.x,p2.y,p2.z);
 //			pg.sphere(r);
@@ -184,7 +184,7 @@ namespace N20170311.Bezier {
 //			}
 //			pg.fill(fill_color);
 //			pg.noStroke();
-			float r = 2 * Mathf.Sqrt(pb_amount / Mathf.PI);
+			float r = .2f * Mathf.Sqrt(pb_amount / Mathf.PI);
 //			pg.pushMatrix();
 //			pg.translate(p2.x,p2.y,p2.z);
 //			pg.sphere(r);

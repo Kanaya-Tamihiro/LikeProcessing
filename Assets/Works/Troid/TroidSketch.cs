@@ -9,39 +9,64 @@ public class TroidSketch : PSketch {
 
     int pointCount = 40;
     float radius = 0.5F;
-    float latheRadius = 0.8F;
-    int segmentCount = 50;
+	float latheRadius = 0.8F;
+    int segmentCount = 40;
 
     GameObject troid;
     // Use this for initialization
     void Start()
     {
         troid = new GameObject("troid");
-        troid.transform.localScale *= 100;
+        troid.transform.localScale *= 1;
         MeshFilter meshFilter = troid.AddComponent<MeshFilter>();
         MeshRenderer meshRenderer = troid.AddComponent<MeshRenderer>();
 
         Mesh mesh = meshFilter.mesh;
         List<Vector3> edge = points();
+		List<Vector3> firstEdge = edge;
         List<Vector3> vertices = new List<Vector3>();
         vertices.AddRange(edge);
         List<int> triangles = new List<int>();
         for (int seg = 0; seg < segmentCount; seg++)
         {
-            edge = rotatedPoints(edge);
-            vertices.AddRange(edge);
-            for (int p = 0; p < pointCount; p++)
+			if (seg == segmentCount - 1) {
+				edge = firstEdge;
+			} else {
+				edge = rotatedPoints(edge);	
+				vertices.AddRange(edge);
+			}
+			int firstS = 0 + seg * (pointCount);
+			int firstT = 0;
+			if (seg == segmentCount -1) {
+				firstT = 0;
+			} else {
+				firstT = firstS + pointCount;	
+			}
+			int lastS = 0; int lastT = 0;
+            for (int p = 0; p < pointCount-1; p++)
             {
-                int s = p + seg * (pointCount + 1);
-                int t = s + 1;
-                int u = t + pointCount;
+                int s = p + seg * (pointCount);
+				int t = 0;
+				if (seg == segmentCount-1) {
+					t = p;	
+				} else {
+					t = s + pointCount;
+				}
                 triangles.Add(s);
-                triangles.Add(u + 1);
                 triangles.Add(t);
-                triangles.Add(s);
-                triangles.Add(u);
-                triangles.Add(u + 1);
+				triangles.Add(s+1);
+                triangles.Add(s+1);
+                triangles.Add(t);
+                triangles.Add(t + 1);
+				lastS = s+1;
+				lastT = t+1;
             }
+			triangles.Add(lastS);
+			triangles.Add(lastT);
+			triangles.Add(firstS);
+			triangles.Add(firstS);
+			triangles.Add(lastT);
+			triangles.Add(firstT);
         }
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
@@ -62,7 +87,7 @@ public class TroidSketch : PSketch {
     {
         float theta = 2 * Mathf.PI / pointCount;
         List<Vector3> points = new List<Vector3>();
-        for (int i = 0; i < pointCount + 1; i++)
+        for (int i = 0; i < pointCount; i++)
         {
             points.Add(new Vector3(Mathf.Cos(theta * i) * radius + latheRadius, 0, Mathf.Sin(theta * i) * radius));
         }

@@ -21,10 +21,10 @@ namespace LikeProcessing
 			PSketch.fill (bezierObj, new Color(0.6F, 1.0F, 0.2F));
 		}
 
-		public void setup (Vector3 x1, Vector3 x2, Vector3 x3, Vector3 x4, float weight = 4.0f, int detail = 6)
+		public void setup (Vector3 x1, Vector3 x2, Vector3 x3, Vector3 x4, float weight = .04f, int detail = 6)
 		{
 			this.x1 = x1; this.x2 = x2; this.x3 = x3; this.x4 = x4;
-			this.weight = Mathf.Max(weight, 1.0f); this.detail = detail;
+			this.weight = Mathf.Max(weight, 0.01f); this.detail = detail;
 
 			Vector3 _z = new Vector3(x2[0]-x1[0],x2[1]-x1[1],x2[2]-x1[2]);
 			Vector3 _zz = new Vector3(x3[0]-x2[0],x3[1]-x2[1],x3[2]-x2[2]);
