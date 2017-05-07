@@ -32,11 +32,13 @@ namespace LikeProcessing
 
 			sphereFrom = GameObject.CreatePrimitive (PrimitiveType.Sphere);
 			sphereFrom.name = "sphere.from";
+            sphereFrom.GetComponent<MeshRenderer>().material = material;
 			sphereFrom.transform.SetParent (line.transform);
 
 			sphereTo = GameObject.CreatePrimitive (PrimitiveType.Sphere);
 			sphereTo.name = "sphere.to";
-			sphereTo.transform.SetParent (line.transform);
+            sphereTo.GetComponent<MeshRenderer>().material = material;
+            sphereTo.transform.SetParent (line.transform);
 
 			update (from, to);
 		}

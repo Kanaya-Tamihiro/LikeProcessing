@@ -13,12 +13,18 @@ namespace LikeProcessing.Examples
             GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             obj.transform.localScale = new Vector3(1, 1, 1);
 			obj.transform.position = new Vector3 (0,1,0);
-//            blur();
+            //            blur();
+            bloom();
         }
 
         // Update is called once per frame
         void Update()
         {
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                Debug.Log(111);
+                this.record();
+            }
         }
     }
 }

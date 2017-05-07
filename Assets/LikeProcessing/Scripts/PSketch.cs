@@ -1,13 +1,17 @@
 ﻿using UnityEngine;
+using UnityEditor;
 using UnityStandardAssets.ImageEffects;
+using UnityEngine.PostProcessing;
 
 namespace LikeProcessing
 {
     public class PSketch : MonoBehaviour
     {
 
-        GameObject cameraObj;
+        protected GameObject cameraObj;
         GameObject lightObj;
+        PostProcessingProfile postProcessingProfile;
+        UTJ.MP4Recorder mp4Recorder;
 
         void Awake()
         {
@@ -16,11 +20,18 @@ namespace LikeProcessing
             cameraObj = new GameObject("PSketch MainCamera");
             Camera camera = cameraObj.AddComponent<Camera>();
             camera.tag = "MainCamera";
-//            camera.clearFlags = CameraClearFlags.SolidColor;
-//            camera.backgroundColor = Color.gray;
-//			camera.farClipPlane = (Screen.height/10.0f) / 2.0f * 10;
-			camera.hdr = true;
+            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = Color.HSVToRGB(241.0f / 359.0f, 40.0f / 100.0f, 20.0f / 100.0f);
+            //camera.farClipPlane = (Screen.height / 10.0f) / 2.0f * 10;
+            camera.hdr = true;
+            camera.renderingPath = RenderingPath.DeferredShading;
 			cameraObj.AddComponent<PCamera> ();
+            PostProcessingBehaviour postProcessingBehaviour = cameraObj.AddComponent<PostProcessingBehaviour>();
+            //this.postProcessingProfile = (PostProcessingProfile)AssetDatabase.LoadAssetAtPath("Assets/LikeProcessing/Assets/Post-Processing-Profile.asset", typeof(PostProcessingProfile));
+            this.postProcessingProfile = (PostProcessingProfile) ScriptableObject.CreateInstance("PostProcessingProfile");
+            postProcessingBehaviour.profile = this.postProcessingProfile;
+            this.mp4Recorder = cameraObj.AddComponent<UTJ.MP4Recorder>();
+            mp4Recorder.m_outputDir = new UTJ.DataPath(UTJ.DataPath.Root.CurrentDirectory, "");
             setupCamera();
 
             lightObj = new GameObject("PSketch Light");
@@ -28,6 +39,7 @@ namespace LikeProcessing
             light.type = LightType.Directional;
             lightObj.transform.Rotate(15, 15, 0);
 			light.shadows = LightShadows.Soft;
+            light.intensity = 0.5f;
 
 			QualitySettings.shadowDistance = (Screen.height/100.0f) / 2.0f * 10;
         }
@@ -69,6 +81,15 @@ namespace LikeProcessing
             blurComp.blurShader = Shader.Find("Hidden/FastBlur");
         }
 
+        public void bloom(float threshold = 1.0f)
+        {
+            //Bloom bloom = cameraObj.AddComponent<Bloom>();
+            //bloom.sh
+            //bloom.blurAndFlaresShader = Shader.Find("Hidden/BlurAndFlares");
+            //bloom.bloomThreshold = threshold;
+            this.postProcessingProfile.bloom.enabled = true;
+        }
+
         public void background(Color color)
         {
             cameraObj.GetComponent<Camera>().backgroundColor = color;
@@ -97,6 +118,16 @@ namespace LikeProcessing
 			material.color = color;
 			meshRenderer.material = material;
 		}
+
+        public void record() {
+            if (!this.mp4Recorder.m_recording)
+            {
+                this.mp4Recorder.BeginRecording();
+            }
+            else {
+                this.mp4Recorder.EndRecording();
+            }
+        }
 
     }
 

@@ -14,12 +14,12 @@ namespace LikeProcessing.Examples
 
 		void StartA()
 		{
-			background(Color.black);
+			//background(Color.black);
 			Rule[] ruleset = new Rule[1];
 			ruleset[0] = new Rule('F', "FF+[+F-F-F]-[-F+F+F]");
 			lsystem = new PLsystem("F", ruleset);
 			lsystem.generate(4);
-			turtle = new Turtle(lsystem.getSentence(), 0.15f, Mathf.Deg2Rad*25, Vector3.down*2);
+			turtle = new Turtle(lsystem.getSentence(), 0.15f, Mathf.Deg2Rad*25, Vector3.down*0);
 			turtle.render();
 		}
 
@@ -91,7 +91,7 @@ namespace LikeProcessing.Examples
 
 		void Update()
 		{
-			cameraRotateWithMouse();
+            //cameraRotateWithMouse();
 		}
 	}
 }
