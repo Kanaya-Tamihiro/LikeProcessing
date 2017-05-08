@@ -39,7 +39,7 @@ namespace UTJ
         RenderTexture m_scratch_buffer;
         int m_callback;
         int m_num_video_frames;
-        public bool m_recording = false;
+        bool m_recording = false;
 
 
         void InitializeContext()

@@ -31,9 +31,9 @@ namespace LikeProcessing
 			Vector3 _zzz = new Vector3(x4[0]-x3[0],x4[1]-x3[1],x4[2]-x3[2]);
 
 			float approx_length = _z.magnitude + _zz.magnitude + _zzz.magnitude;
-			float _seg = approx_length/20.0f;
+			float _seg = approx_length/0.4f;
 			int segment_count = Mathf.CeilToInt(Mathf.Sqrt(_seg * _seg * 0.6f + 225.0f));
-//			Debug.Log("segment_count %d\n", segment_count);
+			Debug.Log(segment_count);
 			i_inc = 1.0f/segment_count;
 
 			points = new List<List<Vector3>>();
@@ -77,26 +77,33 @@ namespace LikeProcessing
 				List<Vector3> edge1 = points[i];
 				List<Vector3> edge2 = points[i+1];
 
+				verteces.AddRange (edge1);
+
 				for (int j = 0; j < angle_count; j++) {
 					int next = j == angle_count -1 ? 0 : j+1;
-					Vector3 p11 = edge1[j];
-					Vector3 p12 = edge1[next];
-					Vector3 p21 = edge2[j];
-					Vector3 p22 = edge2[next];
-					verteces.Add(p11);
-					triangles.Add (verteces.Count -1);
-					verteces.Add(p12);
-					triangles.Add (verteces.Count -1);
-					verteces.Add(p22);
-					triangles.Add (verteces.Count -1);
-					verteces.Add(p22);
-					triangles.Add (verteces.Count -1);
-					verteces.Add(p21);
-					triangles.Add (verteces.Count -1);
-					verteces.Add(p11);
-					triangles.Add (verteces.Count -1);
+//					Vector3 p11 = edge1[j];
+//					Vector3 p12 = edge1[next];
+//					Vector3 p21 = edge2[j];
+//					Vector3 p22 = edge2[next];
+					int t0 = i * angle_count + j;
+					int t1 = i * angle_count + next;
+					int tt0 = (i+1) * angle_count + j;
+					int tt1 = (i+1) * angle_count + next;
+//					verteces.Add(p11);
+					triangles.Add (t0);
+//					verteces.Add(p12);
+					triangles.Add (t1);
+//					verteces.Add(p22);
+					triangles.Add (tt1);
+//					verteces.Add(p22);
+					triangles.Add (tt1);
+//					verteces.Add(p21);
+					triangles.Add (tt0);
+//					verteces.Add(p11);
+					triangles.Add (t0);
 				}
 			}
+			verteces.AddRange (points[points.Count-1]);
 			Mesh mesh = bezierObj.GetComponent<MeshFilter> ().mesh;
 			mesh.Clear ();
 			mesh.vertices = verteces.ToArray ();

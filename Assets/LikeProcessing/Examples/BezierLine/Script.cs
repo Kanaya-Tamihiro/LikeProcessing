@@ -17,7 +17,7 @@ namespace LikeProcessing.Examples
 			Vector3 x4 = new Vector3(3,2,-2);
 			background(Color.black);
 			bezierLine = new PBezierLine (this.gameObject);
-			bezierLine.setup(x1,x2,x3,x4,0.1f, 30);
+			bezierLine.setup(x1,x2,x3,x4,0.1f, 10);
 		}
 
 		float t = 0;
@@ -28,7 +28,7 @@ namespace LikeProcessing.Examples
 //			bezierLine.updateFromTo (t, 1.0f);
 //			t += 0.01f;
 //			if (t >= 1.0f)
-//				t = 0;
+//				t = 0f;
 		}
 	}
 }

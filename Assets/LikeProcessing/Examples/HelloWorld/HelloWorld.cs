@@ -23,7 +23,7 @@ namespace LikeProcessing.Examples
             if (Input.GetKeyDown(KeyCode.R))
             {
                 Debug.Log(111);
-                this.record();
+                this.recordGif();
             }
         }
     }

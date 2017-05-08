@@ -106,15 +106,19 @@ namespace LikeProcessing.Lsystem {
 			for (int i = 0; i < todo.Length; i++) {
 				char c = todo[i];
 				if (c == 'F' || c == 'G') {
-					Vector3 from = matrix.m.MultiplyPoint3x4(Vector3.zero);
-					Vector3 to = matrix.m.MultiplyPoint3x4(Vector3.up * len);
+					Vector3 from = matrix.m.MultiplyPoint3x4 (Vector3.zero);
+					Vector3 to = matrix.m.MultiplyPoint3x4 (Vector3.up * len);
 					PLine line = new PLine (gameObj, from, to, 0.03f);
 					plines.Add (line);
-					matrix.translate(Vector3.up*len);
+					matrix.translate (Vector3.up * len);
 				} else if (c == '+') {
 					matrix.rotateZ (-theta);
 				} else if (c == '-') {
-					matrix.rotateZ(theta);
+					matrix.rotateZ (theta);
+				} else if (c == '*') {
+					matrix.rotateX (-theta);
+				} else if (c == '%') {
+					matrix.rotateX (theta);
 				} else if (c == '[') {
 					matrixes.Push (matrix);
 					matrix = matrix.copy ();

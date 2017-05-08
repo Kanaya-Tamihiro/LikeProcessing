@@ -12,6 +12,7 @@ namespace LikeProcessing
         GameObject lightObj;
         PostProcessingProfile postProcessingProfile;
         UTJ.MP4Recorder mp4Recorder;
+		UTJ.GifRecorder gifRecorder;
 
         void Awake()
         {
@@ -30,8 +31,13 @@ namespace LikeProcessing
             //this.postProcessingProfile = (PostProcessingProfile)AssetDatabase.LoadAssetAtPath("Assets/LikeProcessing/Assets/Post-Processing-Profile.asset", typeof(PostProcessingProfile));
             this.postProcessingProfile = (PostProcessingProfile) ScriptableObject.CreateInstance("PostProcessingProfile");
             postProcessingBehaviour.profile = this.postProcessingProfile;
-            this.mp4Recorder = cameraObj.AddComponent<UTJ.MP4Recorder>();
-            mp4Recorder.m_outputDir = new UTJ.DataPath(UTJ.DataPath.Root.CurrentDirectory, "");
+			if (Application.platform == RuntimePlatform.WindowsPlayer) {
+				this.mp4Recorder = cameraObj.AddComponent<UTJ.MP4Recorder>();
+				this.mp4Recorder.m_outputDir = new UTJ.DataPath(UTJ.DataPath.Root.CurrentDirectory, "");
+				this.gifRecorder = cameraObj.AddComponent<UTJ.GifRecorder> ();
+				this.gifRecorder.m_outputDir = new UTJ.DataPath(UTJ.DataPath.Root.CurrentDirectory, "");
+			}
+            
             setupCamera();
 
             lightObj = new GameObject("PSketch Light");
@@ -119,15 +125,30 @@ namespace LikeProcessing
 			meshRenderer.material = material;
 		}
 
-        public void record() {
-            if (!this.mp4Recorder.m_recording)
-            {
-                this.mp4Recorder.BeginRecording();
-            }
-            else {
-                this.mp4Recorder.EndRecording();
-            }
+        public void recordMp4() {
+			if (Application.platform == RuntimePlatform.WindowsPlayer) {
+				if (!this.mp4Recorder.recording)
+				{
+					this.mp4Recorder.BeginRecording();
+				}
+				else {
+					this.mp4Recorder.EndRecording();
+				}
+			}
+            
         }
+
+		public void recordGif() {
+			if (Application.platform == RuntimePlatform.WindowsPlayer) {
+				if (!this.gifRecorder.recording)
+				{
+					this.gifRecorder.BeginRecording();
+				}
+				else {
+					this.gifRecorder.EndRecording();
+				}
+			}
+		}
 
     }
 
