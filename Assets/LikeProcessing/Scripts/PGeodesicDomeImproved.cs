@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace LikeProcessing
 {
 
-	public class PGeodesicDome
+	public class PGeodesicDomeImproved
 	{
 		public GameObject gameObject;
 		int detail;
@@ -15,8 +15,9 @@ namespace LikeProcessing
 		Facet[] facets;
 		PVertices pvertices;
 		bool isHardEdge = false;
+//		Edge[] edges = new Edge[30];
 
-		public PGeodesicDome (int _detail = 3, bool _isHardEdge = false) {
+		public PGeodesicDomeImproved (int _detail = 3, bool _isHardEdge = false) {
 			detail = Mathf.Max (3, _detail);
 			isHardEdge = _isHardEdge;
 			gameObject = new GameObject ("PGeodesicDome");
@@ -26,12 +27,31 @@ namespace LikeProcessing
 			SetMesh ();
 		}
 
+//		class Edge {
+//			public Vector3[] points;
+//			public int detail;
+//
+//			public Edge(Vector3 vecA, Vector3 vecB, int _detail) {
+//				detail = _detail;
+//				Vector3 deltaV = (vecB - vecA) / detail;
+//				points = new Vector3[detail + 1];
+//				points[0] = vecA;
+//				for(int i=1; i<detail; i++) {
+//					points[i] = vecA + deltaV * i;
+//				}
+//				points[detail] = vecB;
+//			}
+//
+//		}
+
 		class Facet {
 			public Vector3[] triangleVerteces;
 
 			public Facet (Vector3 vecA, Vector3 vecB, Vector3 vecC, int detail = 3) {
-				Vector3 deltaAtoB = (vecB - vecA) / detail;
-				Vector3 deltaBtoC = (vecC - vecB) / detail;
+				Vector3[] a2bPoints = PUtil.divideVector3(vecA, vecB, detail);
+				Vector3[] a2cPoints = PUtil.divideVector3(vecA, vecC, detail);
+				Vector3[] b2cPoints = PUtil.divideVector3(vecB, vecC, detail);
+				
 				int pointCount = 0;
 				for (int i=0; i<=detail; i++) {
 					pointCount += (i+1);
@@ -42,25 +62,23 @@ namespace LikeProcessing
 				// Assume vecA to C was already normalized
 				for(int i=0; i<=detail; i++) {
 					Vector3 p, normP;
-					if (i == detail) {
-						p = vecB;
-						normP = p;
-					} else {
-						p = vecA + deltaAtoB * i;
-						normP = p.normalized * 0.5f;	// mult to sphere sarface
-					}
+					p = a2bPoints[i];
+					normP = p.normalized * 0.5f;	// mult to sphere sarface
 					points[index] = normP;
 					index++;
 					for(int j=1; j<=i; j++) {
 						Vector3 pp, normPP;
-						if (j == detail) {
-							pp = vecC;
-							normPP = pp;
+						if (i == detail) {
+							pp = b2cPoints[j];
+						}
+						else if (j == i) {
+							pp = a2cPoints[j];
 						}
 						else {
-							pp = p + deltaBtoC * j;
-							normPP = pp.normalized * 0.5f;
+							Vector3 deltaV = (a2cPoints[i] - p) / i;
+							pp = p + deltaV * j;
 						}
+						normPP = pp.normalized * 0.5f;
 						points[index] = normPP;
 						index++;
 					}
@@ -97,7 +115,7 @@ namespace LikeProcessing
 				}
 			}
 		}
-			
+
 		void SetUp() {
 			float root2 = Mathf.Sqrt (2);
 			float a = root2;
@@ -123,7 +141,6 @@ namespace LikeProcessing
 			thirdRectVertices [1] = quatUpRight * firstRectVertices [1];
 			thirdRectVertices [2] = quatUpRight * firstRectVertices [2];
 			thirdRectVertices [3] = quatUpRight * firstRectVertices [3];
-
 			firstRectVertices.CopyTo (icosahedralVertices, 0);
 			secondRectVertices.CopyTo (icosahedralVertices, 4);
 			thirdRectVertices.CopyTo (icosahedralVertices, 8);
@@ -153,7 +170,7 @@ namespace LikeProcessing
 				3+4, 1+0, 3+8
 			};
 
-			facets = new Facet[20];
+			facets = new Facet[_triangles.Length/3];
 			for (int i=0; i<facets.Length; i++) {
 				facets [i] = new Facet (
 					icosahedralVertices[_triangles[i*3]],
@@ -169,7 +186,7 @@ namespace LikeProcessing
 			}
 			pvertices.EndShape ();
 		}
-			
+
 		void SetMesh() {
 			Mesh mesh = gameObject.GetComponent<MeshFilter> ().mesh;
 			mesh.Clear ();
@@ -177,14 +194,14 @@ namespace LikeProcessing
 			mesh.triangles = pvertices.Triangles ();
 			mesh.RecalculateNormals ();
 
-			Color[] colors = new Color[mesh.vertices.Length];
-			for (int i=0; i<colors.Length; i=i+3) {
-				Color color = Color.HSVToRGB (Random.value, 0.5f, 1.0f);
-				colors [i] = color;
-				colors [i+1] = color;
-				colors [i+2] = color;
-			}
-			mesh.colors = colors;
+//			Color[] colors = new Color[mesh.vertices.Length];
+//			for (int i=0; i<colors.Length; i=i+3) {
+//				Color color = Color.HSVToRGB (Random.value, 0.5f, 1.0f);
+//				colors [i] = color;
+//				colors [i+1] = color;
+//				colors [i+2] = color;
+//			}
+//			mesh.colors = colors;
 		}
 
 	}

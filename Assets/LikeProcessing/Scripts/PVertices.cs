@@ -7,7 +7,32 @@ namespace LikeProcessing
 {
 	public class PVertices
 	{
-		Dictionary<Vector3, int> vertexDict = new Dictionary<Vector3, int> ();
+		struct IntVector {
+			public int x, y, z;
+			public Vector3 vector;
+			public IntVector(Vector3 v) {
+				int precision = 10000;
+				x = Mathf.RoundToInt(v.x * precision);
+				y = Mathf.RoundToInt(v.y * precision);
+				z = Mathf.RoundToInt(v.z * precision);
+				float reversePrecision = 1.0f / precision;
+				vector = new Vector3(
+					x * reversePrecision,
+					y * reversePrecision,
+					z * reversePrecision
+				);
+			}
+			public override int GetHashCode()
+			{
+				int hash = 17;
+				hash = hash * 23 + x;
+				hash = hash * 23 + y;
+				hash = hash * 23 + z;
+				return hash;
+			}
+		}
+
+		Dictionary<IntVector, int> vertexDict = new Dictionary<IntVector, int> ();
 		List<Vector3> hardEdgeVertexList = new List<Vector3> ();
 		List<int> triangleIndexList = new List<int>();
 		int[] triangleIndecis = new int[0];
@@ -28,14 +53,15 @@ namespace LikeProcessing
 				triangleIndexList.Add (index);
 				return index;
 			}
-			bool isContain = vertexDict.ContainsKey (vertex);
+			IntVector intVector = new IntVector (vertex);
+			bool isContain = vertexDict.ContainsKey (intVector);
 			if (isContain) {
-				int index = vertexDict [vertex];
+				int index = vertexDict [intVector];
 				triangleIndexList.Add (index);
 				return index;
 			} else {
 				int index = vertexDict.Count;
-				vertexDict.Add (vertex, index);
+				vertexDict.Add (intVector, index);
 				triangleIndexList.Add (index);
 				return index;
 			}
@@ -71,8 +97,8 @@ namespace LikeProcessing
 			triangleIndecis = triangleIndexList.ToArray ();
 			if (!isHardEdge) {
 				vertices = new Vector3[vertexDict.Count];
-				foreach (KeyValuePair<Vector3, int> entry in vertexDict)
-					vertices [entry.Value] = entry.Key;
+				foreach (KeyValuePair<IntVector, int> entry in vertexDict)
+					vertices [entry.Value] = entry.Key.vector;
 			} else {
 				vertices = hardEdgeVertexList.ToArray ();
 			}
