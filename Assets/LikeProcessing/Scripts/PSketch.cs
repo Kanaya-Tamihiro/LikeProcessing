@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using UnityStandardAssets.ImageEffects;
 using UnityEngine.PostProcessing;
 
@@ -9,10 +8,12 @@ namespace LikeProcessing
     {
 
         protected GameObject cameraObj;
-        GameObject lightObj;
+        protected GameObject lightObj;
         PostProcessingProfile postProcessingProfile;
-        UTJ.MP4Recorder mp4Recorder;
-		UTJ.GifRecorder gifRecorder;
+
+		bool recording = false;
+		float recordInterval = 1.0f / 10.0f;
+		private float recordDeltaTime = 0.0f;
 
         void Awake()
         {
@@ -31,12 +32,6 @@ namespace LikeProcessing
             //this.postProcessingProfile = (PostProcessingProfile)AssetDatabase.LoadAssetAtPath("Assets/LikeProcessing/Assets/Post-Processing-Profile.asset", typeof(PostProcessingProfile));
             this.postProcessingProfile = (PostProcessingProfile) ScriptableObject.CreateInstance("PostProcessingProfile");
             postProcessingBehaviour.profile = this.postProcessingProfile;
-			if (Application.platform == RuntimePlatform.WindowsPlayer) {
-				this.mp4Recorder = cameraObj.AddComponent<UTJ.MP4Recorder>();
-				this.mp4Recorder.m_outputDir = new UTJ.DataPath(UTJ.DataPath.Root.CurrentDirectory, "");
-				this.gifRecorder = cameraObj.AddComponent<UTJ.GifRecorder> ();
-				this.gifRecorder.m_outputDir = new UTJ.DataPath(UTJ.DataPath.Root.CurrentDirectory, "");
-			}
             
             setupCamera();
 
@@ -48,6 +43,8 @@ namespace LikeProcessing
             light.intensity = 0.5f;
 
 			QualitySettings.shadowDistance = (Screen.height/100.0f) / 2.0f * 10;
+
+			PConstants.Init ();
         }
 
 //		public PSketch() {
@@ -120,32 +117,25 @@ namespace LikeProcessing
 		public static void fill(GameObject obj, Color color) {
 			if (obj.GetComponent<MeshRenderer>() == null) obj.AddComponent<MeshRenderer>();
 			MeshRenderer meshRenderer = obj.GetComponent<MeshRenderer> ();
-			Material material = new Material(Shader.Find("Standard"));
+			Material material = meshRenderer.material ? meshRenderer.material : new Material(Shader.Find("Standard"));
 			material.color = color;
 			meshRenderer.material = material;
 		}
 
-        public void recordMp4() {
-			if (Application.platform == RuntimePlatform.WindowsPlayer) {
-				if (!this.mp4Recorder.recording)
-				{
-					this.mp4Recorder.BeginRecording();
-				}
-				else {
-					this.mp4Recorder.EndRecording();
-				}
-			}
-            
-        }
+		public void Screenshot() {
+			Application.CaptureScreenshot($"screenshots/{Time.time}.png");
+		}
 
-		public void recordGif() {
-			if (Application.platform == RuntimePlatform.WindowsPlayer) {
-				if (!this.gifRecorder.recording)
-				{
-					this.gifRecorder.BeginRecording();
-				}
-				else {
-					this.gifRecorder.EndRecording();
+		public void ToggleRecording() {
+			this.recording = !this.recording;
+		}
+
+		public void Record() {
+			if (this.recording) {
+				this.recordDeltaTime += Time.deltaTime;
+				if (this.recordDeltaTime > this.recordInterval) {
+					this.Screenshot ();
+					this.recordDeltaTime -= this.recordInterval;
 				}
 			}
 		}

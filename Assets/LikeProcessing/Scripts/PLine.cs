@@ -26,9 +26,10 @@ namespace LikeProcessing
 			cylinder.transform.localScale = new Vector3(weight, 1f, weight);
 			this.weight = weight;
 			MeshRenderer meshRenderer = cylinder.GetComponent<MeshRenderer>();
-			Material material = new Material(Shader.Find("Standard"));
-			material.color = new Color(0.6F, 1.0F, 0.2F);
-			meshRenderer.material = material;
+			Material material = PConstants.material001;//Resources.Load("Materials/Material001", typeof(Material)) as Material;
+//			Material material = new Material(Shader.Find("Standard"));
+//			material.color = new Color(0.6F, 1.0F, 0.2F);
+			meshRenderer.sharedMaterial = material;
 
 			sphereFrom = GameObject.CreatePrimitive (PrimitiveType.Sphere);
 			sphereFrom.name = "sphere.from";

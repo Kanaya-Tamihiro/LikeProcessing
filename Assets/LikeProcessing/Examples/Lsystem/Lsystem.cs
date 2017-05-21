@@ -9,7 +9,8 @@ namespace LikeProcessing.Examples
 		Turtle turtle;
 
 		void Start() {
-			StartA ();
+			StartMeanderingSnake ();
+			this.lightObj.GetComponent<Light> ().intensity = 0.8f;
 		}
 
 		void StartA()
@@ -18,7 +19,7 @@ namespace LikeProcessing.Examples
 			Rule[] ruleset = new Rule[1];
 			ruleset[0] = new Rule('F', "FF+[+F-F-F]-[-F+F+F]");
 			lsystem = new PLsystem("F", ruleset);
-			lsystem.generate(3);
+			lsystem.generate(4);
 			turtle = new Turtle(lsystem.getSentence(), 0.15f, Mathf.Deg2Rad*25, Vector3.down*0);
 			turtle.render();
 		}
@@ -27,10 +28,12 @@ namespace LikeProcessing.Examples
 		{
 			//background(Color.black);
 			Rule[] ruleset = new Rule[1];
-			ruleset[0] = new Rule('F', "FF[+F][-F][*F][%F]");
+//			ruleset[0] = new Rule('F', "FF[+F][-F][*F][/F]");
+//			ruleset[0] = new Rule('F', "FF+[+F-F-F]-[-F+F+F]*[*F/F/F]/");
+			ruleset[0] = new Rule('F', "FF+[*+F-F-F]-[/-F+F+F]");
 			lsystem = new PLsystem("F", ruleset);
-			lsystem.generate(4);
-			turtle = new Turtle(lsystem.getSentence(), 0.15f, Mathf.Deg2Rad*25, Vector3.down*0);
+			lsystem.generate(3);
+			turtle = new Turtle(lsystem.getSentence(), 0.15f, Mathf.Deg2Rad*110, Vector3.down*0);
 			turtle.render();
 		}
 

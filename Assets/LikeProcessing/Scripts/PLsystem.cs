@@ -117,7 +117,7 @@ namespace LikeProcessing.Lsystem {
 					matrix.rotateZ (theta);
 				} else if (c == '*') {
 					matrix.rotateX (-theta);
-				} else if (c == '%') {
+				} else if (c == '/') {
 					matrix.rotateX (theta);
 				} else if (c == '[') {
 					matrixes.Push (matrix);
