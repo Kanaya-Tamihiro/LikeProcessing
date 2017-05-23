@@ -9,6 +9,9 @@ namespace LikeProcessing
 
         protected GameObject cameraObj;
         protected GameObject lightObj;
+
+		public static Material material;
+
         PostProcessingProfile postProcessingProfile;
 
 		bool recording = false;
@@ -41,6 +44,10 @@ namespace LikeProcessing
             lightObj.transform.Rotate(15, 15, 0);
 			light.shadows = LightShadows.Soft;
             light.intensity = 0.5f;
+
+			material = new Material (Shader.Find("Standard"));
+			material.SetFloat ("_Metallic", 1);
+			material.SetFloat ("_Glossiness", 0.7f);
 
 			QualitySettings.shadowDistance = (Screen.height/100.0f) / 2.0f * 10;
 

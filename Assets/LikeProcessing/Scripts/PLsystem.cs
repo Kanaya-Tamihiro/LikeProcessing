@@ -10,137 +10,103 @@ namespace LikeProcessing.Lsystem {
 	
 	public class PLsystem
 	{
-		string sentence;
-		Rule[] ruleset;
-		int generation;
+		public string sentence;
+		public PRule rule;
+		public int generation;
+		public GameObject gameObject;
 
-		public PLsystem (string axiom, Rule[] r) {
+		public PLsystem (string axiom, PRule _rule) {
 			sentence = axiom;
-			ruleset = r;
+			rule = _rule;
 			generation = 0;
+			gameObject = new GameObject ("PLsystem");
 		}
 
-		public void generate(int cycle) {
+		public void Generate(int cycle) {
 			for(int c=0; c<cycle; c++) {
-				// An empty StringBuffer that we will fill
 				StringBuilder nextgen = new StringBuilder();
-				// For every character in the sentence
 				for (int i = 0; i < sentence.Length; i++) {
-					// What is the character
 					char curr = sentence[i];
-					// We will replace it with itself unless it matches one of our rules
-					string replace = "" + curr;
-					// Check every rule
-					for (int j = 0; j < ruleset.Length; j++) {
-						char a = ruleset[j].getA();
-						// if we match the Rule, get the replacement String out of the Rule
-						if (a == curr) {
-							replace = ruleset[j].getB();
-							break; 
-						}
-					}
-					// Append replacement String
+					string replace = rule.Generate(curr);
 					nextgen.Append(replace);
 				}
-				// Replace sentence
 				sentence = nextgen.ToString();
-				// Increment generation
 				generation++;
 			}
-
 		}
 
-		public string getSentence() {
-			return sentence; 
-		}
+		public void Render() {
+			//			foreach (PLine line in plines) {
+			//				line.destory ();
+			//			}
+			//			plines.Clear ();
 
-		public int getGeneration() {
-			return generation; 
-		}
-	}
+			//			PMatrix matrix = PMatrix.identity;
+			////			matrix.translate (gameObj.transform.position);
+			//			Stack<PMatrix> matrixes = new Stack<PMatrix> ();
 
-	public class Rule {
-		char a;
-		string b;
-
-		public Rule(char a_, string b_) {
-			a = a_;
-			b = b_; 
-		}
-
-		public char getA() {
-			return a;
-		}
-
-		public string getB() {
-			return b;
-		}
-	}
-
-	public class Turtle {
-		string todo;
-		float len;
-		float theta;
-		List<PLine> plines;
-		GameObject gameObj;
-
-		public Turtle(string s, float l, float t, Vector3 position) {
-			todo = s;
-			len = l; 
-			theta = t;
-			plines = new List<PLine> ();
-			gameObj = new GameObject ("turtle");
-			gameObj.transform.position = position;
-		} 
-
-		public void render() {
-			foreach (PLine line in plines) {
-				line.destory ();
+			for (int i = 0; i < sentence.Length; i++) {
+				char c = sentence[i];
+				rule.Render (gameObject, c);
 			}
-			plines.Clear ();
+		}
 
-			PMatrix matrix = PMatrix.identity;
-//			matrix.translate (gameObj.transform.position);
-			Stack<PMatrix> matrixes = new Stack<PMatrix> ();
+	}
 
-			for (int i = 0; i < todo.Length; i++) {
-				char c = todo[i];
-				if (c == 'F' || c == 'G') {
-					Vector3 from = matrix.m.MultiplyPoint3x4 (Vector3.zero);
-					Vector3 to = matrix.m.MultiplyPoint3x4 (Vector3.up * len);
-					PLine line = new PLine (gameObj, from, to, 0.03f);
-					plines.Add (line);
-					matrix.translate (Vector3.up * len);
-				} else if (c == '+') {
-					matrix.rotateZ (-theta);
-				} else if (c == '-') {
-					matrix.rotateZ (theta);
-				} else if (c == '*') {
-					matrix.rotateX (-theta);
-				} else if (c == '/') {
-					matrix.rotateX (theta);
-				} else if (c == '[') {
-					matrixes.Push (matrix);
-					matrix = matrix.copy ();
-				} else if (c == ']') {
-					matrix = matrixes.Pop ();
+	public class PRule {
+		List<KeyValuePair<char, string>> rules = new List<KeyValuePair<char, string>> ();
+		public float len = 0.2f;
+		public float theta = Mathf.Deg2Rad*30;
+		PMatrix matrix;
+		Stack<PMatrix> matrixes;
+
+		public PRule() {
+			ResetMatrix ();
+		}
+
+		public void AddRule(char c, string s) {
+			rules.Add (new KeyValuePair<char, string>(c, s));
+		}
+
+		public string Generate(char c) {
+			foreach (KeyValuePair<char, string> kv in rules) {
+				char a = kv.Key;
+				if (a == c) {
+					return kv.Value;
 				}
 			}
+			return "" + c;
 		}
 
-		public void setLen(float l) {
-			len = l;
-		} 
-
-		public void changeLen(float percent) {
-			len *= percent;
+		public void ResetMatrix() {
+			matrix = PMatrix.identity;
+			matrixes = new Stack<PMatrix> ();
 		}
 
-		public void setToDo(string s) {
-			todo = s;
+		public void Render(GameObject gameObject, char c) {
+			if (c == 'F') {
+				Vector3 from = matrix.m.MultiplyPoint3x4 (Vector3.zero);
+				Vector3 to = matrix.m.MultiplyPoint3x4 (Vector3.up * len);
+				PLineSimple line = new PLineSimple (from, to, 0.02f, 12);
+//				plines.Add (line);
+				matrix.translate (Vector3.up * len);
+			} else if (c == '+') {
+				matrix.rotateZ (-theta);
+			} else if (c == '-') {
+				matrix.rotateZ (theta);
+			} else if (c == '*') {
+				matrix.rotateX (-theta);
+			} else if (c == '/') {
+				matrix.rotateX (theta);
+			} else if (c == '[') {
+				matrixes.Push (matrix);
+				matrix = matrix.copy ();
+			} else if (c == ']') {
+				matrix = matrixes.Pop ();
+			}
 		}
 	}
-
+		
 }
 
 

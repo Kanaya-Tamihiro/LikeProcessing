@@ -16,7 +16,8 @@ namespace LikeProcessing
 			gameObject = new GameObject();
 			gameObject.name = "PLineSimple";
 			gameObject.AddComponent<MeshFilter> ();
-			gameObject.AddComponent<MeshRenderer> ().material = new Material(Shader.Find("LikeProcessing/VertexColor"));
+//			gameObject.AddComponent<MeshRenderer> ().material = new Material(Shader.Find("LikeProcessing/VertexColor"));
+			gameObject.AddComponent<MeshRenderer> ().material = PSketch.material;
 			weight = _weight;
 			detail = _detail;
 			from = _from;
