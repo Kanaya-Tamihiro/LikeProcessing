@@ -32,9 +32,9 @@ namespace LikeProcessing
 			Vector3 _to = to - center;
 			Vector3 fromTo = _to - _from;
 			fromTo.Normalize ();
-			Vector3 randv = PSketch.randomVector ();
-			while (Vector3.Angle(fromTo, randv) < 5.0f) {
-				randv = PSketch.randomVector();
+			Vector3 randv = Vector3.right;
+			if (Vector3.Angle(fromTo, randv) < 5.0f) {
+				randv = Vector3.up;
 			}
 			Vector3 v1 = Vector3.Cross (fromTo, randv);
 			v1.Normalize ();

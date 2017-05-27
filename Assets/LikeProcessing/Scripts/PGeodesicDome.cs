@@ -178,11 +178,11 @@ namespace LikeProcessing
 			mesh.RecalculateNormals ();
 
 			Color[] colors = new Color[mesh.vertices.Length];
-			for (int i=0; i<colors.Length; i=i+3) {
+			for (int i=0; i<colors.Length; i=i+1) {
 				Color color = Color.HSVToRGB (Random.value, 0.5f, 1.0f);
 				colors [i] = color;
-				colors [i+1] = color;
-				colors [i+2] = color;
+//				colors [i+1] = color;
+//				colors [i+2] = color;
 			}
 			mesh.colors = colors;
 		}

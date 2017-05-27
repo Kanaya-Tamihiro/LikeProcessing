@@ -116,7 +116,7 @@ namespace LikeProcessing
 			}
 		}
 
-		void SetUp() {
+		public void SetUp() {
 			float root2 = Mathf.Sqrt (2);
 			float a = root2;
 			float half_a = root2 / 2.0f;
@@ -187,7 +187,7 @@ namespace LikeProcessing
 			pvertices.EndShape ();
 		}
 
-		void SetMesh() {
+		public void SetMesh() {
 			Mesh mesh = gameObject.GetComponent<MeshFilter> ().mesh;
 			mesh.Clear ();
 			mesh.vertices = pvertices.Vertices ();

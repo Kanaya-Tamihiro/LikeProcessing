@@ -88,6 +88,9 @@ namespace LikeProcessing.Lsystem {
 				Vector3 from = matrix.m.MultiplyPoint3x4 (Vector3.zero);
 				Vector3 to = matrix.m.MultiplyPoint3x4 (Vector3.up * len);
 				PLineSimple line = new PLineSimple (from, to, 0.02f, 12);
+//				GameObject gobj = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+//				gobj.transform.localScale *= 0.05f;
+//				gobj.transform.position = (from + to) / 2;
 //				plines.Add (line);
 				matrix.translate (Vector3.up * len);
 			} else if (c == '+') {
