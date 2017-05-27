@@ -10,20 +10,25 @@ namespace LikeProcessig.Examples {
 		PGeodesicDomeImproved pgeodesicDomeImproved;
 		PGeodesicDome pgeodesicDome;
 		PLineSimple plineSimple;
+		PMetaball pmetaball;
 
 		void Start () {
 			lightObj.GetComponent<Light> ().intensity = 0.8f;
 
-			pgeodesicDomeImproved = new PGeodesicDomeImproved(3, false);
-			pgeodesicDomeImproved.gameObject.transform.position += new Vector3 (-2, 1, 0);
-			pgeodesicDomeImproved.gameObject.GetComponent<MeshRenderer> ().material = new Material (Shader.Find("Standard"));
+//			pgeodesicDomeImproved = new PGeodesicDomeImproved(3, false);
+//			pgeodesicDomeImproved.gameObject.transform.position += new Vector3 (-2, 1, 0);
+//			pgeodesicDomeImproved.gameObject.GetComponent<MeshRenderer> ().material = new Material (Shader.Find("Standard"));
+//
+//			pgeodesicDome = new PGeodesicDome(3);
+//			pgeodesicDome.gameObject.transform.position += new Vector3 (-2, 3, 0);
+//			pgeodesicDome.gameObject.GetComponent<MeshRenderer> ().material = new Material (Shader.Find("Standard"));
+//
+//			plineSimple = new PLineSimple(new Vector3(0, 0, 0), new Vector3(1, 2, 0));
+//			plineSimple.gameObject.GetComponent<MeshRenderer> ().material = new Material (Shader.Find("Standard"));
 
-			pgeodesicDome = new PGeodesicDome(3);
-			pgeodesicDome.gameObject.transform.position += new Vector3 (-2, 3, 0);
-			pgeodesicDome.gameObject.GetComponent<MeshRenderer> ().material = new Material (Shader.Find("Standard"));
+			pmetaball = new PMetaball ();
+			pmetaball.gameObject.transform.position = new Vector3 (0,1,0);
 
-			plineSimple = new PLineSimple(new Vector3(0, 0, 0), new Vector3(1, 2, 0));
-			plineSimple.gameObject.GetComponent<MeshRenderer> ().material = new Material (Shader.Find("Standard"));
 
 		}
 

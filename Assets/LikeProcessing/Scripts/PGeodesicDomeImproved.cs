@@ -22,7 +22,8 @@ namespace LikeProcessing
 			isHardEdge = _isHardEdge;
 			gameObject = new GameObject ("PGeodesicDome");
 			gameObject.AddComponent<MeshFilter> ();
-			gameObject.AddComponent<MeshRenderer> ().material = new Material(Shader.Find("LikeProcessing/VertexColor"));
+//			gameObject.AddComponent<MeshRenderer> ().material = new Material(Shader.Find("LikeProcessing/VertexColor"));
+			gameObject.AddComponent<MeshRenderer> ().material = PSketch.material;
 			SetUp ();
 			SetMesh ();
 		}
