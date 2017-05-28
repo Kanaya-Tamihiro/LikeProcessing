@@ -12,6 +12,8 @@ namespace LikeProcessig.Examples {
 		PLineSimple plineSimple;
 		PMetaball pmetaball;
 
+		float deltaTime = 0f;
+
 		void Start () {
 			lightObj.GetComponent<Light> ().intensity = 0.8f;
 
@@ -26,13 +28,21 @@ namespace LikeProcessig.Examples {
 //			plineSimple = new PLineSimple(new Vector3(0, 0, 0), new Vector3(1, 2, 0));
 //			plineSimple.gameObject.GetComponent<MeshRenderer> ().material = new Material (Shader.Find("Standard"));
 
-			pmetaball = new PMetaball ();
+			pmetaball = new PMetaball();
 			pmetaball.gameObject.transform.position = new Vector3 (0,1,0);
-
-
+			pmetaball.AddCore (new Vector3 (-0.5f,0,0));
+			pmetaball.AddCore (new Vector3 (0.5f,0,0));
+//			pmetaball.AddMetaball (new Vector3 (0.25f,1,0));
+			pmetaball.Update ();
 		}
 
 		void Update () {
+			deltaTime += Time.deltaTime;
+			if (deltaTime >= 1.0f/10.0f)
+			{
+				deltaTime = 0;
+				pmetaball.Update ();
+			}
 		}
 	}
 
