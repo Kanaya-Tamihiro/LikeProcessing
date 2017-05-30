@@ -10,6 +10,8 @@ namespace LikeProcessing
 		public float size = 3.0f;
 		public int detail = 20;
 		public float isoLevel = 0.5f;
+		public float isoPower = 0.5f;
+		public bool isoValuesAddictive = true;
 		public bool isHardEdge = false;
 
 		Point[,,] points;
@@ -31,13 +33,15 @@ namespace LikeProcessing
 			gameObject.AddComponent<MeshFilter> ().mesh.MarkDynamic ();
 			//			gameObject.AddComponent<MeshRenderer> ().material = new Material(Shader.Find("LikeProcessing/VertexColor"));
 			gameObject.AddComponent<MeshRenderer> ().material = PSketch.material;
+		}
 
+		public void SetUpLattice () {
 			SetPoint ();
 			SetEdge ();
 			SetCube ();
-//							DrawPoints ();
-//							DrawEdges ();
-//							DrawCubes ();
+			//							DrawPoints ();
+			//							DrawEdges ();
+			//							DrawCubes ();
 		}
 
 		public void AddCore (Core core)
@@ -48,7 +52,10 @@ namespace LikeProcessing
 
 		public void Update ()
 		{
-			CulcIsoValues ();
+			if (isoValuesAddictive == true)
+				CulcIsoValuesAdd ();
+			else
+				CulcIsoValuesMax ();
 			ClearEdges ();
 			CulcCubeVertices ();
 //			DrawIntersectionPoints ();
@@ -242,7 +249,7 @@ namespace LikeProcessing
 			}
 		}
 
-		void CulcIsoValues ()
+		void CulcIsoValuesAdd ()
 		{
 			for (int iz = 0; iz < detail + 1; iz++) {
 				for (int iy = 0; iy < detail + 1; iy++) {
@@ -250,7 +257,22 @@ namespace LikeProcessing
 						Point p = points [iz, iy, ix];
 						p.isoValue = 0;
 						foreach (Core core in cores) {
-							p.isoValue += core.CulcIsoValue (p, isoLevel);
+							p.isoValue += core.CulcIsoValue (p, isoPower);
+						}
+					}
+				}
+			}
+		}
+
+		void CulcIsoValuesMax ()
+		{
+			for (int iz = 0; iz < detail + 1; iz++) {
+				for (int iy = 0; iy < detail + 1; iy++) {
+					for (int ix = 0; ix < detail + 1; ix++) {
+						Point p = points [iz, iy, ix];
+						p.isoValue = 0;
+						foreach (Core core in cores) {
+							p.isoValue = Mathf.Max(p.isoValue, core.CulcIsoValue (p, isoPower));
 						}
 					}
 				}
@@ -558,9 +580,9 @@ namespace LikeProcessing
 				position = _position;
 			}
 
-			virtual public float CulcIsoValue(Point p, float isoLevel) {
-				float distance = Vector3.Distance (p.loc, position);
-				return 0.7f / (1.0f + distance * distance);	
+			virtual public float CulcIsoValue(Point p, float isoPower) {
+				float sqrMagnitude = (p.loc - position).sqrMagnitude;
+				return isoPower / (1.0f + sqrMagnitude);	
 			}
 		}
 
@@ -568,33 +590,26 @@ namespace LikeProcessing
 		{
 			Vector3 p_org, p_end;
 			Vector3 delta;
-			float width;
 
-			public CoreLine (Vector3 from, Vector3 to, float _width) : base()
+			public CoreLine (Vector3 from, Vector3 to) : base()
 			{
 				p_org = from;
 				p_end = to;
 				delta = to - from;
-				width = _width;
 			}
 
-			override public float CulcIsoValue(Point p, float isoLevel) {
+			override public float CulcIsoValue(Point p, float isoPower) {
 				Vector3 q = p.loc - p_org;
-				float t = Vector3.Dot(delta, q) / delta.magnitude;
-//				Debug.Log (t);
-				float distance;
+				float t = Vector3.Dot(delta, q) / delta.sqrMagnitude;
+				float sqrMagnitude;
 				if (t > 1) {
-					distance = (p.loc - p_end).magnitude;
-//					distance = 100;
+					sqrMagnitude = (p.loc - p_end).sqrMagnitude;
 				} else if (t < 0) {
-					distance = (p.loc - p_org).magnitude;
-//					distance = 100;
+					sqrMagnitude = (p.loc - p_org).sqrMagnitude;
 				} else {
-					distance = (q - (p_org + t * delta)).magnitude;
-//					Debug.Log (distance);
-//					distance = 100;
+					sqrMagnitude = (q - (t * delta)).sqrMagnitude;
 				}
-				return .7f / (1.0f + distance * distance);	
+				return isoPower / (1.0f + sqrMagnitude);	
 			}
 		}
 
