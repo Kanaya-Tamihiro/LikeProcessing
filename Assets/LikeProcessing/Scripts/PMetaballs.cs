@@ -8,15 +8,15 @@ namespace LikeProcessing
 		
 		public GameObject gameObject;
 		public float size = 3.0f;
-		public int detail = 30;
+		public int detail = 20;
 		public float isoLevel = 0.5f;
-		public bool isHardEdge = true;
+		public bool isHardEdge = false;
 
 		Point[,,] points;
 		Edge[,,] edgeHorizon, edgeVertical, edgeDepth;
 		Cube[,,] cubes;
 
-		List<GameObject> cores = new List<GameObject> ();
+		public List<Core> cores = new List<Core> ();
 
 		//		Vector3[] vercites = new Vector3[30000];
 		//		int[] triangleIndeces = new int[30000];
@@ -37,14 +37,12 @@ namespace LikeProcessing
 			SetCube ();
 //							DrawPoints ();
 //							DrawEdges ();
-			//				DrawCubes ();
+//							DrawCubes ();
 		}
 
-		public void AddCore (Vector3 position)
+		public void AddCore (Core core)
 		{
-			GameObject core = new GameObject ("Core");
-			core.transform.SetParent (gameObject.transform);
-			core.transform.position = position;
+//			core.gameObject.transform.SetParent (gameObject.transform);
 			cores.Add (core);
 		}
 
@@ -251,9 +249,8 @@ namespace LikeProcessing
 					for (int ix = 0; ix < detail + 1; ix++) {
 						Point p = points [iz, iy, ix];
 						p.isoValue = 0;
-						foreach (GameObject core in cores) {
-							float distance = Vector3.Distance (p.loc, core.transform.position);
-							p.isoValue += 0.7f / (1.0f + distance * distance);
+						foreach (Core core in cores) {
+							p.isoValue += core.CulcIsoValue (p, isoLevel);
 						}
 					}
 				}
@@ -327,7 +324,7 @@ namespace LikeProcessing
 			Object.Destroy (this.gameObject);
 		}
 
-		class Point
+		public class Point
 		{
 			public Vector3 loc;
 			PGeodesicDomeImproved pGeodesicDome;
@@ -349,7 +346,7 @@ namespace LikeProcessing
 			}
 		}
 
-		class Edge
+		public class Edge
 		{
 			Point[] points = new Point[2];
 			PLineSimple pline;
@@ -459,7 +456,7 @@ namespace LikeProcessing
 			}
 		}
 
-		class Cube
+		public class Cube
 		{
 			public Point[] points;
 			public Edge[] edges;
@@ -548,6 +545,56 @@ namespace LikeProcessing
 					triangleIndexList.Add (triangleIndexList.Count);
 					i += 3;
 				}
+			}
+		}
+
+		public class Core {
+
+			Vector3 position;
+
+			public Core () {}
+
+			public Core(Vector3 _position) {
+				position = _position;
+			}
+
+			virtual public float CulcIsoValue(Point p, float isoLevel) {
+				float distance = Vector3.Distance (p.loc, position);
+				return 0.7f / (1.0f + distance * distance);	
+			}
+		}
+
+		public class CoreLine : Core
+		{
+			Vector3 p_org, p_end;
+			Vector3 delta;
+			float width;
+
+			public CoreLine (Vector3 from, Vector3 to, float _width) : base()
+			{
+				p_org = from;
+				p_end = to;
+				delta = to - from;
+				width = _width;
+			}
+
+			override public float CulcIsoValue(Point p, float isoLevel) {
+				Vector3 q = p.loc - p_org;
+				float t = Vector3.Dot(delta, q) / delta.magnitude;
+//				Debug.Log (t);
+				float distance;
+				if (t > 1) {
+					distance = (p.loc - p_end).magnitude;
+//					distance = 100;
+				} else if (t < 0) {
+					distance = (p.loc - p_org).magnitude;
+//					distance = 100;
+				} else {
+					distance = (q - (p_org + t * delta)).magnitude;
+//					Debug.Log (distance);
+//					distance = 100;
+				}
+				return .7f / (1.0f + distance * distance);	
 			}
 		}
 
