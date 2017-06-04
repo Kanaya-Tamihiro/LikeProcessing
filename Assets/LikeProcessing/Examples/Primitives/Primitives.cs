@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using LikeProcessing;
+using LikeProcessing.PMetaball;
 
 namespace LikeProcessig.Examples {
 	
@@ -29,9 +30,9 @@ namespace LikeProcessig.Examples {
 //			plineSimple.gameObject.GetComponent<MeshRenderer> ().material = new Material (Shader.Find("Standard"));
 
 			pmetaball = new PMetaball();
-			pmetaball.detail = 40;
-			pmetaball.size = 2.0f;
-			pmetaball.isoPower = 1.0f;
+			pmetaball.detail = 70;
+			pmetaball.size = 5.0f;
+			pmetaball.isoPower = .7f;
 			pmetaball.isoValuesAddictive = false;
 			pmetaball.gameObject.transform.position = new Vector3 (0,2,0);
 			pmetaball.SetUpLattice ();
@@ -42,15 +43,15 @@ namespace LikeProcessig.Examples {
 			pmetaball.Update ();
 		}
 
-		void Update () {
-			deltaTime += Time.deltaTime;
-			if (deltaTime >= 1.0f/10.0f)
-			{
-				deltaTime = 0;
-				pmetaball.isoPower -= 0.001f;
-				pmetaball.Update ();
-			}
-		}
+//		void Update () {
+//			deltaTime += Time.deltaTime;
+//			if (deltaTime >= 1.0f/10.0f)
+//			{
+//				deltaTime = 0;
+//				pmetaball.isoPower -= 0.001f;
+//				pmetaball.Update ();
+//			}
+//		}
 	}
 
 }

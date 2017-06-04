@@ -1,16 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-namespace LikeProcessing
+namespace LikeProcessing.PMetaball
 {
 	public class PMetaball
 	{
 		
 		public GameObject gameObject;
 		public float size = 3.0f;
-		public int detail = 20;
+		public int detail = 30;
 		public float isoLevel = 0.5f;
-		public float isoPower = 0.5f;
+		public float isoPower = 0.4f;
 		public bool isoValuesAddictive = true;
 		public bool isHardEdge = false;
 
@@ -346,229 +346,11 @@ namespace LikeProcessing
 			Object.Destroy (this.gameObject);
 		}
 
-		public class Point
-		{
-			public Vector3 loc;
-			PGeodesicDomeImproved pGeodesicDome;
-			public float isoValue;
 
-			public Point (float x, float y, float z)
-			{
-				loc = new Vector3 (x, y, z);
-			}
 
-			public void draw (GameObject parent)
-			{
-				if (pGeodesicDome != null)
-					return;
-				pGeodesicDome = new PGeodesicDomeImproved ();
-				pGeodesicDome.gameObject.transform.SetParent (parent.transform);
-				pGeodesicDome.gameObject.transform.position = loc;
-				pGeodesicDome.gameObject.transform.localScale *= 0.02f;
-			}
-		}
 
-		public class Edge
-		{
-			Point[] points = new Point[2];
-			PLineSimple pline;
-			PGeodesicDomeImproved pGeodesicDome;
-			public Vector3 intersection;
-			public bool hasIntersection = false;
-			public int triangleIndex = -1;
-			public float isoLevel;
 
-			public Edge (Point p1, Point p2, float _isoLevel)
-			{
-				points [0] = p1;
-				points [1] = p2;
-				isoLevel = _isoLevel;
-			}
 
-//			public Vector3 GetIntersection ()
-//			{
-////				hasIntersection = false;
-//				return intersection;
-//			}
-//
-//			public int getTriangleIndex ()
-//			{
-////				hasIntersection = false;
-//				return triangleIndex;
-//			}
-
-			public void draw (GameObject parent)
-			{
-				if (pline != null)
-					return;
-				pline = new PLineSimple (points [0].loc, points [1].loc, 0.005f, 3);
-				pline.gameObject.transform.SetParent (parent.transform);
-			}
-
-			public void DrawIntersection (GameObject parent)
-			{
-//				if (pGeodesicDome == null) {
-//					pGeodesicDome = new PGeodesicDomeImproved ();
-//					pGeodesicDome.gameObject.transform.SetParent (parent.transform);
-//					pGeodesicDome.gameObject.transform.localScale *= 0.02f;	
-//				}
-//				if (!hasIntersection) {
-//					pGeodesicDome.gameObject.SetActive (false);
-//					pGeodesicDome.gameObject.transform.localScale = 0;
-//				} else {
-//					pGeodesicDome.gameObject.transform.position = intersection;
-//					pGeodesicDome.gameObject.SetActive (true);
-//				}
-			}
-
-			public int CulcIntersection (List<Vector3> vertexList, int _triangleIndex, bool isHardEdge)
-			{
-				if (hasIntersection == true) {
-					if (isHardEdge) {
-						vertexList.Add (intersection);
-						triangleIndex = _triangleIndex;
-						return 1;
-					} else
-						return 0;
-				}
-				hasIntersection = true;
-				intersection = LinearInterpolation ();
-				vertexList.Add (intersection);
-				triangleIndex = _triangleIndex;
-				return 1;
-			}
-
-			Vector3 LinearInterpolation ()
-			{
-				Point p1 = points [0];
-				Point p2 = points [1];
-				if (lessThan (p2.loc, p1.loc)) {
-					Point temp;
-					temp = p1;
-					p1 = p2;
-					p2 = temp;    
-				}
-
-				Vector3 result;
-				if (Mathf.Abs (p1.isoValue - p2.isoValue) > 0.00001f)
-					result = p1.loc + (p2.loc - p1.loc) / (p2.isoValue - p1.isoValue) * (isoLevel - p1.isoValue);
-				else
-					result = p1.loc;
-				return result;
-			}
-
-			bool lessThan (Vector3 left, Vector3 right)
-			{
-				if (left.x < right.x)
-					return true;
-				else if (left.x > right.x)
-					return false;
-
-				if (left.y < right.y)
-					return true;
-				else if (left.y > right.y)
-					return false;
-
-				if (left.z < right.z)
-					return true;
-				else if (left.z > right.z)
-					return false;
-
-				return false;
-			}
-		}
-
-		public class Cube
-		{
-			public Point[] points;
-			public Edge[] edges;
-			public int cubeIndex;
-			public float isoLevel;
-
-			public Cube (Point[] _points, Edge[] _edges, float _isoLevel)
-			{
-				points = _points;
-				edges = _edges;
-				isoLevel = _isoLevel;
-			}
-
-			public void draw (GameObject parent)
-			{
-				foreach (Point p in points) {
-					p.draw (parent);
-				}
-				foreach (Edge e in edges) {
-					e.draw (parent);
-				}
-			}
-
-			public int CulcIntersections (List<Vector3> vertexList, int triangleIndex, bool isHardEdge)
-			{
-				int edgeFlags = edgeTable [cubeIndex];
-				if ((edgeFlags & 1) > 0) {
-					triangleIndex += edges [0].CulcIntersection (vertexList, triangleIndex, isHardEdge);
-				}
-				if ((edgeFlags & 2) > 0) {
-					triangleIndex += edges [1].CulcIntersection (vertexList, triangleIndex, isHardEdge);
-				}
-				if ((edgeFlags & 4) > 0) {
-					triangleIndex += edges [2].CulcIntersection (vertexList, triangleIndex, isHardEdge);
-				}
-				if ((edgeFlags & 0x8) > 0) {
-					triangleIndex += edges [3].CulcIntersection (vertexList, triangleIndex, isHardEdge);
-				}
-				if ((edgeFlags & 0x10) > 0) {
-					triangleIndex += edges [4].CulcIntersection (vertexList, triangleIndex, isHardEdge);
-				}
-				if ((edgeFlags & 0x20) > 0) {
-					triangleIndex += edges [5].CulcIntersection (vertexList, triangleIndex, isHardEdge);
-				}
-				if ((edgeFlags & 0x40) > 0) {
-					triangleIndex += edges [6].CulcIntersection (vertexList, triangleIndex, isHardEdge);
-				}
-				if ((edgeFlags & 0x80) > 0) {
-					triangleIndex += edges [7].CulcIntersection (vertexList, triangleIndex, isHardEdge);
-				}
-				if ((edgeFlags & 0x100) > 0) {
-					triangleIndex += edges [8].CulcIntersection (vertexList, triangleIndex, isHardEdge);
-				}
-				if ((edgeFlags & 0x200) > 0) {
-					triangleIndex += edges [9].CulcIntersection (vertexList, triangleIndex, isHardEdge);
-				}
-				if ((edgeFlags & 0x400) > 0) {
-					triangleIndex += edges [10].CulcIntersection (vertexList, triangleIndex, isHardEdge);
-				}
-				if ((edgeFlags & 0x800) > 0) {
-					triangleIndex += edges [11].CulcIntersection (vertexList, triangleIndex, isHardEdge);
-				}
-				return triangleIndex;
-			}
-
-			public void Vertices (List<int> triangleIndexList)
-			{
-				int i = 0;
-				while (triTable [cubeIndex, i] != -1) {
-					triangleIndexList.Add (edges [triTable [cubeIndex, i + 2]].triangleIndex );
-					triangleIndexList.Add (edges [triTable [cubeIndex, i + 1]].triangleIndex );
-					triangleIndexList.Add (edges [triTable [cubeIndex, i + 0]].triangleIndex );
-					i += 3;
-				}
-			}
-
-			public void VerticesHardEdge (List<Vector3> vertexList, List<int> triangleIndexList)
-			{
-				int i = 0;
-				while (triTable [cubeIndex, i] != -1) {
-					vertexList.Add (edges [triTable [cubeIndex, i + 2]].intersection);
-					triangleIndexList.Add (triangleIndexList.Count);
-					vertexList.Add (edges [triTable [cubeIndex, i + 1]].intersection);
-					triangleIndexList.Add (triangleIndexList.Count);
-					vertexList.Add (edges [triTable [cubeIndex, i + 0]].intersection);
-					triangleIndexList.Add (triangleIndexList.Count);
-					i += 3;
-				}
-			}
-		}
 
 		public class Core {
 
