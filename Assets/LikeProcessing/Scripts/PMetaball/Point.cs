@@ -8,6 +8,7 @@ namespace LikeProcessing.PMetaball
 		public Vector3 loc;
 		PGeodesicDomeImproved pGeodesicDome;
 		public float isoValue;
+		public Vector3 normal;
 
 		public Point (float x, float y, float z)
 		{

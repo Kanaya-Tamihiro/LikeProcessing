@@ -12,7 +12,7 @@ namespace LikeProcessing.PMetaball
 		public float isoLevel = 0.5f;
 		public float isoPower = 0.4f;
 		public bool isoValuesAddictive = true;
-		public bool isHardEdge = false;
+		public bool isHardEdge = true;
 
 		Point[,,] points;
 		Edge[,,] edgeHorizon, edgeVertical, edgeDepth;
@@ -24,7 +24,7 @@ namespace LikeProcessing.PMetaball
 		//		int[] triangleIndeces = new int[30000];
 		List<Vector3> vertexList = new List<Vector3> ();
 		List<int> triangleIndexList = new List<int> ();
-
+		List<Vector3> normalList = new List<Vector3>();
 
 		public PMetaball ()
 		{
@@ -68,7 +68,9 @@ namespace LikeProcessing.PMetaball
 			mesh.Clear ();
 			mesh.vertices = vertexList.ToArray ();
 			mesh.triangles = triangleIndexList.ToArray ();
-			mesh.RecalculateNormals ();
+			mesh.normals = normalList.ToArray ();
+//			Debug.Log (PUtil.VerticesToString (mesh.normals));
+//			mesh.RecalculateNormals ();
 		}
 
 			
@@ -170,6 +172,162 @@ namespace LikeProcessing.PMetaball
 			}
 		}
 
+
+
+		void CulcIsoValuesAdd ()
+		{
+			for (int iz = 0; iz < detail + 1; iz++) {
+				for (int iy = 0; iy < detail + 1; iy++) {
+					for (int ix = 0; ix < detail + 1; ix++) {
+						Point p = points [iz, iy, ix];
+						p.isoValue = 0;
+						foreach (Core core in cores) {
+							p.isoValue += core.CulcIsoValue (p, isoPower);
+							p.normal += core.CulcNormal (p, isoPower);
+						}
+//						p.normal.Normalize ();
+					}
+				}
+			}
+		}
+
+		void CulcIsoValuesMax ()
+		{
+			for (int iz = 0; iz < detail + 1; iz++) {
+				for (int iy = 0; iy < detail + 1; iy++) {
+					for (int ix = 0; ix < detail + 1; ix++) {
+						Point p = points [iz, iy, ix];
+						p.isoValue = 0;
+						foreach (Core core in cores) {
+							float isoValue = core.CulcIsoValue (p, isoPower);
+							if (p.isoValue < isoValue) {
+								p.isoValue = isoValue;
+								p.normal = core.CulcNormal (p, isoPower);
+							}
+						}
+//						p.normal.Normalize ();
+					}
+				}
+			}
+		}
+
+		void ClearEdges () {
+			for (int iz = 0; iz < detail + 1; iz++) {
+				for (int iy = 0; iy < detail + 1; iy++) {
+					for (int ix = 0; ix < detail; ix++) {
+						edgeHorizon [iz, iy, ix].hasIntersection = false;
+					}
+				}
+			}
+			for (int iz = 0; iz < detail + 1; iz++) {
+				for (int iy = 0; iy < detail; iy++) {
+					for (int ix = 0; ix < detail + 1; ix++) {
+						edgeVertical [iz, iy, ix].hasIntersection = false;
+					}
+				}
+			}
+			for (int iz = 0; iz < detail; iz++) {
+				for (int iy = 0; iy < detail + 1; iy++) {
+					for (int ix = 0; ix < detail + 1; ix++) {
+						edgeDepth [iz, iy, ix].hasIntersection = false;
+					}
+				}
+			}
+		}
+
+		void CulcCubeVertices ()
+		{
+			vertexList.Clear ();
+			triangleIndexList.Clear ();
+			normalList.Clear ();
+			int triangleIndex = 0;
+			for (int iz = 0; iz < detail; iz++) {
+				for (int iy = 0; iy < detail; iy++) {
+					for (int ix = 0; ix < detail; ix++) {
+						Cube cube = cubes [iz, iy, ix];
+						int cubeIndex = 0;
+						if (cube.points [0].isoValue > isoLevel)
+							cubeIndex |= 1;
+						if (cube.points [1].isoValue > isoLevel)
+							cubeIndex |= 2;
+						if (cube.points [2].isoValue > isoLevel)
+							cubeIndex |= 4;
+						if (cube.points [3].isoValue > isoLevel)
+							cubeIndex |= 8;
+						if (cube.points [4].isoValue > isoLevel)
+							cubeIndex |= 16;
+						if (cube.points [5].isoValue > isoLevel)
+							cubeIndex |= 32;
+						if (cube.points [6].isoValue > isoLevel)
+							cubeIndex |= 64;
+						if (cube.points [7].isoValue > isoLevel)
+							cubeIndex |= 128;
+						cube.cubeIndex = cubeIndex;
+						triangleIndex = cube.CulcIntersections (vertexList, normalList, triangleIndex, isHardEdge);
+//						if (isHardEdge == true) {
+//							cube.VerticesHardEdge (vertexList, triangleIndexList);
+//						} else {
+						cube.Vertices (triangleIndexList);
+//						}
+					}
+				}
+			}
+		}
+
+		public void destory ()
+		{
+			Object.Destroy (this.gameObject);
+		}
+			
+		public class Core {
+
+			Vector3 position;
+
+			public Core () {}
+
+			public Core(Vector3 _position) {
+				position = _position;
+			}
+
+			virtual public float CulcIsoValue(Point p, float isoPower) {
+				float sqrMagnitude = (p.loc - position).sqrMagnitude;
+//				return isoPower / (1.0f + sqrMagnitude);
+				return 1.0f / sqrMagnitude;
+			}
+
+			virtual public Vector3 CulcNormal(Point p, float isoPower) {
+				float sqrMagnitude = (p.loc - position).sqrMagnitude;
+				return (1.0f / (sqrMagnitude * sqrMagnitude)) * ((p.loc - position) * 2);
+			}
+		}
+
+		public class CoreLine : Core
+		{
+			Vector3 p_org, p_end;
+			Vector3 delta;
+
+			public CoreLine (Vector3 from, Vector3 to) : base()
+			{
+				p_org = from;
+				p_end = to;
+				delta = to - from;
+			}
+
+			override public float CulcIsoValue(Point p, float isoPower) {
+				Vector3 q = p.loc - p_org;
+				float t = Vector3.Dot(delta, q) / delta.sqrMagnitude;
+				float sqrMagnitude;
+				if (t > 1) {
+					sqrMagnitude = (p.loc - p_end).sqrMagnitude;
+				} else if (t < 0) {
+					sqrMagnitude = (p.loc - p_org).sqrMagnitude;
+				} else {
+					sqrMagnitude = (q - (t * delta)).sqrMagnitude;
+				}
+				return isoPower / (1.0f + sqrMagnitude);	
+			}
+		}
+
 		void DrawPoints ()
 		{
 			for (int iz = 0; iz < detail + 1; iz++) {
@@ -246,152 +404,6 @@ namespace LikeProcessing.PMetaball
 						cubes [iz, iy, ix].draw (gameObject);
 					}
 				}
-			}
-		}
-
-		void CulcIsoValuesAdd ()
-		{
-			for (int iz = 0; iz < detail + 1; iz++) {
-				for (int iy = 0; iy < detail + 1; iy++) {
-					for (int ix = 0; ix < detail + 1; ix++) {
-						Point p = points [iz, iy, ix];
-						p.isoValue = 0;
-						foreach (Core core in cores) {
-							p.isoValue += core.CulcIsoValue (p, isoPower);
-						}
-					}
-				}
-			}
-		}
-
-		void CulcIsoValuesMax ()
-		{
-			for (int iz = 0; iz < detail + 1; iz++) {
-				for (int iy = 0; iy < detail + 1; iy++) {
-					for (int ix = 0; ix < detail + 1; ix++) {
-						Point p = points [iz, iy, ix];
-						p.isoValue = 0;
-						foreach (Core core in cores) {
-							p.isoValue = Mathf.Max(p.isoValue, core.CulcIsoValue (p, isoPower));
-						}
-					}
-				}
-			}
-		}
-
-		void ClearEdges () {
-			for (int iz = 0; iz < detail + 1; iz++) {
-				for (int iy = 0; iy < detail + 1; iy++) {
-					for (int ix = 0; ix < detail; ix++) {
-						edgeHorizon [iz, iy, ix].hasIntersection = false;
-					}
-				}
-			}
-			for (int iz = 0; iz < detail + 1; iz++) {
-				for (int iy = 0; iy < detail; iy++) {
-					for (int ix = 0; ix < detail + 1; ix++) {
-						edgeVertical [iz, iy, ix].hasIntersection = false;
-					}
-				}
-			}
-			for (int iz = 0; iz < detail; iz++) {
-				for (int iy = 0; iy < detail + 1; iy++) {
-					for (int ix = 0; ix < detail + 1; ix++) {
-						edgeDepth [iz, iy, ix].hasIntersection = false;
-					}
-				}
-			}
-		}
-
-		void CulcCubeVertices ()
-		{
-			vertexList.Clear ();
-			triangleIndexList.Clear ();
-			int triangleIndex = 0;
-			for (int iz = 0; iz < detail; iz++) {
-				for (int iy = 0; iy < detail; iy++) {
-					for (int ix = 0; ix < detail; ix++) {
-						Cube cube = cubes [iz, iy, ix];
-						int cubeIndex = 0;
-						if (cube.points [0].isoValue > isoLevel)
-							cubeIndex |= 1;
-						if (cube.points [1].isoValue > isoLevel)
-							cubeIndex |= 2;
-						if (cube.points [2].isoValue > isoLevel)
-							cubeIndex |= 4;
-						if (cube.points [3].isoValue > isoLevel)
-							cubeIndex |= 8;
-						if (cube.points [4].isoValue > isoLevel)
-							cubeIndex |= 16;
-						if (cube.points [5].isoValue > isoLevel)
-							cubeIndex |= 32;
-						if (cube.points [6].isoValue > isoLevel)
-							cubeIndex |= 64;
-						if (cube.points [7].isoValue > isoLevel)
-							cubeIndex |= 128;
-						cube.cubeIndex = cubeIndex;
-						triangleIndex = cube.CulcIntersections (vertexList, triangleIndex, isHardEdge);
-//						if (isHardEdge == true) {
-//							cube.VerticesHardEdge (vertexList, triangleIndexList);
-//						} else {
-						cube.Vertices (triangleIndexList);
-//						}
-					}
-				}
-			}
-		}
-
-		public void destory ()
-		{
-			Object.Destroy (this.gameObject);
-		}
-
-
-
-
-
-
-
-		public class Core {
-
-			Vector3 position;
-
-			public Core () {}
-
-			public Core(Vector3 _position) {
-				position = _position;
-			}
-
-			virtual public float CulcIsoValue(Point p, float isoPower) {
-				float sqrMagnitude = (p.loc - position).sqrMagnitude;
-				return isoPower / (1.0f + sqrMagnitude);	
-			}
-		}
-
-		public class CoreLine : Core
-		{
-			Vector3 p_org, p_end;
-			Vector3 delta;
-
-			public CoreLine (Vector3 from, Vector3 to) : base()
-			{
-				p_org = from;
-				p_end = to;
-				delta = to - from;
-			}
-
-			override public float CulcIsoValue(Point p, float isoPower) {
-				Vector3 q = p.loc - p_org;
-				float t = Vector3.Dot(delta, q) / delta.sqrMagnitude;
-				float sqrMagnitude;
-				if (t > 1) {
-					sqrMagnitude = (p.loc - p_end).sqrMagnitude;
-				} else if (t < 0) {
-					sqrMagnitude = (p.loc - p_org).sqrMagnitude;
-				} else {
-					sqrMagnitude = (q - (t * delta)).sqrMagnitude;
-				}
-				return isoPower / (1.0f + sqrMagnitude);	
 			}
 		}
 

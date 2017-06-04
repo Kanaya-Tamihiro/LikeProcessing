@@ -28,44 +28,44 @@ namespace LikeProcessing.PMetaball
 			}
 		}
 
-		public int CulcIntersections (List<Vector3> vertexList, int triangleIndex, bool isHardEdge)
+		public int CulcIntersections (List<Vector3> vertexList, List<Vector3> normalList, int triangleIndex, bool isHardEdge)
 		{
 			int edgeFlags = PMetaball.edgeTable [cubeIndex];
 			if ((edgeFlags & 1) > 0) {
-				triangleIndex += edges [0].CulcIntersection (vertexList, triangleIndex, isHardEdge);
+				triangleIndex += edges [0].CulcIntersection (vertexList, normalList, triangleIndex, isHardEdge);
 			}
 			if ((edgeFlags & 2) > 0) {
-				triangleIndex += edges [1].CulcIntersection (vertexList, triangleIndex, isHardEdge);
+				triangleIndex += edges [1].CulcIntersection (vertexList, normalList, triangleIndex, isHardEdge);
 			}
 			if ((edgeFlags & 4) > 0) {
-				triangleIndex += edges [2].CulcIntersection (vertexList, triangleIndex, isHardEdge);
+				triangleIndex += edges [2].CulcIntersection (vertexList, normalList, triangleIndex, isHardEdge);
 			}
 			if ((edgeFlags & 0x8) > 0) {
-				triangleIndex += edges [3].CulcIntersection (vertexList, triangleIndex, isHardEdge);
+				triangleIndex += edges [3].CulcIntersection (vertexList, normalList, triangleIndex, isHardEdge);
 			}
 			if ((edgeFlags & 0x10) > 0) {
-				triangleIndex += edges [4].CulcIntersection (vertexList, triangleIndex, isHardEdge);
+				triangleIndex += edges [4].CulcIntersection (vertexList, normalList, triangleIndex, isHardEdge);
 			}
 			if ((edgeFlags & 0x20) > 0) {
-				triangleIndex += edges [5].CulcIntersection (vertexList, triangleIndex, isHardEdge);
+				triangleIndex += edges [5].CulcIntersection (vertexList, normalList, triangleIndex, isHardEdge);
 			}
 			if ((edgeFlags & 0x40) > 0) {
-				triangleIndex += edges [6].CulcIntersection (vertexList, triangleIndex, isHardEdge);
+				triangleIndex += edges [6].CulcIntersection (vertexList, normalList, triangleIndex, isHardEdge);
 			}
 			if ((edgeFlags & 0x80) > 0) {
-				triangleIndex += edges [7].CulcIntersection (vertexList, triangleIndex, isHardEdge);
+				triangleIndex += edges [7].CulcIntersection (vertexList, normalList, triangleIndex, isHardEdge);
 			}
 			if ((edgeFlags & 0x100) > 0) {
-				triangleIndex += edges [8].CulcIntersection (vertexList, triangleIndex, isHardEdge);
+				triangleIndex += edges [8].CulcIntersection (vertexList, normalList, triangleIndex, isHardEdge);
 			}
 			if ((edgeFlags & 0x200) > 0) {
-				triangleIndex += edges [9].CulcIntersection (vertexList, triangleIndex, isHardEdge);
+				triangleIndex += edges [9].CulcIntersection (vertexList, normalList, triangleIndex, isHardEdge);
 			}
 			if ((edgeFlags & 0x400) > 0) {
-				triangleIndex += edges [10].CulcIntersection (vertexList, triangleIndex, isHardEdge);
+				triangleIndex += edges [10].CulcIntersection (vertexList, normalList, triangleIndex, isHardEdge);
 			}
 			if ((edgeFlags & 0x800) > 0) {
-				triangleIndex += edges [11].CulcIntersection (vertexList, triangleIndex, isHardEdge);
+				triangleIndex += edges [11].CulcIntersection (vertexList, normalList, triangleIndex, isHardEdge);
 			}
 			return triangleIndex;
 		}

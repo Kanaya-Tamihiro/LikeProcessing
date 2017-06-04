@@ -10,6 +10,7 @@ namespace LikeProcessing.PMetaball
 		PLineSimple pline;
 		PGeodesicDomeImproved pGeodesicDome;
 		public Vector3 intersection;
+		public Vector3 intersectionNormal;
 		public bool hasIntersection = false;
 		public int triangleIndex = -1;
 		public float isoLevel;
@@ -57,24 +58,26 @@ namespace LikeProcessing.PMetaball
 			//				}
 		}
 
-		public int CulcIntersection (List<Vector3> vertexList, int _triangleIndex, bool isHardEdge)
+		public int CulcIntersection (List<Vector3> vertexList, List<Vector3> normalList, int _triangleIndex, bool isHardEdge)
 		{
 			if (hasIntersection == true) {
 				if (isHardEdge) {
 					vertexList.Add (intersection);
+					normalList.Add (intersectionNormal);
 					triangleIndex = _triangleIndex;
 					return 1;
 				} else
 					return 0;
 			}
 			hasIntersection = true;
-			intersection = LinearInterpolation ();
+			LinearInterpolation ();
 			vertexList.Add (intersection);
+			normalList.Add (intersectionNormal);
 			triangleIndex = _triangleIndex;
 			return 1;
 		}
 
-		Vector3 LinearInterpolation ()
+		void LinearInterpolation ()
 		{
 			Point p1 = points [0];
 			Point p2 = points [1];
@@ -85,12 +88,13 @@ namespace LikeProcessing.PMetaball
 				p2 = temp;    
 			}
 
-			Vector3 result;
-			if (Mathf.Abs (p1.isoValue - p2.isoValue) > 0.00001f)
-				result = p1.loc + (p2.loc - p1.loc) / (p2.isoValue - p1.isoValue) * (isoLevel - p1.isoValue);
-			else
-				result = p1.loc;
-			return result;
+			if (Mathf.Abs (p1.isoValue - p2.isoValue) > 0.00001f) {
+				intersection = p1.loc + (p2.loc - p1.loc) / (p2.isoValue - p1.isoValue) * (isoLevel - p1.isoValue);
+				intersectionNormal = p1.normal + (p2.normal - p1.normal) / (p2.isoValue - p1.isoValue) * (isoLevel - p1.isoValue);
+			} else {
+				intersection = p1.loc;
+				intersectionNormal = p1.normal;
+			}
 		}
 
 		bool lessThan (Vector3 left, Vector3 right)

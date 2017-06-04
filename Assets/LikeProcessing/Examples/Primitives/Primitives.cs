@@ -30,15 +30,15 @@ namespace LikeProcessig.Examples {
 //			plineSimple.gameObject.GetComponent<MeshRenderer> ().material = new Material (Shader.Find("Standard"));
 
 			pmetaball = new PMetaball();
-			pmetaball.detail = 70;
-			pmetaball.size = 5.0f;
+			pmetaball.detail = 30;
+			pmetaball.size = 3.0f;
 			pmetaball.isoPower = .7f;
-			pmetaball.isoValuesAddictive = false;
+			pmetaball.isoValuesAddictive = true;
 			pmetaball.gameObject.transform.position = new Vector3 (0,2,0);
 			pmetaball.SetUpLattice ();
-			pmetaball.AddCore (new PMetaball.Core(new Vector3 (-1.5f,0,0)));
-			pmetaball.AddCore (new PMetaball.Core(new Vector3 (0.5f,-1.0f,0)));
-			pmetaball.AddCore (new PMetaball.CoreLine(new Vector3 (-1.0f,-1.0f,0), new Vector3 (1.0f,1.0f,0)));
+			pmetaball.AddCore (new PMetaball.Core(new Vector3 (0f,0,0)));
+//			pmetaball.AddCore (new PMetaball.Core(new Vector3 (0.5f,-1.0f,0)));
+//			pmetaball.AddCore (new PMetaball.CoreLine(new Vector3 (-1.0f,-1.0f,0), new Vector3 (1.0f,1.0f,0)));
 //			pmetaball.AddMetaball (new Vector3 (0.25f,1,0));
 			pmetaball.Update ();
 		}
