@@ -12,7 +12,6 @@ namespace LikeProcessing.PMetaball
 		public Vector3 intersection;
 		public Vector3 intersectionNormal;
 		public bool hasIntersection = false;
-		public int triangleIndex = -1;
 		public float isoLevel;
 
 		public Edge (Point p1, Point p2, float _isoLevel)
@@ -58,20 +57,12 @@ namespace LikeProcessing.PMetaball
 			//				}
 		}
 
-		public int CulcIntersection (List<Vector3> vertexList, List<Vector3> normalList, int _triangleIndex)
+		public void CulcIntersection ()
 		{
-			if (hasIntersection == true) {
-				vertexList.Add (intersection);
-				normalList.Add (intersectionNormal);
-				triangleIndex = _triangleIndex;
-				return 1;
-			}
+			if (hasIntersection == true)
+				return;
 			hasIntersection = true;
 			LinearInterpolation ();
-			vertexList.Add (intersection);
-			normalList.Add (intersectionNormal);
-			triangleIndex = _triangleIndex;
-			return 1;
 		}
 
 		void LinearInterpolation ()

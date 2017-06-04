@@ -28,57 +28,69 @@ namespace LikeProcessing.PMetaball
 			}
 		}
 
-		public int CulcIntersections (List<Vector3> vertexList, List<Vector3> normalList, int triangleIndex)
+		public void CulcIntersections ()
 		{
 			int edgeFlags = PMetaball.edgeTable [cubeIndex];
 			if ((edgeFlags & 1) > 0) {
-				triangleIndex += edges [0].CulcIntersection (vertexList, normalList, triangleIndex);
+				edges [0].CulcIntersection ();
 			}
 			if ((edgeFlags & 2) > 0) {
-				triangleIndex += edges [1].CulcIntersection (vertexList, normalList, triangleIndex);
+				edges [1].CulcIntersection ();
 			}
 			if ((edgeFlags & 4) > 0) {
-				triangleIndex += edges [2].CulcIntersection (vertexList, normalList, triangleIndex);
+				edges [2].CulcIntersection ();
 			}
 			if ((edgeFlags & 0x8) > 0) {
-				triangleIndex += edges [3].CulcIntersection (vertexList, normalList, triangleIndex);
+				edges [3].CulcIntersection ();
 			}
 			if ((edgeFlags & 0x10) > 0) {
-				triangleIndex += edges [4].CulcIntersection (vertexList, normalList, triangleIndex);
+				edges [4].CulcIntersection ();
 			}
 			if ((edgeFlags & 0x20) > 0) {
-				triangleIndex += edges [5].CulcIntersection (vertexList, normalList, triangleIndex);
+				edges [5].CulcIntersection ();
 			}
 			if ((edgeFlags & 0x40) > 0) {
-				triangleIndex += edges [6].CulcIntersection (vertexList, normalList, triangleIndex);
+				edges [6].CulcIntersection ();
 			}
 			if ((edgeFlags & 0x80) > 0) {
-				triangleIndex += edges [7].CulcIntersection (vertexList, normalList, triangleIndex);
+				edges [7].CulcIntersection ();
 			}
 			if ((edgeFlags & 0x100) > 0) {
-				triangleIndex += edges [8].CulcIntersection (vertexList, normalList, triangleIndex);
+				edges [8].CulcIntersection ();
 			}
 			if ((edgeFlags & 0x200) > 0) {
-				triangleIndex += edges [9].CulcIntersection (vertexList, normalList, triangleIndex);
+				edges [9].CulcIntersection ();
 			}
 			if ((edgeFlags & 0x400) > 0) {
-				triangleIndex += edges [10].CulcIntersection (vertexList, normalList, triangleIndex);
+				edges [10].CulcIntersection ();
 			}
 			if ((edgeFlags & 0x800) > 0) {
-				triangleIndex += edges [11].CulcIntersection (vertexList, normalList, triangleIndex);
+				edges [11].CulcIntersection ();
 			}
-			return triangleIndex;
 		}
 
-		public void Vertices (List<int> triangleIndexList)
+		public int Vertices (Vector3[] vertices, Vector3[] normals, int index)
 		{
 			int i = 0;
 			while (PMetaball.triTable [cubeIndex, i] != -1) {
-				triangleIndexList.Add (edges [PMetaball.triTable [cubeIndex, i + 2]].triangleIndex );
-				triangleIndexList.Add (edges [PMetaball.triTable [cubeIndex, i + 1]].triangleIndex );
-				triangleIndexList.Add (edges [PMetaball.triTable [cubeIndex, i + 0]].triangleIndex );
+				Edge edge1 = edges [PMetaball.triTable [cubeIndex, i + 2]];
+				Edge edge2 = edges [PMetaball.triTable [cubeIndex, i + 1]];
+				Edge edge3 = edges [PMetaball.triTable [cubeIndex, i + 0]];
+				vertices [index + i] = edge1.intersection;
+				vertices [index + i + 1] = edge2.intersection;
+				vertices [index + i + 2] = edge3.intersection;
+				normals [index + i] = edge1.intersectionNormal;
+				normals [index + i + 1] = edge2.intersectionNormal;
+				normals [index + i + 2] = edge3.intersectionNormal;
+				edge1.hasIntersection = false;
+				edge2.hasIntersection = false;
+				edge3.hasIntersection = false;
+//				triangleIndexList.Add (edges [PMetaball.triTable [cubeIndex, i + 2]].triangleIndex );
+//				triangleIndexList.Add (edges [PMetaball.triTable [cubeIndex, i + 1]].triangleIndex );
+//				triangleIndexList.Add (edges [PMetaball.triTable [cubeIndex, i + 0]].triangleIndex );
 				i += 3;
 			}
+			return i;
 		}
 
 //		public void VerticesHardEdge (List<Vector3> vertexList, List<int> triangleIndexList)

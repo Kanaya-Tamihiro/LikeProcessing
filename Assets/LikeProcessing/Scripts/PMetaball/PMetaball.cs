@@ -20,8 +20,12 @@ namespace LikeProcessing.PMetaball
 
 		public List<Core> cores = new List<Core> ();
 
-		//		Vector3[] vercites = new Vector3[30000];
-		//		int[] triangleIndeces = new int[30000];
+		static int maxVertexCount = 9000;
+		Vector3[] vertices = new Vector3[maxVertexCount];
+		int[] triangleIndeces = new int[maxVertexCount];
+		Vector3[] normals = new Vector3[maxVertexCount];
+		int lastUpdatedTriangleIndexCount = 0;
+
 		List<Vector3> vertexList = new List<Vector3> ();
 		List<int> triangleIndexList = new List<int> ();
 		List<Vector3> normalList = new List<Vector3>();
@@ -33,14 +37,24 @@ namespace LikeProcessing.PMetaball
 			gameObject.AddComponent<MeshFilter> ().mesh.MarkDynamic ();
 			//			gameObject.AddComponent<MeshRenderer> ().material = new Material(Shader.Find("LikeProcessing/VertexColor"));
 			gameObject.AddComponent<MeshRenderer> ().material = PSketch.material;
+
+			Mesh mesh = gameObject.GetComponent<MeshFilter> ().mesh;
+//			for (int i=0; i<maxVertexCount; i++) {
+//				vertices [i] = normals [i] = Vector3.zero;
+//				triangleIndeces [i] = 0;
+//			}
+			mesh.Clear ();
+			mesh.vertices = vertices;
+			mesh.triangles = triangleIndeces;
+			mesh.normals = normals;
 		}
 
 		public void SetUpLattice () {
 			SetPoint ();
 			SetEdge ();
 			SetCube ();
-			//							DrawPoints ();
-			//							DrawEdges ();
+//										DrawPoints ();
+//										DrawEdges ();
 			//							DrawCubes ();
 		}
 
@@ -56,7 +70,7 @@ namespace LikeProcessing.PMetaball
 				CulcIsoValuesAdd ();
 			else
 				CulcIsoValuesMax ();
-			ClearEdges ();
+//			ClearEdges ();
 			CulcCubeVertices ();
 //			DrawIntersectionPoints ();
 			SetMesh ();
@@ -65,14 +79,13 @@ namespace LikeProcessing.PMetaball
 		public void SetMesh ()
 		{
 			Mesh mesh = gameObject.GetComponent<MeshFilter> ().mesh;
-			mesh.Clear ();
-			mesh.vertices = vertexList.ToArray ();
-			mesh.triangles = triangleIndexList.ToArray ();
-			if (isHardEdge)
+			mesh.vertices = vertices;
+			mesh.triangles = triangleIndeces;
+			mesh.normals = normals;
+			if (isHardEdge) {
+//				Mesh mesh = gameObject.GetComponent<MeshFilter> ().mesh;
 				mesh.RecalculateNormals ();
-			else
-				mesh.normals = normalList.ToArray ();
-			
+			}
 		}
 
 			
@@ -214,36 +227,36 @@ namespace LikeProcessing.PMetaball
 			}
 		}
 
-		void ClearEdges () {
-			for (int iz = 0; iz < detail + 1; iz++) {
-				for (int iy = 0; iy < detail + 1; iy++) {
-					for (int ix = 0; ix < detail; ix++) {
-						edgeHorizon [iz, iy, ix].hasIntersection = false;
-					}
-				}
-			}
-			for (int iz = 0; iz < detail + 1; iz++) {
-				for (int iy = 0; iy < detail; iy++) {
-					for (int ix = 0; ix < detail + 1; ix++) {
-						edgeVertical [iz, iy, ix].hasIntersection = false;
-					}
-				}
-			}
-			for (int iz = 0; iz < detail; iz++) {
-				for (int iy = 0; iy < detail + 1; iy++) {
-					for (int ix = 0; ix < detail + 1; ix++) {
-						edgeDepth [iz, iy, ix].hasIntersection = false;
-					}
-				}
-			}
-		}
+//		void ClearEdges () {
+//			for (int iz = 0; iz < detail + 1; iz++) {
+//				for (int iy = 0; iy < detail + 1; iy++) {
+//					for (int ix = 0; ix < detail; ix++) {
+//						edgeHorizon [iz, iy, ix].hasIntersection = false;
+//					}
+//				}
+//			}
+//			for (int iz = 0; iz < detail + 1; iz++) {
+//				for (int iy = 0; iy < detail; iy++) {
+//					for (int ix = 0; ix < detail + 1; ix++) {
+//						edgeVertical [iz, iy, ix].hasIntersection = false;
+//					}
+//				}
+//			}
+//			for (int iz = 0; iz < detail; iz++) {
+//				for (int iy = 0; iy < detail + 1; iy++) {
+//					for (int ix = 0; ix < detail + 1; ix++) {
+//						edgeDepth [iz, iy, ix].hasIntersection = false;
+//					}
+//				}
+//			}
+//		}
 
 		void CulcCubeVertices ()
 		{
-			vertexList.Clear ();
-			triangleIndexList.Clear ();
-			normalList.Clear ();
-			int triangleIndex = 0;
+//			vertexList.Clear ();
+//			triangleIndexList.Clear ();
+//			normalList.Clear ();
+			int triangleIndexCount = 0;
 			for (int iz = 0; iz < detail; iz++) {
 				for (int iy = 0; iy < detail; iy++) {
 					for (int ix = 0; ix < detail; ix++) {
@@ -266,11 +279,22 @@ namespace LikeProcessing.PMetaball
 						if (cube.points [7].isoValue > isoLevel)
 							cubeIndex |= 128;
 						cube.cubeIndex = cubeIndex;
-						triangleIndex = cube.CulcIntersections (vertexList, normalList, triangleIndex);
-						cube.Vertices (triangleIndexList);
+						cube.CulcIntersections ();
+						triangleIndexCount += cube.Vertices (vertices, normals, triangleIndexCount);
 					}
 				}
 			}
+
+			for (int i=lastUpdatedTriangleIndexCount; i<triangleIndexCount; i++) {
+				triangleIndeces [i] = i;
+			}
+//			Debug.Log (PUtil.IndecisToString(triangleIndeces));
+			for (int i=triangleIndexCount; i<lastUpdatedTriangleIndexCount; i++) {
+				triangleIndeces [i] = 0;
+				vertices [i] = Vector3.zero;
+				normals [i] = Vector3.zero;
+			}
+			lastUpdatedTriangleIndexCount = triangleIndexCount;
 		}
 
 		public void destory ()
