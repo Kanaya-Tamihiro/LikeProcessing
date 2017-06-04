@@ -12,7 +12,7 @@ namespace LikeProcessing.PMetaball
 		public float isoLevel = 0.5f;
 		public float isoPower = 0.4f;
 		public bool isoValuesAddictive = true;
-		public bool isHardEdge = true;
+		public bool isHardEdge = false;
 
 		Point[,,] points;
 		Edge[,,] edgeHorizon, edgeVertical, edgeDepth;
@@ -68,9 +68,11 @@ namespace LikeProcessing.PMetaball
 			mesh.Clear ();
 			mesh.vertices = vertexList.ToArray ();
 			mesh.triangles = triangleIndexList.ToArray ();
-			mesh.normals = normalList.ToArray ();
-//			Debug.Log (PUtil.VerticesToString (mesh.normals));
-//			mesh.RecalculateNormals ();
+			if (isHardEdge)
+				mesh.RecalculateNormals ();
+			else
+				mesh.normals = normalList.ToArray ();
+			
 		}
 
 			
@@ -182,8 +184,9 @@ namespace LikeProcessing.PMetaball
 						Point p = points [iz, iy, ix];
 						p.isoValue = 0;
 						foreach (Core core in cores) {
-							p.isoValue += core.CulcIsoValue (p, isoPower);
-							p.normal += core.CulcNormal (p, isoPower);
+							float[] valueAndNormal = core.CulcIsoValueAndNormal (p, isoPower);
+							p.isoValue += valueAndNormal [0];
+							p.normal += new Vector3 (valueAndNormal[1], valueAndNormal[2], valueAndNormal[3]);
 						}
 //						p.normal.Normalize ();
 					}
@@ -199,10 +202,10 @@ namespace LikeProcessing.PMetaball
 						Point p = points [iz, iy, ix];
 						p.isoValue = 0;
 						foreach (Core core in cores) {
-							float isoValue = core.CulcIsoValue (p, isoPower);
-							if (p.isoValue < isoValue) {
-								p.isoValue = isoValue;
-								p.normal = core.CulcNormal (p, isoPower);
+							float[] valueAndNormal = core.CulcIsoValueAndNormal (p, isoPower);
+							if (p.isoValue < valueAndNormal[0]) {
+								p.isoValue = valueAndNormal[0];
+								p.normal = new Vector3 (valueAndNormal[1], valueAndNormal[2], valueAndNormal[3]);
 							}
 						}
 //						p.normal.Normalize ();
@@ -263,12 +266,8 @@ namespace LikeProcessing.PMetaball
 						if (cube.points [7].isoValue > isoLevel)
 							cubeIndex |= 128;
 						cube.cubeIndex = cubeIndex;
-						triangleIndex = cube.CulcIntersections (vertexList, normalList, triangleIndex, isHardEdge);
-//						if (isHardEdge == true) {
-//							cube.VerticesHardEdge (vertexList, triangleIndexList);
-//						} else {
+						triangleIndex = cube.CulcIntersections (vertexList, normalList, triangleIndex);
 						cube.Vertices (triangleIndexList);
-//						}
 					}
 				}
 			}
@@ -281,7 +280,7 @@ namespace LikeProcessing.PMetaball
 			
 		public class Core {
 
-			Vector3 position;
+			public Vector3 position;
 
 			public Core () {}
 
@@ -289,16 +288,22 @@ namespace LikeProcessing.PMetaball
 				position = _position;
 			}
 
-			virtual public float CulcIsoValue(Point p, float isoPower) {
+			virtual public float[] CulcIsoValueAndNormal(Point p, float isoPower) {
+				float[] result = new float[4];
 				float sqrMagnitude = (p.loc - position).sqrMagnitude;
 //				return isoPower / (1.0f + sqrMagnitude);
-				return 1.0f / sqrMagnitude;
+				Vector3 normal = (1.0f / (sqrMagnitude * sqrMagnitude)) * ((p.loc - position) * 2);
+				result[0] = 1.0f / sqrMagnitude;
+				result [1] = normal.x;
+				result [2] = normal.y;
+				result [3] = normal.z;
+				return result;
 			}
 
-			virtual public Vector3 CulcNormal(Point p, float isoPower) {
-				float sqrMagnitude = (p.loc - position).sqrMagnitude;
-				return (1.0f / (sqrMagnitude * sqrMagnitude)) * ((p.loc - position) * 2);
-			}
+//			virtual public Vector3 CulcNormal(Point p, float isoPower) {
+//				float sqrMagnitude = (p.loc - position).sqrMagnitude;
+//				return (1.0f / (sqrMagnitude * sqrMagnitude)) * ((p.loc - position) * 2);
+//			}
 		}
 
 		public class CoreLine : Core
@@ -313,18 +318,29 @@ namespace LikeProcessing.PMetaball
 				delta = to - from;
 			}
 
-			override public float CulcIsoValue(Point p, float isoPower) {
+			override public float[] CulcIsoValueAndNormal(Point p, float isoPower) {
+				float[] result = new float[4];
 				Vector3 q = p.loc - p_org;
+				Vector3 corePosition;
 				float t = Vector3.Dot(delta, q) / delta.sqrMagnitude;
 				float sqrMagnitude;
 				if (t > 1) {
+					corePosition = p_end;
 					sqrMagnitude = (p.loc - p_end).sqrMagnitude;
 				} else if (t < 0) {
+					corePosition = p_org;
 					sqrMagnitude = (p.loc - p_org).sqrMagnitude;
 				} else {
+					corePosition =p_org + t * delta; 
 					sqrMagnitude = (q - (t * delta)).sqrMagnitude;
 				}
-				return isoPower / (1.0f + sqrMagnitude);	
+//				result[0] = isoPower / (1.0f + sqrMagnitude);
+				result[0] = 1.0f / sqrMagnitude;
+				Vector3 normal = (1.0f / (sqrMagnitude * sqrMagnitude)) * ((p.loc - corePosition) * 2);
+				result [1] = normal.x;
+				result [2] = normal.y;
+				result [3] = normal.z;
+				return result;
 			}
 		}
 

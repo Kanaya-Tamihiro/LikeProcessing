@@ -58,16 +58,13 @@ namespace LikeProcessing.PMetaball
 			//				}
 		}
 
-		public int CulcIntersection (List<Vector3> vertexList, List<Vector3> normalList, int _triangleIndex, bool isHardEdge)
+		public int CulcIntersection (List<Vector3> vertexList, List<Vector3> normalList, int _triangleIndex)
 		{
 			if (hasIntersection == true) {
-				if (isHardEdge) {
-					vertexList.Add (intersection);
-					normalList.Add (intersectionNormal);
-					triangleIndex = _triangleIndex;
-					return 1;
-				} else
-					return 0;
+				vertexList.Add (intersection);
+				normalList.Add (intersectionNormal);
+				triangleIndex = _triangleIndex;
+				return 1;
 			}
 			hasIntersection = true;
 			LinearInterpolation ();
