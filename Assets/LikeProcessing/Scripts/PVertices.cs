@@ -5,33 +5,39 @@ using System.Collections.Generic;
 
 namespace LikeProcessing
 {
+	public struct IntVector {
+		public int x, y, z;
+		public Vector3 vector;
+		public IntVector(Vector3 v) {
+			int precision = 10000;
+			x = Mathf.RoundToInt(v.x * precision);
+			y = Mathf.RoundToInt(v.y * precision);
+			z = Mathf.RoundToInt(v.z * precision);
+			float reversePrecision = 1.0f / precision;
+			vector = new Vector3(
+				x * reversePrecision,
+				y * reversePrecision,
+				z * reversePrecision
+			);
+		}
+		public IntVector(int _x, int _y, int _z) {
+			x = _x;
+			y = _y;
+			z = _z;
+			vector = new Vector3 (x, y, z);
+		}
+		public override int GetHashCode()
+		{
+			int hash = 17;
+			hash = hash * 23 + x;
+			hash = hash * 23 + y;
+			hash = hash * 23 + z;
+			return hash;
+		}
+	}
+
 	public class PVertices
 	{
-		struct IntVector {
-			public int x, y, z;
-			public Vector3 vector;
-			public IntVector(Vector3 v) {
-				int precision = 10000;
-				x = Mathf.RoundToInt(v.x * precision);
-				y = Mathf.RoundToInt(v.y * precision);
-				z = Mathf.RoundToInt(v.z * precision);
-				float reversePrecision = 1.0f / precision;
-				vector = new Vector3(
-					x * reversePrecision,
-					y * reversePrecision,
-					z * reversePrecision
-				);
-			}
-			public override int GetHashCode()
-			{
-				int hash = 17;
-				hash = hash * 23 + x;
-				hash = hash * 23 + y;
-				hash = hash * 23 + z;
-				return hash;
-			}
-		}
-
 		Dictionary<IntVector, int> vertexDict = new Dictionary<IntVector, int> ();
 		List<Vector3> hardEdgeVertexList = new List<Vector3> ();
 		List<int> triangleIndexList = new List<int>();

@@ -46,7 +46,7 @@ namespace LikeProcessing
             light.intensity = 0.5f;
 
 			material = new Material (Shader.Find("Standard"));
-			material.SetFloat ("_Metallic", 1);
+			material.SetFloat ("_Metallic", 0.1f);
 			material.SetFloat ("_Glossiness", 0.7f);
 
 			QualitySettings.shadowDistance = (Screen.height/100.0f) / 2.0f * 10;

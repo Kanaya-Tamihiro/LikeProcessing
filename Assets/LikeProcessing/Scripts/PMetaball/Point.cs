@@ -21,7 +21,7 @@ namespace LikeProcessing.PMetaball
 				return;
 			pGeodesicDome = new PGeodesicDomeImproved ();
 			pGeodesicDome.gameObject.transform.SetParent (parent.transform);
-			pGeodesicDome.gameObject.transform.position = loc;
+			pGeodesicDome.gameObject.transform.localPosition = loc;
 			pGeodesicDome.gameObject.transform.localScale *= 0.02f;
 		}
 	}

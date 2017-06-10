@@ -8,16 +8,19 @@ namespace LikeProcessing
 		int detail;
 		public GameObject gameObject;
 		Vector3 from, to;
-		Vector3[] vertices;
-		int[] triangles;
+//		Vector3[] vertices;
+//		int[] triangles;
 
-		public PLineSimple (Vector3 _from, Vector3 _to, float _weight = 0.1f, int _detail = 6)
+		public PLineSimple (Vector3 _from, Vector3 _to, float _weight = 0.1f, int _detail = 6, GameObject parent = null)
 		{
 			gameObject = new GameObject();
 			gameObject.name = "PLineSimple";
 			gameObject.AddComponent<MeshFilter> ();
 //			gameObject.AddComponent<MeshRenderer> ().material = new Material(Shader.Find("LikeProcessing/VertexColor"));
 			gameObject.AddComponent<MeshRenderer> ().material = PSketch.material;
+			if (parent != null) {
+				gameObject.transform.SetParent (parent.transform);
+			}
 			weight = _weight;
 			detail = _detail;
 			from = _from;
@@ -25,12 +28,20 @@ namespace LikeProcessing
 			SetMesh ();
 		}
 
-		public void SetMesh() {
-			Vector3 center = (from + to) / 2;
-			gameObject.transform.position = center;
-			Vector3 _from = from - center;
-			Vector3 _to = to - center;
-			Vector3 fromTo = _to - _from;
+		public static int[] MeshCounts (int detail) {
+			int[] counts = { detail * 2, detail * 2 * 3 };
+			return counts;
+		}
+
+		public static PMesh Mesh(Vector3 from, Vector3 to, float weight, int detail, PMesh pmesh = null) {
+			if (pmesh == null) {
+				pmesh = new PMesh (detail * 2, detail * 2 * 3);
+			}
+//			Vector3 center = (from + to) / 2;
+//			Vector3 _from = from - center;
+//			Vector3 _to = to - center;
+//			Vector3 fromTo = _to - _from;
+			Vector3 fromTo = to - from;
 			fromTo.Normalize ();
 			Vector3 randv = Vector3.right;
 			if (Vector3.Angle(fromTo, randv) < 5.0f) {
@@ -47,11 +58,13 @@ namespace LikeProcessing
 			float theta = 2f * Mathf.PI / (float) detail;
 			for(int i=0; i<detail; i++) {
 				Vector3 point = v1 * Mathf.Cos (theta * i) + v2 * Mathf.Sin (theta * i);
-				fromPoints [i] = _from + point;
-				toPoints [i] = _to + point;
+				fromPoints [i] = from + point;
+				toPoints [i] = to + point;
 			}
-			triangles = new int[detail * 2 * 3];
+
 			int index = 0;
+			int[] triangles = new int[detail * 2 * 3];
+			Vector3[] vertices = new Vector3[detail * 2];
 			for (int i = 0; i < detail; i++) {
 				if (i == detail - 1) {
 					triangles [index] = detail + i;
@@ -69,15 +82,22 @@ namespace LikeProcessing
 					triangles [index + 5] = detail + i;
 				}
 				index += 6;
- 			}
-			vertices = new Vector3[detail * 2];
+			}
+
 			fromPoints.CopyTo (vertices, 0);
 			toPoints.CopyTo (vertices, detail);
+			pmesh.Add (vertices, triangles);
+			return pmesh;
+		}
 
+		public void SetMesh() {
+//			Vector3 center = (from + to) / 2;
+//			gameObject.transform.localPosition = center;
+			PMesh pmesh = PLineSimple.Mesh (from, to, weight, detail);
 			Mesh mesh = gameObject.GetComponent<MeshFilter> ().mesh;
 			mesh.Clear ();
-			mesh.vertices = vertices;
-			mesh.triangles = triangles;
+			mesh.vertices = pmesh.vertices;
+			mesh.triangles = pmesh.triangles;
 			mesh.RecalculateNormals ();
 
 			Color[] colors = new Color[mesh.vertices.Length];

@@ -9,13 +9,11 @@ namespace LikeProcessing.PMetaball
 		public Point[] points;
 		public Edge[] edges;
 		public int cubeIndex;
-		public float isoLevel;
 
-		public Cube (Point[] _points, Edge[] _edges, float _isoLevel)
+		public Cube (Point[] _points, Edge[] _edges)
 		{
 			points = _points;
 			edges = _edges;
-			isoLevel = _isoLevel;
 		}
 
 		public void draw (GameObject parent)
@@ -28,44 +26,44 @@ namespace LikeProcessing.PMetaball
 			}
 		}
 
-		public void CulcIntersections ()
+		public void CulcIntersections (float isoLevel)
 		{
 			int edgeFlags = PMetaball.edgeTable [cubeIndex];
 			if ((edgeFlags & 1) > 0) {
-				edges [0].CulcIntersection ();
+				edges [0].CulcIntersection (isoLevel);
 			}
 			if ((edgeFlags & 2) > 0) {
-				edges [1].CulcIntersection ();
+				edges [1].CulcIntersection (isoLevel);
 			}
 			if ((edgeFlags & 4) > 0) {
-				edges [2].CulcIntersection ();
+				edges [2].CulcIntersection (isoLevel);
 			}
 			if ((edgeFlags & 0x8) > 0) {
-				edges [3].CulcIntersection ();
+				edges [3].CulcIntersection (isoLevel);
 			}
 			if ((edgeFlags & 0x10) > 0) {
-				edges [4].CulcIntersection ();
+				edges [4].CulcIntersection (isoLevel);
 			}
 			if ((edgeFlags & 0x20) > 0) {
-				edges [5].CulcIntersection ();
+				edges [5].CulcIntersection (isoLevel);
 			}
 			if ((edgeFlags & 0x40) > 0) {
-				edges [6].CulcIntersection ();
+				edges [6].CulcIntersection (isoLevel);
 			}
 			if ((edgeFlags & 0x80) > 0) {
-				edges [7].CulcIntersection ();
+				edges [7].CulcIntersection (isoLevel);
 			}
 			if ((edgeFlags & 0x100) > 0) {
-				edges [8].CulcIntersection ();
+				edges [8].CulcIntersection (isoLevel);
 			}
 			if ((edgeFlags & 0x200) > 0) {
-				edges [9].CulcIntersection ();
+				edges [9].CulcIntersection (isoLevel);
 			}
 			if ((edgeFlags & 0x400) > 0) {
-				edges [10].CulcIntersection ();
+				edges [10].CulcIntersection (isoLevel);
 			}
 			if ((edgeFlags & 0x800) > 0) {
-				edges [11].CulcIntersection ();
+				edges [11].CulcIntersection (isoLevel);
 			}
 		}
 

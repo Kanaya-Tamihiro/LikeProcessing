@@ -12,13 +12,11 @@ namespace LikeProcessing.PMetaball
 		public Vector3 intersection;
 		public Vector3 intersectionNormal;
 		public bool hasIntersection = false;
-		public float isoLevel;
 
-		public Edge (Point p1, Point p2, float _isoLevel)
+		public Edge (Point p1, Point p2)
 		{
 			points [0] = p1;
 			points [1] = p2;
-			isoLevel = _isoLevel;
 		}
 
 		//			public Vector3 GetIntersection ()
@@ -37,8 +35,15 @@ namespace LikeProcessing.PMetaball
 		{
 			if (pline != null)
 				return;
-			pline = new PLineSimple (points [0].loc, points [1].loc, 0.005f, 3);
-			pline.gameObject.transform.SetParent (parent.transform);
+			pline = new PLineSimple (points [0].loc, points [1].loc, 0.01f, 3, parent);
+		}
+
+		public int[] MeshCounts () {
+			return PLineSimple.MeshCounts (3);
+		}
+
+		public PMesh Mesh (PMesh pmesh) {
+			return PLineSimple.Mesh (points [0].loc, points [1].loc, 0.01f, 3, pmesh);
 		}
 
 		public void DrawIntersection (GameObject parent)
@@ -52,20 +57,20 @@ namespace LikeProcessing.PMetaball
 			//					pGeodesicDome.gameObject.SetActive (false);
 			//					pGeodesicDome.gameObject.transform.localScale = 0;
 			//				} else {
-			//					pGeodesicDome.gameObject.transform.position = intersection;
+			//					pGeodesicDome.gameObject.transform.localPosition = intersection;
 			//					pGeodesicDome.gameObject.SetActive (true);
 			//				}
 		}
 
-		public void CulcIntersection ()
+		public void CulcIntersection (float isoLevel)
 		{
 			if (hasIntersection == true)
 				return;
 			hasIntersection = true;
-			LinearInterpolation ();
+			LinearInterpolation (isoLevel);
 		}
 
-		void LinearInterpolation ()
+		void LinearInterpolation (float isoLevel)
 		{
 			Point p1 = points [0];
 			Point p2 = points [1];

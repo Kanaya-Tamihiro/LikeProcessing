@@ -14,287 +14,71 @@ namespace LikeProcessing.PMetaball
 		public bool isoValuesAddictive = true;
 		public bool isHardEdge = false;
 
-		Point[,,] points;
-		Edge[,,] edgeHorizon, edgeVertical, edgeDepth;
-		Cube[,,] cubes;
+		public HashSet<Lattice> shouldUpdateLattices = new HashSet<Lattice>();
+
+		//Dictionary<IntVector, Lattice> latticeDict = new Dictionary<IntVector, Lattice> ();
+		static readonly int latticeLen = 50;
+		Lattice[,,] latticeDict = new Lattice[latticeLen*2,latticeLen*2,latticeLen*2];
 
 		public List<Core> cores = new List<Core> ();
 
-		static int maxVertexCount = 9000;
-		Vector3[] vertices = new Vector3[maxVertexCount];
-		int[] triangleIndeces = new int[maxVertexCount];
-		Vector3[] normals = new Vector3[maxVertexCount];
-		int lastUpdatedTriangleIndexCount = 0;
-
-		List<Vector3> vertexList = new List<Vector3> ();
-		List<int> triangleIndexList = new List<int> ();
-		List<Vector3> normalList = new List<Vector3>();
+		public static readonly int maxVertexCount = 9000;
+		public static readonly string CoreTag = "MetaballCore";
 
 		public PMetaball ()
 		{
 			gameObject = new GameObject ();
 			gameObject.name = "PMetaballs";
-			gameObject.AddComponent<MeshFilter> ().mesh.MarkDynamic ();
-			//			gameObject.AddComponent<MeshRenderer> ().material = new Material(Shader.Find("LikeProcessing/VertexColor"));
-			gameObject.AddComponent<MeshRenderer> ().material = PSketch.material;
-
-			Mesh mesh = gameObject.GetComponent<MeshFilter> ().mesh;
-//			for (int i=0; i<maxVertexCount; i++) {
-//				vertices [i] = normals [i] = Vector3.zero;
-//				triangleIndeces [i] = 0;
-//			}
-			mesh.Clear ();
-			mesh.vertices = vertices;
-			mesh.triangles = triangleIndeces;
-			mesh.normals = normals;
 		}
 
-		public void SetUpLattice () {
-			SetPoint ();
-			SetEdge ();
-			SetCube ();
-//										DrawPoints ();
-//										DrawEdges ();
-			//							DrawCubes ();
+
+		Lattice SetUpLattice (int x, int y, int z) {
+			IntVector v = new IntVector (x-latticeLen,y-latticeLen,z-latticeLen);
+			Lattice lattice = new Lattice (this, v);
+			latticeDict[x,y,z] = lattice;
+			lattice.SetUpLattice ();
+			return lattice;
 		}
+
+
 
 		public void AddCore (Core core)
 		{
 //			core.gameObject.transform.SetParent (gameObject.transform);
+			Vector3 position = core.gameObject.transform.localPosition;
+			float len = size * 2;
+			int x = Mathf.FloorToInt (position.x / len) + latticeLen;
+			int y = Mathf.FloorToInt (position.y / len) + latticeLen;
+			int z = Mathf.FloorToInt (position.z / len) + latticeLen;
+			if (latticeDict[x, y, z] == null) {
+				Lattice lattice = SetUpLattice (x, y, z);
+				lattice.latticeMono.affectedCores.Add (core);
+				shouldUpdateLattices.Add (lattice);
+			}
 			cores.Add (core);
+		}
+
+		public void MoveCore(Core core, Vector3 position)
+		{
+			shouldUpdateLattices.UnionWith (core.affectLattices);
+			core.gameObject.transform.localPosition = position;
+			float len = size * 2;
+			int x = Mathf.FloorToInt (position.x / len) + latticeLen;
+			int y = Mathf.FloorToInt (position.y / len) + latticeLen;
+			int z = Mathf.FloorToInt (position.z / len) + latticeLen;
+			if (latticeDict[x, y, z] == null) {
+				Lattice lattice = SetUpLattice (x, y, z);
+				lattice.latticeMono.affectedCores.Add (core);
+				shouldUpdateLattices.Add (lattice);
+			}
 		}
 
 		public void Update ()
 		{
-			if (isoValuesAddictive == true)
-				CulcIsoValuesAdd ();
-			else
-				CulcIsoValuesMax ();
-//			ClearEdges ();
-			CulcCubeVertices ();
-//			DrawIntersectionPoints ();
-			SetMesh ();
-		}
-
-		public void SetMesh ()
-		{
-			Mesh mesh = gameObject.GetComponent<MeshFilter> ().mesh;
-			mesh.vertices = vertices;
-			mesh.triangles = triangleIndeces;
-			mesh.normals = normals;
-			if (isHardEdge) {
-//				Mesh mesh = gameObject.GetComponent<MeshFilter> ().mesh;
-				mesh.RecalculateNormals ();
+			foreach (Lattice lattice in shouldUpdateLattices) {
+				lattice.Update ();
 			}
-		}
-
-			
-		void SetPoint ()
-		{
-			points = new Point[detail + 1, detail + 1, detail + 1];
-			float x = -size;
-			float y = -size;
-			float z = -size;
-			float delta = (size * 2) / detail;
-			for (int iz = 0; iz < detail + 1; iz++) {
-				for (int iy = 0; iy < detail + 1; iy++) {
-					for (int ix = 0; ix < detail + 1; ix++) {
-						Point point = new Point (x, y, z);
-						points [iz, iy, ix] = point;
-						x += delta;
-					}
-					x = -size;
-					y += delta;
-				}
-				y = -size;
-				z += delta;
-			}
-		}
-
-		void SetEdge ()
-		{
-			edgeHorizon = new Edge[detail + 1, detail + 1, detail];
-			for (int iz = 0; iz < detail + 1; iz++) {
-				for (int iy = 0; iy < detail + 1; iy++) {
-					for (int ix = 0; ix < detail; ix++) {
-						Point p1 = points [iz, iy, ix];
-						Point p2 = points [iz, iy, ix + 1];
-						Edge edge = new Edge (p1, p2, isoLevel);
-						edgeHorizon [iz, iy, ix] = edge;
-					}
-				}
-			}
-
-			edgeVertical = new Edge[detail + 1, detail, detail + 1];
-			for (int iz = 0; iz < detail + 1; iz++) {
-				for (int iy = 0; iy < detail; iy++) {
-					for (int ix = 0; ix < detail + 1; ix++) {
-						Point p1 = points [iz, iy, ix];
-						Point p2 = points [iz, iy + 1, ix];
-						Edge edge = new Edge (p1, p2, isoLevel);
-						edgeVertical [iz, iy, ix] = edge;
-					}
-				}
-			}
-
-			edgeDepth = new Edge[detail, detail + 1, detail + 1];
-			for (int iz = 0; iz < detail; iz++) {
-				for (int iy = 0; iy < detail + 1; iy++) {
-					for (int ix = 0; ix < detail + 1; ix++) {
-						Point p1 = points [iz, iy, ix];
-						Point p2 = points [iz + 1, iy, ix];
-						Edge edge = new Edge (p1, p2, isoLevel);
-						edgeDepth [iz, iy, ix] = edge;
-					}
-				}
-			}
-		}
-
-		void SetCube ()
-		{
-			cubes = new Cube[detail, detail, detail];
-			for (int iz = 0; iz < detail; iz++) {
-				for (int iy = 0; iy < detail; iy++) {
-					for (int ix = 0; ix < detail; ix++) {
-						Point[] _points = {
-							points [iz + 1, iy, ix],	//left back down
-							points [iz + 1, iy, ix + 1], //right back down
-							points [iz, iy, ix + 1],	//right front down
-							points [iz, iy, ix],		//left front down
-							points [iz + 1, iy + 1, ix],	//left back up
-							points [iz + 1, iy + 1, ix + 1], //right back up
-							points [iz, iy + 1, ix + 1],	//right front up
-							points [iz, iy + 1, ix],		//left front up
-						};
-						Edge[] _edges = {
-							edgeHorizon [iz + 1, iy, ix], //back down
-							edgeDepth [iz, iy, ix + 1],   //right down
-							edgeHorizon [iz, iy, ix],   //front down
-							edgeDepth [iz, iy, ix],     //left down
-							edgeHorizon [iz + 1, iy + 1, ix], //back up
-							edgeDepth [iz, iy + 1, ix + 1],   //right up
-							edgeHorizon [iz, iy + 1, ix],   //front up
-							edgeDepth [iz, iy + 1, ix],     //left up
-							edgeVertical [iz + 1, iy, ix],	  //left back side
-							edgeVertical [iz + 1, iy, ix + 1], //right back side
-							edgeVertical [iz, iy, ix + 1],	  //right front side
-							edgeVertical [iz, iy, ix],	  //left front side
-						};
-						Cube cube = new Cube (_points, _edges, isoLevel);
-						cubes [iz, iy, ix] = cube;
-					}
-				}
-			}
-		}
-
-
-
-		void CulcIsoValuesAdd ()
-		{
-			for (int iz = 0; iz < detail + 1; iz++) {
-				for (int iy = 0; iy < detail + 1; iy++) {
-					for (int ix = 0; ix < detail + 1; ix++) {
-						Point p = points [iz, iy, ix];
-						p.isoValue = 0;
-						foreach (Core core in cores) {
-							float[] valueAndNormal = core.CulcIsoValueAndNormal (p, isoPower);
-							p.isoValue += valueAndNormal [0];
-							p.normal += new Vector3 (valueAndNormal[1], valueAndNormal[2], valueAndNormal[3]);
-						}
-//						p.normal.Normalize ();
-					}
-				}
-			}
-		}
-
-		void CulcIsoValuesMax ()
-		{
-			for (int iz = 0; iz < detail + 1; iz++) {
-				for (int iy = 0; iy < detail + 1; iy++) {
-					for (int ix = 0; ix < detail + 1; ix++) {
-						Point p = points [iz, iy, ix];
-						p.isoValue = 0;
-						foreach (Core core in cores) {
-							float[] valueAndNormal = core.CulcIsoValueAndNormal (p, isoPower);
-							if (p.isoValue < valueAndNormal[0]) {
-								p.isoValue = valueAndNormal[0];
-								p.normal = new Vector3 (valueAndNormal[1], valueAndNormal[2], valueAndNormal[3]);
-							}
-						}
-//						p.normal.Normalize ();
-					}
-				}
-			}
-		}
-
-//		void ClearEdges () {
-//			for (int iz = 0; iz < detail + 1; iz++) {
-//				for (int iy = 0; iy < detail + 1; iy++) {
-//					for (int ix = 0; ix < detail; ix++) {
-//						edgeHorizon [iz, iy, ix].hasIntersection = false;
-//					}
-//				}
-//			}
-//			for (int iz = 0; iz < detail + 1; iz++) {
-//				for (int iy = 0; iy < detail; iy++) {
-//					for (int ix = 0; ix < detail + 1; ix++) {
-//						edgeVertical [iz, iy, ix].hasIntersection = false;
-//					}
-//				}
-//			}
-//			for (int iz = 0; iz < detail; iz++) {
-//				for (int iy = 0; iy < detail + 1; iy++) {
-//					for (int ix = 0; ix < detail + 1; ix++) {
-//						edgeDepth [iz, iy, ix].hasIntersection = false;
-//					}
-//				}
-//			}
-//		}
-
-		void CulcCubeVertices ()
-		{
-//			vertexList.Clear ();
-//			triangleIndexList.Clear ();
-//			normalList.Clear ();
-			int triangleIndexCount = 0;
-			for (int iz = 0; iz < detail; iz++) {
-				for (int iy = 0; iy < detail; iy++) {
-					for (int ix = 0; ix < detail; ix++) {
-						Cube cube = cubes [iz, iy, ix];
-						int cubeIndex = 0;
-						if (cube.points [0].isoValue > isoLevel)
-							cubeIndex |= 1;
-						if (cube.points [1].isoValue > isoLevel)
-							cubeIndex |= 2;
-						if (cube.points [2].isoValue > isoLevel)
-							cubeIndex |= 4;
-						if (cube.points [3].isoValue > isoLevel)
-							cubeIndex |= 8;
-						if (cube.points [4].isoValue > isoLevel)
-							cubeIndex |= 16;
-						if (cube.points [5].isoValue > isoLevel)
-							cubeIndex |= 32;
-						if (cube.points [6].isoValue > isoLevel)
-							cubeIndex |= 64;
-						if (cube.points [7].isoValue > isoLevel)
-							cubeIndex |= 128;
-						cube.cubeIndex = cubeIndex;
-						cube.CulcIntersections ();
-						triangleIndexCount += cube.Vertices (vertices, normals, triangleIndexCount);
-					}
-				}
-			}
-
-			for (int i=lastUpdatedTriangleIndexCount; i<triangleIndexCount; i++) {
-				triangleIndeces [i] = i;
-			}
-//			Debug.Log (PUtil.IndecisToString(triangleIndeces));
-			for (int i=triangleIndexCount; i<lastUpdatedTriangleIndexCount; i++) {
-				triangleIndeces [i] = 0;
-				vertices [i] = Vector3.zero;
-				normals [i] = Vector3.zero;
-			}
-			lastUpdatedTriangleIndexCount = triangleIndexCount;
+			shouldUpdateLattices.Clear ();
 		}
 
 		public void destory ()
@@ -302,152 +86,7 @@ namespace LikeProcessing.PMetaball
 			Object.Destroy (this.gameObject);
 		}
 			
-		public class Core {
-
-			public Vector3 position;
-
-			public Core () {}
-
-			public Core(Vector3 _position) {
-				position = _position;
-			}
-
-			virtual public float[] CulcIsoValueAndNormal(Point p, float isoPower) {
-				float[] result = new float[4];
-				float sqrMagnitude = (p.loc - position).sqrMagnitude;
-//				return isoPower / (1.0f + sqrMagnitude);
-				Vector3 normal = (1.0f / (sqrMagnitude * sqrMagnitude)) * ((p.loc - position) * 2);
-				result[0] = 1.0f / sqrMagnitude;
-				result [1] = normal.x;
-				result [2] = normal.y;
-				result [3] = normal.z;
-				return result;
-			}
-
-//			virtual public Vector3 CulcNormal(Point p, float isoPower) {
-//				float sqrMagnitude = (p.loc - position).sqrMagnitude;
-//				return (1.0f / (sqrMagnitude * sqrMagnitude)) * ((p.loc - position) * 2);
-//			}
-		}
-
-		public class CoreLine : Core
-		{
-			Vector3 p_org, p_end;
-			Vector3 delta;
-
-			public CoreLine (Vector3 from, Vector3 to) : base()
-			{
-				p_org = from;
-				p_end = to;
-				delta = to - from;
-			}
-
-			override public float[] CulcIsoValueAndNormal(Point p, float isoPower) {
-				float[] result = new float[4];
-				Vector3 q = p.loc - p_org;
-				Vector3 corePosition;
-				float t = Vector3.Dot(delta, q) / delta.sqrMagnitude;
-				float sqrMagnitude;
-				if (t > 1) {
-					corePosition = p_end;
-					sqrMagnitude = (p.loc - p_end).sqrMagnitude;
-				} else if (t < 0) {
-					corePosition = p_org;
-					sqrMagnitude = (p.loc - p_org).sqrMagnitude;
-				} else {
-					corePosition =p_org + t * delta; 
-					sqrMagnitude = (q - (t * delta)).sqrMagnitude;
-				}
-//				result[0] = isoPower / (1.0f + sqrMagnitude);
-				result[0] = 1.0f / sqrMagnitude;
-				Vector3 normal = (1.0f / (sqrMagnitude * sqrMagnitude)) * ((p.loc - corePosition) * 2);
-				result [1] = normal.x;
-				result [2] = normal.y;
-				result [3] = normal.z;
-				return result;
-			}
-		}
-
-		void DrawPoints ()
-		{
-			for (int iz = 0; iz < detail + 1; iz++) {
-				for (int iy = 0; iy < detail + 1; iy++) {
-					for (int ix = 0; ix < detail + 1; ix++) {
-						Point p = points [iz, iy, ix];
-						p.draw (gameObject);
-					}
-				}
-			}
-		}
-
-		void DrawEdges ()
-		{
-			for (int iz = 0; iz < detail + 1; iz++) {
-				for (int iy = 0; iy < detail + 1; iy++) {
-					for (int ix = 0; ix < detail; ix++) {
-						edgeHorizon [iz, iy, ix].draw (gameObject);
-					}
-				}
-			}
-			for (int iz = 0; iz < detail + 1; iz++) {
-				for (int iy = 0; iy < detail; iy++) {
-					for (int ix = 0; ix < detail + 1; ix++) {
-						edgeVertical [iz, iy, ix].draw (gameObject);
-					}
-				}
-			}
-			for (int iz = 0; iz < detail; iz++) {
-				for (int iy = 0; iy < detail + 1; iy++) {
-					for (int ix = 0; ix < detail + 1; ix++) {
-						edgeDepth [iz, iy, ix].draw (gameObject);
-					}
-				}
-			}
-		}
-
-		public void DrawIntersectionPoints ()
-		{
-			for (int iz = 0; iz < detail + 1; iz++) {
-				for (int iy = 0; iy < detail + 1; iy++) {
-					for (int ix = 0; ix < detail; ix++) {
-						edgeHorizon [iz, iy, ix].DrawIntersection (gameObject);
-					}
-				}
-			}
-			for (int iz = 0; iz < detail + 1; iz++) {
-				for (int iy = 0; iy < detail; iy++) {
-					for (int ix = 0; ix < detail + 1; ix++) {
-						edgeVertical [iz, iy, ix].DrawIntersection (gameObject);
-					}
-				}
-			}
-			for (int iz = 0; iz < detail; iz++) {
-				for (int iy = 0; iy < detail + 1; iy++) {
-					for (int ix = 0; ix < detail + 1; ix++) {
-						edgeDepth [iz, iy, ix].DrawIntersection (gameObject);
-					}
-				}
-			}
-		}
-
-		void DrawCubes ()
-		{
-			for (int iz = 0; iz < detail; iz++) {
-				if (iz % 2 == 0)
-					continue;
-				for (int iy = 0; iy < detail; iy++) {
-					if (iy % 2 == 0)
-						continue;
-					for (int ix = 0; ix < detail; ix++) {
-						if (ix % 2 == 0)
-							continue;
-						cubes [iz, iy, ix].draw (gameObject);
-					}
-				}
-			}
-		}
-
-		public static int[] edgeTable = {
+		public static readonly int[] edgeTable = {
 			0x0, 0x109, 0x203, 0x30a, 0x406, 0x50f, 0x605, 0x70c,
 			0x80c, 0x905, 0xa0f, 0xb06, 0xc0a, 0xd03, 0xe09, 0xf00,
 			0x190, 0x99, 0x393, 0x29a, 0x596, 0x49f, 0x795, 0x69c,
@@ -482,7 +121,7 @@ namespace LikeProcessing.PMetaball
 			0x70c, 0x605, 0x50f, 0x406, 0x30a, 0x203, 0x109, 0x0
 		};
 			
-		public static int[,] triTable = {{ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
+		public static readonly int[,] triTable = {{ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
 			{ 0, 8, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
 			{ 0, 1, 9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
 			{ 1, 8, 3, 9, 8, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },

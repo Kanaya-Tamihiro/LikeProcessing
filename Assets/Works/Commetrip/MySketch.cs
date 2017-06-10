@@ -75,7 +75,7 @@ public class MySketch : PSketch {
         int activeStarIdx = 0;
         Vector3 activeStar;
 
-        float maxCommetSpeed = 0.2f;
+        float maxCommetSpeed = 1f;
 
         LineGraphics lineGraphics;
 

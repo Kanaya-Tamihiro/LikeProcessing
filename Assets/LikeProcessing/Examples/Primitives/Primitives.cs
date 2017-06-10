@@ -15,7 +15,7 @@ namespace LikeProcessig.Examples {
 
 		float deltaTime = 0f;
 
-		PMetaball.Core core1, core2;
+		Core core1, core2;
 
 		void Start () {
 			lightObj.GetComponent<Light> ().intensity = 0.8f;
@@ -32,20 +32,20 @@ namespace LikeProcessig.Examples {
 //			plineSimple.gameObject.GetComponent<MeshRenderer> ().material = new Material (Shader.Find("Standard"));
 
 			pmetaball = new PMetaball();
-			pmetaball.detail = 30;
-			pmetaball.size = 5.0f;
+			pmetaball.detail = 20;
+			pmetaball.size = 3.0f;
 			pmetaball.isoPower = .7f;
 			pmetaball.isoValuesAddictive = true;
 			pmetaball.isHardEdge = false;
-			pmetaball.gameObject.transform.position = new Vector3 (0,2,0);
-			pmetaball.SetUpLattice ();
-			core1 = new PMetaball.Core (new Vector3 (1, 0, 0));
+			pmetaball.gameObject.transform.position = new Vector3 (0,0,0);
+//			pmetaball.SetUpLattice ();
+			core1 = new Core (pmetaball, new Vector3 (3, 3, 3));
 			pmetaball.AddCore (core1);
-			core2 = new PMetaball.Core (new Vector3 (1, 0, 0));
-			pmetaball.AddCore (core2);
+			core2 = new Core (pmetaball, new Vector3 (3, 0, 3));
+//			pmetaball.AddCore (core2);
 //			pmetaball.AddCore (new PMetaball.CoreLine(new Vector3 (-1.0f,-1.0f,0), new Vector3 (1.0f,1.0f,0)));
 //			pmetaball.AddMetaball (new Vector3 (0.25f,1,0));
-			pmetaball.Update ();
+//			pmetaball.Update ();
 		}
 
 		void Update () {
@@ -56,10 +56,13 @@ namespace LikeProcessig.Examples {
 //				pmetaball.isoPower -= 0.001f;
 //				pmetaball.Update ();
 //			}
-			float angle = Mathf.PI/2 * Time.time;
-			core1.position = (new Vector3 (Mathf.Cos (angle), Mathf.Sin (angle), Mathf.Cos (angle))) * 2.5f;;
-			core2.position = (new Vector3 (Mathf.Sin(angle), Mathf.Cos(angle), Mathf.Cos(angle) * Mathf.Sin(angle))) * 1.5f;
-			pmetaball.Update ();
+			float angle = Mathf.PI/4 * Time.time;
+			if (Input.GetKey (KeyCode.RightArrow)) {
+				pmetaball.MoveCore(core1, (new Vector3 (Mathf.Cos (angle), Mathf.Sin (angle), Mathf.Cos (angle))) * 2.5f);
+				pmetaball.MoveCore(core2, (new Vector3 (Mathf.Sin(angle), Mathf.Cos(angle), Mathf.Cos(angle) * Mathf.Sin(angle))) * 1.5f);
+				pmetaball.Update ();
+			}
+
 		}
 	}
 
