@@ -86,11 +86,11 @@ namespace LikeProcessing.PMetaball
 			SetPoint ();
 			SetEdge ();
 			SetCube ();
-//			DrawPoints ();
-//			DrawEdges ();
-//			DrawEdge2();
-//			DrawCubes ();
-		}
+            //			DrawPoints ();
+            //			DrawEdges ();
+            //DrawEdge2();
+            //			DrawCubes ();
+        }
 
 
 		public void Update ()
@@ -116,7 +116,8 @@ namespace LikeProcessing.PMetaball
 				//				Mesh mesh = gameObject.GetComponent<MeshFilter> ().mesh;
 				mesh.RecalculateNormals ();
 			}
-		}
+            mesh.RecalculateBounds();
+        }
 
 		void CulcIsoValuesAdd ()
 		{
@@ -415,7 +416,8 @@ namespace LikeProcessing.PMetaball
 			mesh.vertices = pmesh.vertices;
 			mesh.triangles = pmesh.triangles;
 			mesh.RecalculateNormals ();
-		}
+            mesh.RecalculateBounds();
+        }
 
 		public void DrawIntersectionPoints ()
 		{

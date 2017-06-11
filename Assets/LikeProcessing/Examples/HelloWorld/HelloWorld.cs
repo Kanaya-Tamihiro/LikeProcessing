@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.VR;
 
 namespace LikeProcessing.Examples
 {
@@ -11,6 +12,7 @@ namespace LikeProcessing.Examples
 
         void Start()
         {
+            VRSettings.enabled = false;
             background(Color.black);
 //            GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 //            obj.transform.localScale = new Vector3(1, 1, 1);

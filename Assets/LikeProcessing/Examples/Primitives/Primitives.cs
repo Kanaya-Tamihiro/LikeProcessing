@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using LikeProcessing;
 using LikeProcessing.PMetaball;
+using UnityEngine.VR;
 
 namespace LikeProcessig.Examples {
 	
@@ -11,7 +12,7 @@ namespace LikeProcessig.Examples {
 		PGeodesicDomeImproved pgeodesicDomeImproved;
 		PGeodesicDome pgeodesicDome;
 		PLineSimple plineSimple;
-		PMetaball pmetaball;
+		public PMetaball pmetaball;
 
 		float deltaTime = 0f;
 
@@ -20,7 +21,8 @@ namespace LikeProcessig.Examples {
 		Core dragCore;
 
 		void Start () {
-			lightObj.GetComponent<Light> ().intensity = 0.8f;
+            //VRSettings.enabled = false;
+            lightObj.GetComponent<Light> ().intensity = 0.8f;
 
 //			pgeodesicDomeImproved = new PGeodesicDomeImproved(3, false);
 //			pgeodesicDomeImproved.gameObject.transform.position += new Vector3 (-2, 1, 0);
@@ -69,22 +71,22 @@ namespace LikeProcessig.Examples {
 
 		void Update() {
 
-			if (Input.GetMouseButtonDown (1)) {
-				RaycastHit hit;
-				Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+			//if (Input.GetMouseButtonDown (1)) {
+			//	RaycastHit hit;
+			//	Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-				if (Physics.Raycast (ray, out hit)) {
-					dragCore = hit.collider.gameObject.GetComponent<Core.CoreMono> ().core;
-				}
-			}
+			//	if (Physics.Raycast (ray, out hit)) {
+			//		dragCore = hit.collider.gameObject.GetComponent<Core.CoreMono> ().core;
+			//	}
+			//}
 
-			if (Input.GetMouseButtonUp (1)) {
-				dragCore = null;
-			}
+			//if (Input.GetMouseButtonUp (1)) {
+			//	dragCore = null;
+			//}
 
-			if (dragCore != null) {
-				pmetaball.MoveCore (dragCore, dragCore.gameObject.transform.localPosition + new Vector3(0.1f,0,0));
-			}
+			//if (dragCore != null) {
+			//	pmetaball.MoveCore (dragCore, dragCore.gameObject.transform.localPosition + new Vector3(0.1f,0,0));
+			//}
 			
 			if (Input.GetMouseButtonDown (0)) {
 
@@ -92,11 +94,11 @@ namespace LikeProcessig.Examples {
 				Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
 				if (Physics.Raycast (ray, out hit)) {
-					pmetaball.AddCore (new Core(pmetaball, hit.point - pmetaball.gameObject.transform.position));
+					pmetaball.AddCore (new Core(pmetaball, hit.point));
 				} else {
 					Vector3 v3 = Input.mousePosition;
 					v3.z = 7.0f;
-					v3 = Camera.main.ScreenToWorldPoint(v3) - pmetaball.gameObject.transform.position;
+					v3 = Camera.main.ScreenToWorldPoint(v3);
 					pmetaball.AddCore (new Core(pmetaball, v3));
 				}
 			}
