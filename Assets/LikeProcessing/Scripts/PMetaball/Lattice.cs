@@ -24,7 +24,7 @@ namespace LikeProcessing.PMetaball
 			public HashSet<Core> affectedCores = new HashSet<Core>();
 			void OnTriggerEnter(Collider other) {
 				if (other.gameObject.tag == PMetaball.CoreTag) {
-					Debug.Log ("Lattice enter other");
+//					Debug.Log ("Lattice enter other");
 					Core.CoreMono coreMono = other.gameObject.GetComponent<Core.CoreMono> ();
 					affectedCores.Add (coreMono.core);
 					coreMono.core.affectLattices.Add (lattice);
@@ -33,7 +33,7 @@ namespace LikeProcessing.PMetaball
 			}
 			void OnTriggerExit(Collider other)
 			{
-				Debug.Log ("Lattice exit other");
+//				Debug.Log ("Lattice exit other");
 				Core.CoreMono coreMono = other.gameObject.GetComponent<Core.CoreMono> ();
 				affectedCores.Remove (coreMono.core);
 				coreMono.core.affectLattices.Remove (lattice);

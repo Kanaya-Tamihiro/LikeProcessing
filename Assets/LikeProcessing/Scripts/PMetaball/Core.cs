@@ -12,6 +12,8 @@ namespace LikeProcessing.PMetaball
 
 		public GameObject gameObject;
 		public HashSet<Lattice> affectLattices = new HashSet<Lattice> ();
+		float colliderRadius;
+		float colliderRadiusSqrt;
 
 		public Core (PMetaball metaball) {
 			gameObject = new GameObject ("core");
@@ -19,6 +21,8 @@ namespace LikeProcessing.PMetaball
 			gameObject.transform.SetParent (metaball.gameObject.transform);
 			Rigidbody rigidbody = gameObject.AddComponent<Rigidbody> ();
 			rigidbody.isKinematic = true;
+			colliderRadius = 1.0f;
+			colliderRadiusSqrt = colliderRadius * colliderRadius;
 			AddCollider ();
 			CoreMono coreMono = gameObject.AddComponent<CoreMono> ();
 			coreMono.core = this;
@@ -32,16 +36,30 @@ namespace LikeProcessing.PMetaball
 			SphereCollider collider = gameObject.AddComponent<SphereCollider> ();
 			collider.center = Vector3.zero;
 			collider.isTrigger = true;
-			collider.radius = 2.5f;
+			collider.radius = colliderRadius;
 		}
 
+//		virtual public float[] CulcIsoValueAndNormal(Point p, float isoPower) {
+//			float[] result = new float[4];
+//			Vector3 position = gameObject.transform.localPosition;
+//			float sqrMagnitude = (p.loc - position).sqrMagnitude;
+//			//				return isoPower / (1.0f + sqrMagnitude);
+//			Vector3 normal = (1.0f / (sqrMagnitude * sqrMagnitude)) * ((p.loc - position) * 2);
+//			result[0] = 1.0f / sqrMagnitude;
+//			result [1] = normal.x;
+//			result [2] = normal.y;
+//			result [3] = normal.z;
+//			return result;
+//		}
 		virtual public float[] CulcIsoValueAndNormal(Point p, float isoPower) {
 			float[] result = new float[4];
 			Vector3 position = gameObject.transform.localPosition;
 			float sqrMagnitude = (p.loc - position).sqrMagnitude;
-			//				return isoPower / (1.0f + sqrMagnitude);
-			Vector3 normal = (1.0f / (sqrMagnitude * sqrMagnitude)) * ((p.loc - position) * 2);
-			result[0] = 1.0f / sqrMagnitude;
+			result[0] = Mathf.Max(1.0f - (sqrMagnitude / colliderRadiusSqrt), 0);
+			Vector3 normal = Vector3.zero;
+			if (result[0] != 0) {
+				normal = (2.0f * 1.0f / colliderRadiusSqrt) * (p.loc - position);	
+			}
 			result [1] = normal.x;
 			result [2] = normal.y;
 			result [3] = normal.z;

@@ -1,6 +1,7 @@
 ﻿Shader "Custom/Diffuse Simple" {
     SubShader {
       Tags { "RenderType" = "Opaque" }
+      Cull Off
       CGPROGRAM
       #pragma surface surf Lambert
       struct Input {

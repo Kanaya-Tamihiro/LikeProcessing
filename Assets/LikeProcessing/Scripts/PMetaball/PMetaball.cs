@@ -9,7 +9,7 @@ namespace LikeProcessing.PMetaball
 		public GameObject gameObject;
 		public float size = 3.0f;
 		public int detail = 30;
-		public float isoLevel = 0.5f;
+		public float isoLevel = 0.1f;
 		public float isoPower = 0.4f;
 		public bool isoValuesAddictive = true;
 		public bool isHardEdge = false;
@@ -22,7 +22,7 @@ namespace LikeProcessing.PMetaball
 
 		public List<Core> cores = new List<Core> ();
 
-		public static readonly int maxVertexCount = 9000;
+		public static readonly int maxVertexCount = 12000;
 		public static readonly string CoreTag = "MetaballCore";
 
 		public PMetaball ()
