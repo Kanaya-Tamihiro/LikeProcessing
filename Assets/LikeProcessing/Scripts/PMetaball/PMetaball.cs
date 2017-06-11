@@ -9,7 +9,7 @@ namespace LikeProcessing.PMetaball
 		public GameObject gameObject;
 		public float size = 3.0f;
 		public int detail = 30;
-		public float isoLevel = 0.1f;
+		public float isoLevel = 0.15f;
 		public float isoPower = 0.4f;
 		public bool isoValuesAddictive = true;
 		public bool isHardEdge = false;
@@ -41,6 +41,15 @@ namespace LikeProcessing.PMetaball
 		}
 
 
+		Lattice AddLatticeIfNone(int x, int y, int z, Core core) {
+			Lattice lattice = latticeDict[x, y, z];
+			if (lattice == null) {
+				lattice = SetUpLattice (x, y, z);
+				lattice.latticeMono.affectedCores.Add (core);
+				shouldUpdateLattices.Add (lattice);
+			}
+			return lattice;
+		}
 
 		public void AddCore (Core core)
 		{
@@ -50,11 +59,18 @@ namespace LikeProcessing.PMetaball
 			int x = Mathf.FloorToInt (position.x / len) + latticeLen;
 			int y = Mathf.FloorToInt (position.y / len) + latticeLen;
 			int z = Mathf.FloorToInt (position.z / len) + latticeLen;
-			if (latticeDict[x, y, z] == null) {
-				Lattice lattice = SetUpLattice (x, y, z);
-				lattice.latticeMono.affectedCores.Add (core);
-				shouldUpdateLattices.Add (lattice);
-			}
+			Lattice lattice = AddLatticeIfNone (x, y, z, core);
+			Vector3 latticePosition = lattice.gameObject.transform.localPosition;
+			int dx = position.x > latticePosition.x ? 1 : -1;
+			int dy = position.y > latticePosition.y ? 1 : -1;
+			int dz = position.z > latticePosition.z ? 1 : -1;
+			AddLatticeIfNone (x + dx, y, z, core);
+			AddLatticeIfNone (x, y + dy, z, core);
+			AddLatticeIfNone (x, y, z + dz, core);
+			AddLatticeIfNone (x + dx, y + dy, z, core);
+			AddLatticeIfNone (x, y + dy, z + dz, core);
+			AddLatticeIfNone (x + dx, y, z + dz, core);
+			AddLatticeIfNone (x + dx, y + dy, z + dz, core);
 			cores.Add (core);
 		}
 

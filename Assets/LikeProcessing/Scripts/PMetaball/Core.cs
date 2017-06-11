@@ -56,6 +56,7 @@ namespace LikeProcessing.PMetaball
 			Vector3 position = gameObject.transform.localPosition;
 			float sqrMagnitude = (p.loc - position).sqrMagnitude;
 			result[0] = Mathf.Max(1.0f - (sqrMagnitude / colliderRadiusSqrt), 0);
+//			Debug.Log (result[0]);
 			Vector3 normal = Vector3.zero;
 			if (result[0] != 0) {
 				normal = (2.0f * 1.0f / colliderRadiusSqrt) * (p.loc - position);	

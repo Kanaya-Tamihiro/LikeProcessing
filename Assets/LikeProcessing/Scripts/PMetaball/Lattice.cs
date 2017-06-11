@@ -73,6 +73,7 @@ namespace LikeProcessing.PMetaball
 			mesh.triangles = triangleIndeces;
 			mesh.normals = normals;
 
+			gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
 			BoxCollider collider = gameObject.AddComponent<BoxCollider> ();
 			collider.center = Vector3.zero;
 			collider.size = new Vector3 (size * 2, size * 2, size * 2);

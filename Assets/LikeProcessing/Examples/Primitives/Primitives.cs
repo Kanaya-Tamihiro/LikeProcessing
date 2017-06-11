@@ -17,6 +17,8 @@ namespace LikeProcessig.Examples {
 
 		Core core1, core2;
 
+		Core dragCore;
+
 		void Start () {
 			lightObj.GetComponent<Light> ().intensity = 0.8f;
 
@@ -33,7 +35,7 @@ namespace LikeProcessig.Examples {
 
 			pmetaball = new PMetaball();
 			pmetaball.detail = 20;
-			pmetaball.size = 3.0f;
+			pmetaball.size = 1.0f;
 			pmetaball.isoPower = .3f;
 			pmetaball.isoValuesAddictive = true;
 			pmetaball.isHardEdge = false;
@@ -66,14 +68,39 @@ namespace LikeProcessig.Examples {
 //		}
 
 		void Update() {
-			if (Input.GetMouseButtonDown (0)) {
-				Vector3 v3 = Input.mousePosition;
-				v3.z = 5.0f;
-				v3 = Camera.main.ScreenToWorldPoint(v3);
-				pmetaball.AddCore (new Core(pmetaball, v3));
-				pmetaball.Update ();
+
+			if (Input.GetMouseButtonDown (1)) {
+				RaycastHit hit;
+				Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+				if (Physics.Raycast (ray, out hit)) {
+					dragCore = hit.collider.gameObject.GetComponent<Core.CoreMono> ().core;
+				}
 			}
 
+			if (Input.GetMouseButtonUp (1)) {
+				dragCore = null;
+			}
+
+			if (dragCore != null) {
+				pmetaball.MoveCore (dragCore, dragCore.gameObject.transform.localPosition + new Vector3(0.1f,0,0));
+			}
+			
+			if (Input.GetMouseButtonDown (0)) {
+
+				RaycastHit hit;
+				Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+				if (Physics.Raycast (ray, out hit)) {
+					pmetaball.AddCore (new Core(pmetaball, hit.point - pmetaball.gameObject.transform.position));
+				} else {
+					Vector3 v3 = Input.mousePosition;
+					v3.z = 7.0f;
+					v3 = Camera.main.ScreenToWorldPoint(v3) - pmetaball.gameObject.transform.position;
+					pmetaball.AddCore (new Core(pmetaball, v3));
+				}
+			}
+			pmetaball.Update ();
 		}
 	}
 
