@@ -71,24 +71,28 @@ namespace LikeProcessig.Examples {
 
 		void Update() {
 
-			//if (Input.GetMouseButtonDown (1)) {
-			//	RaycastHit hit;
-			//	Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Input.GetMouseButtonDown(1))
+            {
+                RaycastHit hit;
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-			//	if (Physics.Raycast (ray, out hit)) {
-			//		dragCore = hit.collider.gameObject.GetComponent<Core.CoreMono> ().core;
-			//	}
-			//}
+                if (Physics.Raycast(ray, out hit))
+                {
+                    dragCore = hit.collider.gameObject.GetComponent<Core.CoreMono>().core;
+                }
+            }
 
-			//if (Input.GetMouseButtonUp (1)) {
-			//	dragCore = null;
-			//}
+            if (Input.GetMouseButtonUp(1))
+            {
+                dragCore = null;
+            }
 
-			//if (dragCore != null) {
-			//	pmetaball.MoveCore (dragCore, dragCore.gameObject.transform.localPosition + new Vector3(0.1f,0,0));
-			//}
-			
-			if (Input.GetMouseButtonDown (0)) {
+            if (dragCore != null)
+            {
+                pmetaball.MoveCore(dragCore, dragCore.gameObject.transform.localPosition + new Vector3(0.1f, 0, 0));
+            }
+
+            if (Input.GetMouseButtonDown (0)) {
 
 				RaycastHit hit;
 				Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);

@@ -51,19 +51,19 @@ namespace LikeProcessig.Examples
             if (device.GetPressDown(SteamVR_Controller.ButtonMask.Grip))
             {
 
-                RaycastHit hit;
-                Ray ray = new Ray(InputTracking.GetLocalPosition(leftOrRight), InputTracking.GetLocalRotation(leftOrRight) * Vector3.forward);
+                //RaycastHit hit;
+                //Ray ray = new Ray(InputTracking.GetLocalPosition(leftOrRight), InputTracking.GetLocalRotation(leftOrRight) * Vector3.forward);
 
-                if (Physics.Raycast(ray, out hit))
-                {
-                    primitives.pmetaball.AddCore(new Core(primitives.pmetaball, hit.point));
-                }
-                else
-                {
-                    Vector3 v3 = InputTracking.GetLocalPosition(leftOrRight) + InputTracking.GetLocalRotation(leftOrRight) * Vector3.forward * 4.0f;
+                //if (Physics.Raycast(ray, out hit))
+                //{
+                //    primitives.pmetaball.AddCore(new Core(primitives.pmetaball, hit.point));
+                //}
+                //else
+                //{
+                    Vector3 v3 = InputTracking.GetLocalPosition(leftOrRight) + InputTracking.GetLocalRotation(leftOrRight) * Vector3.forward * 6.0f;
                     //v3.z = 7.0f;
                     primitives.pmetaball.AddCore(new Core(primitives.pmetaball, v3));
-                }
+                //}
             }
         }
     }

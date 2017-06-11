@@ -7,6 +7,7 @@ namespace LikeProcessing.PMetaball
 	public class Lattice
 	{
 		public GameObject gameObject, blob;
+        Vector3 latticeLocalPosition;
 		public LatticeMono latticeMono;
 		PMetaball metaball;
 
@@ -18,6 +19,10 @@ namespace LikeProcessing.PMetaball
 		int[] triangleIndeces;
 		Vector3[] normals;
 		int lastUpdatedTriangleIndexCount = 0;
+
+        public bool latticeReady = false;
+        public bool updateReady = false;
+        public bool updating = false;
 
 		public class LatticeMono : MonoBehaviour {
 			public Lattice lattice;
@@ -56,8 +61,9 @@ namespace LikeProcessing.PMetaball
 				size + location.y * 2 * size,
 				size + location.z * 2 * size
 			);
+            latticeLocalPosition = gameObject.transform.localPosition;
 
-			gameObject.AddComponent<MeshFilter> ();//.mesh.MarkDynamic ();
+            gameObject.AddComponent<MeshFilter> ();//.mesh.MarkDynamic ();
 			blob.AddComponent<MeshFilter> ().mesh.MarkDynamic ();
 			// gameObject.AddComponent<MeshRenderer> ().material = new Material(Shader.Find("LikeProcessing/VertexColor"));
 			gameObject.AddComponent<MeshRenderer> ().material = PSketch.material;
@@ -90,11 +96,15 @@ namespace LikeProcessing.PMetaball
             //			DrawEdges ();
             //DrawEdge2();
             //			DrawCubes ();
+            latticeReady = true;
         }
 
 
 		public void Update ()
 		{
+            //if (latticeReady == false || updating == true) { return; }
+            //updating = true;
+
 //			Debug.Log (gameObject.name + " Update called");
 			if (metaball.isoValuesAddictive == true)
 				CulcIsoValuesAdd ();
@@ -102,12 +112,17 @@ namespace LikeProcessing.PMetaball
 				CulcIsoValuesMax ();
 			//			ClearEdges ();
 			CulcCubeVertices ();
-			//			DrawIntersectionPoints ();
-			SetMesh ();
+            //			DrawIntersectionPoints ();
+            //SetMesh ();
+
+            updating = false;
+            updateReady = true;
 		}
 
 		public void SetMesh ()
 		{
+            if (updateReady == false) { return; }
+
 			Mesh mesh = blob.GetComponent<MeshFilter> ().mesh;
 			mesh.vertices = vertices;
 			mesh.triangles = triangleIndeces;
@@ -117,6 +132,8 @@ namespace LikeProcessing.PMetaball
 				mesh.RecalculateNormals ();
 			}
             mesh.RecalculateBounds();
+
+            updateReady = false;
         }
 
 		void CulcIsoValuesAdd ()
@@ -231,7 +248,7 @@ namespace LikeProcessing.PMetaball
 		{
 			int detail = metaball.detail;
 			float size = metaball.size;
-			Vector3 position = gameObject.transform.localPosition;
+			Vector3 position = latticeLocalPosition;
 			points = new Point[detail + 1, detail + 1, detail + 1];
 			float x = -size + position.x;
 			float y = -size + position.y;

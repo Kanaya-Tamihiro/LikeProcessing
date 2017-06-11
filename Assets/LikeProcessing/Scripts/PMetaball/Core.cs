@@ -11,6 +11,7 @@ namespace LikeProcessing.PMetaball
 		}
 
 		public GameObject gameObject;
+        Vector3 coreLocalPosition;
 		public HashSet<Lattice> affectLattices = new HashSet<Lattice> ();
 		float colliderRadius;
 		float colliderRadiusSqrt;
@@ -29,7 +30,7 @@ namespace LikeProcessing.PMetaball
 		}
 
 		public Core(PMetaball metaball, Vector3 _position) : this(metaball) {
-			gameObject.transform.localPosition = _position;
+            SetLocalPosition(_position);
 		}
 
 		virtual public void AddCollider () {
@@ -38,6 +39,11 @@ namespace LikeProcessing.PMetaball
 			collider.isTrigger = true;
 			collider.radius = colliderRadius;
 		}
+
+        public void SetLocalPosition (Vector3 localPosition) {
+            gameObject.transform.localPosition = localPosition;
+            coreLocalPosition = localPosition;
+        }
 
 //		virtual public float[] CulcIsoValueAndNormal(Point p, float isoPower) {
 //			float[] result = new float[4];
@@ -53,7 +59,7 @@ namespace LikeProcessing.PMetaball
 //		}
 		virtual public float[] CulcIsoValueAndNormal(Point p, float isoPower) {
 			float[] result = new float[4];
-			Vector3 position = gameObject.transform.localPosition;
+			Vector3 position = coreLocalPosition;
 			float sqrMagnitude = (p.loc - position).sqrMagnitude;
 			result[0] = Mathf.Max(1.0f - (sqrMagnitude / colliderRadiusSqrt), 0);
 //			Debug.Log (result[0]);

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace LikeProcessing.PMetaball
 {
@@ -36,7 +37,7 @@ namespace LikeProcessing.PMetaball
 			IntVector v = new IntVector (x-latticeLen,y-latticeLen,z-latticeLen);
 			Lattice lattice = new Lattice (this, v);
 			latticeDict[x,y,z] = lattice;
-			lattice.SetUpLattice ();
+            ThreadPool.QueueUserWorkItem(o => lattice.SetUpLattice());
 			return lattice;
 		}
 
@@ -77,7 +78,8 @@ namespace LikeProcessing.PMetaball
 		public void MoveCore(Core core, Vector3 position)
 		{
 			shouldUpdateLattices.UnionWith (core.affectLattices);
-			core.gameObject.transform.localPosition = position;
+            //core.gameObject.transform.localPosition = position;
+            core.SetLocalPosition(position);
 			float len = size * 2;
 			int x = Mathf.FloorToInt (position.x / len) + latticeLen;
 			int y = Mathf.FloorToInt (position.y / len) + latticeLen;
@@ -91,10 +93,20 @@ namespace LikeProcessing.PMetaball
 
 		public void Update ()
 		{
+            shouldUpdateLattices.RemoveWhere(lattice => {
+                if (lattice.updateReady == true) {
+                    lattice.SetMesh();
+                    return true;
+                }
+                return false;
+            });
 			foreach (Lattice lattice in shouldUpdateLattices) {
-				lattice.Update ();
+                if (lattice.latticeReady == true && lattice.updating == false) {
+                    lattice.updating = true;
+                    ThreadPool.QueueUserWorkItem(o => lattice.Update());
+                }
 			}
-			shouldUpdateLattices.Clear ();
+			//shouldUpdateLattices.Clear ();
 		}
 
 		public void destory ()
