@@ -42,14 +42,16 @@
             float4 _MainTex_ST;
             float4 _Color;
 
-            float4 _Points[100];
+            //float4 _Points[100];
+			StructuredBuffer<float4> _Points;
 
             v2f vert (appdata v)
             {
                 v2f o;
 //                o.vertex = UnityObjectToClipPos(v.vertex);
 //				o.vertex = float4(v.id, 0, 0, 1);
-				o.vertex = mul(UNITY_MATRIX_MVP, _Points[v.id]);
+				//o.vertex = mul(UNITY_MATRIX_MVP, _Points[v.id]);
+				o.vertex = _Points[v.id];
 //                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 //                o.normal = v.normal;
 //                o.worldPosition = mul(unity_ObjectToWorld, v.vertex).xyz;
@@ -71,8 +73,8 @@
 		                test.color = input[0].color;
 		                float4 pos = input[0].vertex;
 			      		// 頂点座標を計算し、射影変換
-				      	test.vertex = pos + float4(float2(x, y) * 0.2, 0, 0);
-			          	//test.vertex = UnityObjectToClipPos(test.vertex.xyz);
+				      	test.vertex = pos + float4(float2(x, y) * 1, 0, 0);
+			          	test.vertex = UnityObjectToClipPos(test.vertex.xyz);
 			          	test.color = input[0].color;
 			          	// ストリームに頂点を追加
 				      	OutputStream.Append (test);

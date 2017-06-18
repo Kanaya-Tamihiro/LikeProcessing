@@ -29,6 +29,7 @@ namespace LikeProcessing.PMetaball
 			public HashSet<Core> affectedCores = new HashSet<Core>();
 			public Vector4[] points;
 			int cubeCount;
+            public ComputeBuffer computeBuffer;
 
 			void OnTriggerEnter(Collider other) {
 				if (other.gameObject.tag == PMetaball.CoreTag) {
@@ -56,14 +57,20 @@ namespace LikeProcessing.PMetaball
 				SetPoints ();
 				int detail = lattice.metaball.detail;
 				cubeCount = detail * detail * detail;
-				material.SetVectorArray ("_Points", points);
+                //material.SetVectorArray ("_Points", points);
+                computeBuffer = new ComputeBuffer(points.Length, 12);
+                computeBuffer.SetData(points);
 			}
 
-			void SetPoints ()
+            void OnDisable() {
+                computeBuffer.Release();
+            }
+
+            void SetPoints ()
 			{
 				int detail = lattice.metaball.detail;
 				float size = lattice.metaball.size;
-				Vector3 position = Vector4.zero;
+                Vector3 position = lattice.latticeLocalPosition;
 				points = new Vector4[(detail + 1) * (detail + 1) * (detail + 1)];
 				float x = -size + position.x;
 				float y = -size + position.y;
@@ -88,7 +95,8 @@ namespace LikeProcessing.PMetaball
 
 			void OnRenderObject() {
 				if (lattice.metaball.useGeometryShader == true) {
-					material.SetPass (0);
+                    material.SetBuffer("_Points", computeBuffer);
+                    material.SetPass (0);
 					Graphics.DrawProcedural (MeshTopology.Points, 20, 0);
 				}
 			}
