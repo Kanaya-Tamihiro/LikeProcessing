@@ -14,6 +14,7 @@ namespace LikeProcessing.PMetaball
 		public float isoPower = 0.4f;
 		public bool isoValuesAddictive = true;
 		public bool isHardEdge = false;
+		public bool useGeometryShader = true;
 
 		public HashSet<Lattice> shouldUpdateLattices = new HashSet<Lattice>();
 
@@ -37,7 +38,12 @@ namespace LikeProcessing.PMetaball
 			IntVector v = new IntVector (x-latticeLen,y-latticeLen,z-latticeLen);
 			Lattice lattice = new Lattice (this, v);
 			latticeDict[x,y,z] = lattice;
-            ThreadPool.QueueUserWorkItem(o => lattice.SetUpLattice());
+			if (Application.platform == RuntimePlatform.WindowsPlayer) {
+				ThreadPool.QueueUserWorkItem(o => lattice.SetUpLattice());
+			} else {
+				lattice.SetUpLattice ();
+			}
+            
 			return lattice;
 		}
 
@@ -103,7 +109,11 @@ namespace LikeProcessing.PMetaball
 			foreach (Lattice lattice in shouldUpdateLattices) {
                 if (lattice.latticeReady == true && lattice.updating == false) {
                     lattice.updating = true;
-                    ThreadPool.QueueUserWorkItem(o => lattice.Update());
+					if (Application.platform == RuntimePlatform.WindowsPlayer) {
+						ThreadPool.QueueUserWorkItem (o => lattice.Update ());
+					} else {
+						lattice.Update ();
+					}
                 }
 			}
 			//shouldUpdateLattices.Clear ();

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.VR;
+using System.Threading;
 
 namespace LikeProcessing.Examples
 {
@@ -12,6 +13,11 @@ namespace LikeProcessing.Examples
 
         void Start()
         {
+			int workMin;
+			int ioMin;
+			ThreadPool.GetMinThreads(out workMin, out ioMin);
+
+			Debug.Log("MinThreads work=" + workMin + ", i/o=" + ioMin);
             VRSettings.enabled = false;
             background(Color.black);
 //            GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Sphere);

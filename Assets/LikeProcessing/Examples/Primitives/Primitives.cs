@@ -20,8 +20,9 @@ namespace LikeProcessig.Examples {
 
 		Core dragCore;
 
+
 		void Start () {
-            //VRSettings.enabled = false;
+            VRSettings.enabled = false;
             lightObj.GetComponent<Light> ().intensity = 0.8f;
 
 //			pgeodesicDomeImproved = new PGeodesicDomeImproved(3, false);
@@ -36,7 +37,7 @@ namespace LikeProcessig.Examples {
 //			plineSimple.gameObject.GetComponent<MeshRenderer> ().material = new Material (Shader.Find("Standard"));
 
 			pmetaball = new PMetaball();
-			pmetaball.detail = 20;
+			pmetaball.detail = 4;
 			pmetaball.size = 1.0f;
 			pmetaball.isoPower = .3f;
 			pmetaball.isoValuesAddictive = true;
