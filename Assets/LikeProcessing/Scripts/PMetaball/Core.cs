@@ -11,7 +11,7 @@ namespace LikeProcessing.PMetaball
 		}
 
 		public GameObject gameObject;
-        Vector3 coreLocalPosition;
+        public Vector3 coreLocalPosition;
 		public HashSet<Lattice> affectLattices = new HashSet<Lattice> ();
 		float colliderRadius;
 		float colliderRadiusSqrt;

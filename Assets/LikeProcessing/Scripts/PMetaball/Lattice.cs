@@ -29,7 +29,7 @@ namespace LikeProcessing.PMetaball
 			public HashSet<Core> affectedCores = new HashSet<Core>();
 			public Vector4[] points;
 			int cubeCount;
-            public ComputeBuffer computeBuffer;
+//            public ComputeBuffer computeBuffer;
 
 			void OnTriggerEnter(Collider other) {
 				if (other.gameObject.tag == PMetaball.CoreTag) {
@@ -54,17 +54,22 @@ namespace LikeProcessing.PMetaball
 			void Start () {
 				material = new Material(Shader.Find("LikeProcessing/GeometryMetaballShader"));
 				//commandBuffer = new CommandBuffer ();
-				SetPoints ();
+//				SetPoints ();
 				int detail = lattice.metaball.detail;
 				cubeCount = detail * detail * detail;
-                //material.SetVectorArray ("_Points", points);
-                computeBuffer = new ComputeBuffer(points.Length, 12);
-                computeBuffer.SetData(points);
+//                material.SetVectorArray ("_Points", points);
+//                computeBuffer = new ComputeBuffer(points.Length, 12);
+//                computeBuffer.SetData(points);
+				material.SetInt("detail", lattice.metaball.detail);
+				float size = lattice.metaball.size;
+				float delta = (size * 2) / detail;
+				material.SetFloat ("deltaLen", delta);
+				material.SetFloat ("size", size);
 			}
 
-            void OnDisable() {
-                computeBuffer.Release();
-            }
+//            void OnDisable() {
+//                computeBuffer.Release();
+//            }
 
             void SetPoints ()
 			{
@@ -95,9 +100,20 @@ namespace LikeProcessing.PMetaball
 
 			void OnRenderObject() {
 				if (lattice.metaball.useGeometryShader == true) {
-                    material.SetBuffer("_Points", computeBuffer);
+//                    material.SetBuffer("_Points", computeBuffer);
+//					material.SetFloatArray("_Points", points);
+					material.SetVector("latticeWorldPosition", gameObject.transform.localPosition);
+					Vector4[] coreLocs = new Vector4[affectedCores.Count];
+					int index = 0;
+					foreach (Core core in affectedCores) {
+						coreLocs [index] = core.coreLocalPosition;
+					}
+					if (index > 0) {
+						material.SetVectorArray ("_Cores", coreLocs);	
+					}
+					material.SetInt ("_CoreCount", coreLocs.Length);
                     material.SetPass (0);
-					Graphics.DrawProcedural (MeshTopology.Points, 20, 0);
+					Graphics.DrawProcedural (MeshTopology.Points, cubeCount, 0);
 				}
 			}
 		}
@@ -150,7 +166,7 @@ namespace LikeProcessing.PMetaball
 			SetCube ();
             //			DrawPoints ();
             //			DrawEdges ();
-            DrawEdge2();
+//            DrawEdge2();
             //			DrawCubes ();
             latticeReady = true;
         }
