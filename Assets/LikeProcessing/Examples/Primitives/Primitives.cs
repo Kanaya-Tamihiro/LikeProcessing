@@ -37,7 +37,7 @@ namespace LikeProcessig.Examples {
 //			plineSimple.gameObject.GetComponent<MeshRenderer> ().material = new Material (Shader.Find("Standard"));
 
 			pmetaball = new PMetaball();
-			pmetaball.detail = 20;
+			pmetaball.detail = 6;
 			pmetaball.size = 1.0f;
 			pmetaball.isoPower = .3f;
 			pmetaball.isoValuesAddictive = true;
@@ -72,16 +72,16 @@ namespace LikeProcessig.Examples {
 
 		void Update() {
 
-            if (Input.GetMouseButtonDown(1))
-            {
-                RaycastHit hit;
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-                if (Physics.Raycast(ray, out hit))
-                {
-                    dragCore = hit.collider.gameObject.GetComponent<Core.CoreMono>().core;
-                }
-            }
+//            if (Input.GetMouseButtonDown(1))
+//            {
+//                RaycastHit hit;
+//                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+//
+//                if (Physics.Raycast(ray, out hit))
+//                {
+//                    dragCore = hit.collider.gameObject.GetComponent<Core.CoreMono>().core;
+//                }
+//            }
 
             if (Input.GetMouseButtonUp(1))
             {

@@ -113,7 +113,7 @@ namespace LikeProcessing.PMetaball
 					}
 					material.SetInt ("_CoreCount", coreLocs.Length);
                     material.SetPass (0);
-					Graphics.DrawProcedural (MeshTopology.Points, cubeCount, 0);
+					Graphics.DrawProcedural (MeshTopology.Points, cubeCount * 6, 0);
 				}
 			}
 		}
@@ -166,7 +166,7 @@ namespace LikeProcessing.PMetaball
 			SetCube ();
             //			DrawPoints ();
             //			DrawEdges ();
-//            DrawEdge2();
+            DrawEdge2();
             //			DrawCubes ();
             latticeReady = true;
         }
