@@ -11,8 +11,8 @@
         LOD 100
  
         Pass
-        {
-            CGPROGRAM
+		{
+	        CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
             #pragma geometry geom
@@ -32,9 +32,7 @@
                 float4 vertex : SV_POSITION;
 //                float3 normal : NORMAL;
 //                float2 uv : TEXCOORD0;
-//                float3 worldPosition : TEXCOORD1;
                 float4 color : COLOR;
-                uint vertexIdPassed : SV_InstanceID;
             };
  
             sampler2D _MainTex;
@@ -49,21 +47,9 @@
             float4 _Cores[50];
             int _CoreCount;
 
-//            float4 _Points[1000];
-//			StructuredBuffer<float4> _Points;
-
             v2f vert (appdata v)
             {
                 v2f o = (v2f)0;
-//                o.vertex = UnityObjectToClipPos(v.vertex);
-				o.vertex = float4(0, 0, 0, 1);
-				//o.vertex = mul(UNITY_MATRIX_MVP, _Points[v.id]);
-//				o.vertex = _Points[v.id];
-//                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-//                o.normal = v.normal;
-//                o.worldPosition = mul(unity_ObjectToWorld, v.vertex).xyz;
-                o.color = _Color;
-                o.vertexIdPassed = v.id;
                 return o;
             }
 
@@ -73,13 +59,6 @@
             	float3 normal;
             };
 
-//            struct Edge {
-//            	Point p1;
-//            	Point p2;
-//            	float3 intersection;
-//            	float3 intersectionNormal;
-//            };
-
 			struct Triangle {
 				float3 vertices[3];
 			};
@@ -88,7 +67,9 @@
 	            //float result = new float[4];
 				//Vector3 position = coreLocalPosition;
 				//float sqrMagnitude = (p.loc - position).sqrMagnitude;
-				float sqrMagnitude = dot(p, core);
+				float3 _core = float3(core.x, core.y, core.z);
+				float3 v = p - _core;
+				float sqrMagnitude = dot(v, v);
 				float result = max(1.0 - (sqrMagnitude / 1.0), 0);
 	//			Debug.Log (result[0]);
 //				Vector3 normal = Vector3.zero;
@@ -132,7 +113,7 @@
 				}
 				float3 intersection;
 				if (abs (p1.isoValue - p2.isoValue) > 0.00001) {
-					intersection = p1.loc + (p2.loc - p1.loc) / (p2.isoValue - p1.isoValue) * (isoLevel - p1.isoValue);
+					intersection = p1.loc + ((p2.loc - p1.loc) / (p2.isoValue - p1.isoValue)) * (isoLevel - p1.isoValue);
 					//intersectionNormal = p1.normal + (p2.normal - p1.normal) / (p2.isoValue - p1.isoValue) * (isoLevel - p1.isoValue);
 				} else {
 					intersection = p1.loc;
@@ -143,11 +124,10 @@
 
 
  
-            [maxvertexcount(10)]
-            void geom(point v2f input[1], inout TriangleStream<v2f> OutputStream)
+            [maxvertexcount(12)]
+            void geom(point v2f input[1], uint primitiveId : SV_PrimitiveID, inout TriangleStream<v2f> OutputStream)
             {
-            	int cubeIndex = input[0].vertexIdPassed / 6;
-            	int tetrahedronIndex = input[0].vertexIdPassed % 6;
+				int cubeIndex = primitiveId & 0xffff;
             	int z = cubeIndex / (detail * detail);
             	int y = (cubeIndex % (detail * detail)) / detail;
             	int x = (cubeIndex % (detail * detail)) % detail;
@@ -157,15 +137,7 @@
             		-size + y*deltaLen + latticeWorldPosition.y,
             		-size + z*deltaLen + latticeWorldPosition.z);
 
-            	Point px1 = (Point)0;
-            	Point px2 = (Point)0;
-            	Point px3 = (Point)0;
-            	Point px4 = (Point)0;
-            	Point px5 = (Point)0;
-            	Point px6 = (Point)0;
-            	Point px7 = (Point)0;
-            	Point px8 = (Point)0;
-            	Point cubePoints[8] = {px1, px2, px3, px4, px5, px6, px7, px8};
+            	Point cubePoints[8] = {(Point)0, (Point)0, (Point)0, (Point)0, (Point)0, (Point)0, (Point)0, (Point)0};
 
             	cubePoints[0].loc = leftDown + float3(0, 0, deltaLen);	//left front down
             	cubePoints[1].loc = leftDown + float3(deltaLen, 0, deltaLen);	//right front down
@@ -185,305 +157,244 @@
             		{5, 6, 1, 4}
             	};
 
-            	Point points[4] = {px1, px2, px3, px4};
-
-            	for (int i=0; i<4; i++) {
-            		points[i] = cubePoints[pointTable[tetrahedronIndex][i]];
-            	}
-
-//            	Edge edgex1 = (Edge)0;
-//            	Edge edgex2 = (Edge)0;
-//            	Edge edgex3 = (Edge)0;
-//            	Edge edgex4 = (Edge)0;
-//            	Edge edgex5 = (Edge)0;
-//            	Edge edgex6 = (Edge)0;
-////            	Edge edgex7 = (Edge)0;
-////            	Edge edgex8 = (Edge)0;
-////            	Edge edgex9 = (Edge)0;
-////            	Edge edgex10 = (Edge)0;
-////            	Edge edgex11 = (Edge)0;
-////            	Edge edgex12 = (Edge)0;
-//            	//Edge edges[12] = {edgex1, edgex2, edgex3, edgex4, edgex5, edgex6, edgex7, edgex8, edgex9, edgex10, edgex11, edgex12};
-//            	Edge edges[6] = {edgex1, edgex2, edgex3, edgex4, edgex5, edgex6};
-//
-//
-//
-//            	edges[0].p1 = points[0]; edges[0].p2 = points[1];
-//            	edges[1].p1 = points[1]; edges[1].p2 = points[2];
-//            	edges[2].p1 = points[3]; edges[2].p2 = points[2];
-//            	edges[3].p1 = points[0]; edges[3].p2 = points[3];
-//            	edges[4].p1 = points[4]; edges[4].p2 = points[5];
-//            	edges[5].p1 = points[5]; edges[5].p2 = points[6];
-//            	edges[6].p1 = points[7]; edges[6].p2 = points[6];
-//            	edges[7].p1 = points[4]; edges[7].p2 = points[7];
-//            	edges[8].p1 = points[0]; edges[8].p2 = points[4];
-//            	edges[9].p1 = points[1]; edges[8].p2 = points[5];
-//            	edges[10].p1 = points[2]; edges[10].p2 = points[6];
-//            	edges[11].p1 = points[3]; edges[11].p2 = points[7];
-
-            	for (int i=0; i<4; i++) {
-            		Point p = points[i];
+            	for (int i=0; i<8; i++) {
+            		Point p = cubePoints[i];
             		for (int j=0; j<_CoreCount; j++) {
             			p.isoValue += culcIsoValue(p.loc, _Cores[j]);
             		}
-            		points[i] = p;
+            		cubePoints[i] = p;
             	}
 
-            	float isoLevel = 0.15;
-            	int triIndex = 0;
-				if (points[0].isoValue > isoLevel)
-					triIndex |= 1;
-				if (points [1].isoValue > isoLevel)
-					triIndex |= 2;
-				if (points [2].isoValue > isoLevel)
-					triIndex |= 4;
-				if (points [3].isoValue > isoLevel)
-					triIndex |= 8;
-//				if (points [4].isoValue > isoLevel)
-//					cubeIndex |= 16;
-//				if (points [5].isoValue > isoLevel)
-//					cubeIndex |= 32;
-//				if (points [6].isoValue > isoLevel)
-//					cubeIndex |= 64;
-//				if (points [7].isoValue > isoLevel)
-//					cubeIndex |= 128;
-				//cube.CulcIntersections (isoLevel);
+//            	float len = deltaLen / 1.0;
+//				v2f test = (v2f)0;
+//            	test.vertex = UnityObjectToClipPos(leftDown);
+//            	OutputStream.Append (test);
+//            	test.vertex = UnityObjectToClipPos(leftDown + float4(0, len, 0, 0));
+//            	OutputStream.Append (test);
+//            	test.vertex = UnityObjectToClipPos(leftDown + float4(len, len, 0, 0));
+//            	OutputStream.Append (test);
+//		      	OutputStream.RestartStrip();
+//		      	test.vertex = UnityObjectToClipPos(leftDown + float4(len, len, 0, 0));
+//            	OutputStream.Append (test);
+//            	test.vertex = UnityObjectToClipPos(leftDown + float4(len, 0, 0, 0));
+//            	OutputStream.Append (test);
+//            	test.vertex = UnityObjectToClipPos(leftDown);
+//            	OutputStream.Append (test);
+//            	OutputStream.RestartStrip();
 
-//				Triangle trix1 = (Triangle)0;
-//				Triangle trix2 = (Triangle)0;
-				Triangle triangles[2] = {(Triangle)0, (Triangle)0};
-				int nTriangle = 0;
-				switch (triIndex) {
-				   case 0x00:
-				   case 0x0F:
-				      break;
-				   case 0x0E:
-				   case 0x01:
-				      triangles[0].vertices[0] = LinearInterpolation(isoLevel, points[0], points[1]);
-				      triangles[0].vertices[1] = LinearInterpolation(isoLevel, points[0], points[2]);
-				      triangles[0].vertices[2] = LinearInterpolation(isoLevel, points[0], points[3]);
-				      nTriangle++;
-				      break;
-				   case 0x0D:
-				   case 0x02:
-				      triangles[0].vertices[0] = LinearInterpolation(isoLevel, points[1], points[0]);
-				      triangles[0].vertices[1] = LinearInterpolation(isoLevel, points[1], points[3]);
-				      triangles[0].vertices[2] = LinearInterpolation(isoLevel, points[1], points[2]);
-				      nTriangle++;
-				      break;
-				   case 0x0C:
-				   case 0x03:
-				      triangles[0].vertices[0] = LinearInterpolation(isoLevel, points[0], points[3]);
-				      triangles[0].vertices[1] = LinearInterpolation(isoLevel, points[0], points[2]);
-				      triangles[0].vertices[2] = LinearInterpolation(isoLevel, points[1], points[3]);
-				      nTriangle++;
-				      triangles[1].vertices[0] = triangles[0].vertices[2];
-				      triangles[1].vertices[1] = LinearInterpolation(isoLevel, points[1], points[2]);
-				      triangles[1].vertices[2] = triangles[0].vertices[1];
-				      nTriangle++;
-				      break;
-				   case 0x0B:
-				   case 0x04:
-				      triangles[0].vertices[0] = LinearInterpolation(isoLevel, points[2], points[0]);
-				      triangles[0].vertices[1] = LinearInterpolation(isoLevel, points[2], points[1]);
-				      triangles[0].vertices[2] = LinearInterpolation(isoLevel, points[2], points[3]);
-				      nTriangle++;
-				      break;
-				   case 0x0A:
-				   case 0x05:
-				      triangles[0].vertices[0] = LinearInterpolation(isoLevel, points[0], points[1]);
-				      triangles[0].vertices[1] = LinearInterpolation(isoLevel, points[2], points[3]);
-				      triangles[0].vertices[2] = LinearInterpolation(isoLevel, points[0], points[3]);
-				      nTriangle++;
-				      triangles[1].vertices[0] = triangles[0].vertices[0];
-				      triangles[1].vertices[1] = LinearInterpolation(isoLevel, points[1], points[2]);
-				      triangles[1].vertices[2] = triangles[0].vertices[1];
-				      nTriangle++;
-				      break;
-				   case 0x09:
-				   case 0x06:
-				      triangles[0].vertices[0] = LinearInterpolation(isoLevel, points[0], points[1]);
-				      triangles[0].vertices[1] = LinearInterpolation(isoLevel, points[1], points[3]);
-				      triangles[0].vertices[2] = LinearInterpolation(isoLevel, points[2], points[3]);
-				      nTriangle++;
-				      triangles[1].vertices[0] = triangles[0].vertices[0];
-				      triangles[1].vertices[1] = LinearInterpolation(isoLevel, points[0], points[2]);
-				      triangles[1].vertices[2] = triangles[0].vertices[2];
-				      nTriangle++;
-				      break;
-				   case 0x07:
-				   case 0x08:
-				      triangles[0].vertices[0] = LinearInterpolation(isoLevel, points[3], points[0]);
-				      triangles[0].vertices[1] = LinearInterpolation(isoLevel, points[3], points[2]);
-				      triangles[0].vertices[2] = LinearInterpolation(isoLevel, points[3], points[1]);
-				      nTriangle++;
-				      break;
-				   }
+            	for (int tetraIndex=0; tetraIndex<6; tetraIndex++) {
+	            	Point points[4] = {(Point)0, (Point)0, (Point)0, (Point)0};
+	            	for (int j=0; j<4; j++) {
+	            		points[j] = cubePoints[pointTable[tetraIndex][j]];
+	            	}
 
+          			float isoLevel = 0.15;
+	            	int triIndex = 0;
+					if (points[0].isoValue > isoLevel)
+						triIndex |= 1;
+					if (points [1].isoValue > isoLevel)
+						triIndex |= 2;
+					if (points [2].isoValue > isoLevel)
+						triIndex |= 4;
+					if (points [3].isoValue > isoLevel)
+						triIndex |= 8;
 
-//				int edgeFlags = edgeTable [cubeIndex];
-//				if ((edgeFlags & 1) > 0) {
-//					edges[0].intersection = LinearInterpolation(edges [0], isoLevel);
-//				}
-//				if ((edgeFlags & 2) > 0) {
-//					edges[1].intersection = LinearInterpolation(edges [1], isoLevel);
-//				}
-//				if ((edgeFlags & 4) > 0) {
-//					edges[2].intersection = LinearInterpolation(edges [2], isoLevel);
-//				}
-//				if ((edgeFlags & 0x8) > 0) {
-//					edges[3].intersection = LinearInterpolation(edges [3], isoLevel);
-//				}
-//				if ((edgeFlags & 0x10) > 0) {
-//					edges[4].intersection = LinearInterpolation(edges [4], isoLevel);
-//				}
-//				if ((edgeFlags & 0x20) > 0) {
-//					edges[5].intersection = LinearInterpolation(edges [5], isoLevel);
-//				}
-//				if ((edgeFlags & 0x40) > 0) {
-//					edges[6].intersection = LinearInterpolation(edges [6], isoLevel);
-//				}
-//				if ((edgeFlags & 0x80) > 0) {
-//					edges[7].intersection = LinearInterpolation(edges [7], isoLevel);
-//				}
-//				if ((edgeFlags & 0x100) > 0) {
-//					edges[8].intersection = LinearInterpolation(edges [8], isoLevel);
-//				}
-//				if ((edgeFlags & 0x200) > 0) {
-//					edges[9].intersection = LinearInterpolation(edges [9], isoLevel);
-//				}
-//				if ((edgeFlags & 0x400) > 0) {
-//					edges[10].intersection = LinearInterpolation(edges [10], isoLevel);
-//				}
-//				if ((edgeFlags & 0x800) > 0) {
-//					edges[11].intersection = LinearInterpolation(edges [11], isoLevel);
-//				}
+					Triangle triangles[2] = {(Triangle)0, (Triangle)0};
+					int nTriangle = 0;
+					switch (triIndex) {
+					   case 0x00:
+					   case 0x0F:
+					      break;
+					   case 0x0E:
+					   case 0x01:
+					      triangles[0].vertices[0] = LinearInterpolation(isoLevel, points[0], points[1]);
+					      triangles[0].vertices[1] = LinearInterpolation(isoLevel, points[0], points[2]);
+					      triangles[0].vertices[2] = LinearInterpolation(isoLevel, points[0], points[3]);
+					      nTriangle++;
+					      break;
+					   case 0x0D:
+					   case 0x02:
+					      triangles[0].vertices[0] = LinearInterpolation(isoLevel, points[1], points[0]);
+					      triangles[0].vertices[1] = LinearInterpolation(isoLevel, points[1], points[3]);
+					      triangles[0].vertices[2] = LinearInterpolation(isoLevel, points[1], points[2]);
+					      nTriangle++;
+					      break;
+					   case 0x0C:
+					   case 0x03:
+					      triangles[0].vertices[0] = LinearInterpolation(isoLevel, points[0], points[3]);
+					      triangles[0].vertices[1] = LinearInterpolation(isoLevel, points[0], points[2]);
+					      triangles[0].vertices[2] = LinearInterpolation(isoLevel, points[1], points[3]);
+					      nTriangle++;
+					      triangles[1].vertices[0] = triangles[0].vertices[2];
+					      triangles[1].vertices[1] = LinearInterpolation(isoLevel, points[1], points[2]);
+					      triangles[1].vertices[2] = triangles[0].vertices[1];
+					      nTriangle++;
+					      break;
+					   case 0x0B:
+					   case 0x04:
+					      triangles[0].vertices[0] = LinearInterpolation(isoLevel, points[2], points[0]);
+					      triangles[0].vertices[1] = LinearInterpolation(isoLevel, points[2], points[1]);
+					      triangles[0].vertices[2] = LinearInterpolation(isoLevel, points[2], points[3]);
+					      nTriangle++;
+					      break;
+					   case 0x0A:
+					   case 0x05:
+					      triangles[0].vertices[0] = LinearInterpolation(isoLevel, points[0], points[1]);
+					      triangles[0].vertices[1] = LinearInterpolation(isoLevel, points[2], points[3]);
+					      triangles[0].vertices[2] = LinearInterpolation(isoLevel, points[0], points[3]);
+					      nTriangle++;
+					      triangles[1].vertices[0] = triangles[0].vertices[0];
+					      triangles[1].vertices[1] = LinearInterpolation(isoLevel, points[1], points[2]);
+					      triangles[1].vertices[2] = triangles[0].vertices[1];
+					      nTriangle++;
+					      break;
+					   case 0x09:
+					   case 0x06:
+					      triangles[0].vertices[0] = LinearInterpolation(isoLevel, points[0], points[1]);
+					      triangles[0].vertices[1] = LinearInterpolation(isoLevel, points[1], points[3]);
+					      triangles[0].vertices[2] = LinearInterpolation(isoLevel, points[2], points[3]);
+					      nTriangle++;
+					      triangles[1].vertices[0] = triangles[0].vertices[0];
+					      triangles[1].vertices[1] = LinearInterpolation(isoLevel, points[0], points[2]);
+					      triangles[1].vertices[2] = triangles[0].vertices[2];
+					      nTriangle++;
+					      break;
+					   case 0x07:
+					   case 0x08:
+					      triangles[0].vertices[0] = LinearInterpolation(isoLevel, points[3], points[0]);
+					      triangles[0].vertices[1] = LinearInterpolation(isoLevel, points[3], points[2]);
+					      triangles[0].vertices[2] = LinearInterpolation(isoLevel, points[3], points[1]);
+					      nTriangle++;
+					      break;
+					}
 
-				v2f test = (v2f)0;
-//            	test.color = input[0].color;
-//				cubeIndex = 100;
-            	test.color = float4(cubeIndex/256.0, cubeIndex/256.0, cubeIndex/256.0, 1);
-//				test.color = float4(nTriangle / 3.0, nTriangle / 3.0, nTriangle / 3.0, 1);
-//				float cc = cubeIndex / (detail * detail * 1.0);
-				float cc = tetrahedronIndex / 6.0;
-				test.color = float4(cc, cc, cc, 1);
+				    v2f test = (v2f)0;
+				    float c = triIndex / 15.0;
+				    test.color = float4(c,c,c,c);
+//		               for (int i=0; i<nTriangle; i++) {
+//		            		Triangle tri = triangles[i];
+//		            		test.vertex = UnityObjectToClipPos(float4(0,1,tetraIndex,1));
+//		            		OutputStream.Append (test);
+//		            		test.vertex = UnityObjectToClipPos(float4(1,-1,tetraIndex,1));
+//		            		OutputStream.Append (test);
+//		            		test.vertex = UnityObjectToClipPos(float4(-1,0,tetraIndex,1));
+//		            		OutputStream.Append (test);
+//		            		OutputStream.RestartStrip();
+//		               }
+//					for (int i=0; i<nTriangle; i++) {
+//						Triangle tri = triangles[i];
+//						test.vertex = UnityObjectToClipPos(float4(0,1,tetraIndex,1));
+//						OutputStream.Append (test);
+//						test.vertex = UnityObjectToClipPos(float4(1,-1,tetraIndex,1));
+//						OutputStream.Append (test);
+//						test.vertex = UnityObjectToClipPos(float4(-1,0,tetraIndex,1));
+//						OutputStream.Append (test);
+//						OutputStream.RestartStrip();
+//					}
+					for (int i=0; i<nTriangle; i++) {
+	            		Triangle tri = triangles[i];
+	            		test.vertex = UnityObjectToClipPos(tri.vertices[2]);
+	            		OutputStream.Append (test);
+	            		test.vertex = UnityObjectToClipPos(tri.vertices[1]);
+	            		OutputStream.Append (test);
+	            		test.vertex = UnityObjectToClipPos(tri.vertices[0]);
+	            		OutputStream.Append (test);
+	            		OutputStream.RestartStrip();
+            		}
+//					c = float4(1,1,1,1);
+//					test.color = c;
+//					for (int i=0; i<1; i++) {
+//	            		Triangle tri = triangles[i];
+//	            		test.vertex = UnityObjectToClipPos(cubePoints[7].loc);
+//	            		OutputStream.Append (test);
+//	            		test.vertex = UnityObjectToClipPos(cubePoints[6].loc);
+//	            		OutputStream.Append (test);
+//	            		test.vertex = UnityObjectToClipPos(cubePoints[3].loc);
+//	            		OutputStream.Append (test);
+//	            		OutputStream.RestartStrip();
 
-            	for (int i=0; i<nTriangle; i++) {
-            		Triangle tri = triangles[i];
-            		test.vertex = UnityObjectToClipPos(tri.vertices[2]);
-            		OutputStream.Append (test);
-            		test.vertex = UnityObjectToClipPos(tri.vertices[1]);
-            		OutputStream.Append (test);
-            		test.vertex = UnityObjectToClipPos(tri.vertices[0]);
-            		OutputStream.Append (test);
-            		OutputStream.RestartStrip();
-            	}
+//	            		Triangle tri = triangles[i];
+//	            		test.vertex = UnityObjectToClipPos(points[0].loc);
+//	            		OutputStream.Append (test);
+//	            		test.vertex = UnityObjectToClipPos(points[1].loc);
+//	            		OutputStream.Append (test);
+//	            		test.vertex = UnityObjectToClipPos(points[2].loc);
+//	            		OutputStream.Append (test);
+//	            		OutputStream.RestartStrip();
 
-//				int ii = 0;
-////				cubeIndex = 3;
-//				int table[16];
-//				if (cubeIndex >= 100)
-//					table = triTable2[cubeIndex-100];
-//				else
-//					table = triTable[cubeIndex];
-//				while (table[ii] != -1) {
-//					Edge edge1 = edges [triTable [cubeIndex][ii + 2]];
-//					Edge edge2 = edges [triTable [cubeIndex][ii + 1]];
-//					Edge edge3 = edges [triTable [cubeIndex][ii + 0]];
-//					test.vertex = UnityObjectToClipPos(edge1.intersection);
-//					OutputStream.Append (test);
-//					test.vertex = UnityObjectToClipPos(edge2.intersection);
-//					OutputStream.Append (test);
-//					test.vertex = UnityObjectToClipPos(edge3.intersection);
-//					OutputStream.Append (test);
-////					vertices [index + i] = edge1.intersection;
-//					OutputStream.RestartStrip();
-////					vertices [index + i + 1] = edge2.intersection;
-////					vertices [index + i + 2] = edge3.intersection;
-////					normals [index + i] = edge1.intersectionNormal;
-////					normals [index + i + 1] = edge2.intersectionNormal;
-////					normals [index + i + 2] = edge3.intersectionNormal;
-////					edge1.hasIntersection = false;
-////					edge2.hasIntersection = false;
-////					edge3.hasIntersection = false;
-//	//				triangleIndexList.Add (edges [PMetaball.triTable [cubeIndex, i + 2]].triangleIndex );
-//	//				triangleIndexList.Add (edges [PMetaball.triTable [cubeIndex, i + 1]].triangleIndex );
-//	//				triangleIndexList.Add (edges [PMetaball.triTable [cubeIndex, i + 0]].triangleIndex );
-//					ii += 3;
-//				}
+//	            		c = float4(0.5,0.5,0.5,1);
+//	            		test.color = c;
+//	            		test.vertex = UnityObjectToClipPos(cubePoints[0].loc);
+//	            		OutputStream.Append (test);
+//	            		test.vertex = UnityObjectToClipPos(cubePoints[5].loc);
+//	            		OutputStream.Append (test);
+//	            		test.vertex = UnityObjectToClipPos(cubePoints[1].loc);
+//	            		OutputStream.Append (test);
+//	            		OutputStream.RestartStrip();
+//            		}
+				}
 
-////            	v2f test = (v2f)0;
-////            	test.color = input[0].color;
-				float len = deltaLen / 3.0;
-            	test.vertex = UnityObjectToClipPos(leftDown);
-            	OutputStream.Append (test);
-            	test.vertex = UnityObjectToClipPos(leftDown + float4(0, len, 0, 0));
-            	OutputStream.Append (test);
-            	test.vertex = UnityObjectToClipPos(leftDown + float4(len, len, 0, 0));
-            	OutputStream.Append (test);
-		      	OutputStream.RestartStrip();
-		      	test.vertex = UnityObjectToClipPos(leftDown + float4(len, len, 0, 0));
-            	OutputStream.Append (test);
-            	test.vertex = UnityObjectToClipPos(leftDown + float4(len, 0, 0, 0));
-            	OutputStream.Append (test);
-            	test.vertex = UnityObjectToClipPos(leftDown);
-            	OutputStream.Append (test);
-            	OutputStream.RestartStrip();
-                // 四角形になるように頂点を生産
-//		      	for(int x = 0; x < 2; x++)
-//		      	{
-//			      	for(int y = 0; y < 2; y++)
-//			      	{
-//				      	v2f test = (v2f)0;
-//		                test.color = input[0].color;
-//		                float4 pos = input[0].vertex;
-//			      		// 頂点座標を計算し、射影変換
-//				      	test.vertex = pos + float4(float2(x, y) * 0.2, 0, 0);
-//			          	test.vertex = UnityObjectToClipPos(test.vertex.xyz);
-//			          	test.color = input[0].color;
-//			          	// ストリームに頂点を追加
-//				      	OutputStream.Append (test);
-//			      	}
-//		      	}
-//				test.vertex = pos + float4(0.1,0,0,0);
-//				test.vertex = mul (UNITY_MATRIX_VP, test.vertex);
-//				OutputStream.Append (test);
-//				test.vertex = pos + float4(-0.1,0,0,0);
-//				test.vertex = mul (UNITY_MATRIX_VP, test.vertex);
-//				OutputStream.Append (test);
-//				test.vertex = pos + float4(0,-0.1,0,0);
-//				test.vertex = mul (UNITY_MATRIX_VP, test.vertex);
-//				OutputStream.Append (test);
-		      	
-		      	// トライアングルストリップを終了
+            	//				    v2f hoge = (v2f)0;
+//				    hoge.color = float4(1,1,1,1);
+//	                if (tetraIndex == 0) {
+//	                	hoge.color = float4(0,0,0,0);
+//	                	hoge.vertex = UnityObjectToClipPos(points[0].loc);
+//	            		OutputStream.Append (hoge);
+//	            		hoge.color = float4(1,1,1,1);
+//	            		hoge.vertex = UnityObjectToClipPos(points[1].loc);
+//	            		OutputStream.Append (hoge);
+//	            		hoge.color = float4(1,1,1,1);
+//	            		hoge.vertex = UnityObjectToClipPos(points[2].loc);
+//	            		OutputStream.Append (hoge);
+//	            		OutputStream.RestartStrip();
+//
+//	            		hoge.color = float4(0,0,0,0);
+//	            		hoge.vertex = UnityObjectToClipPos(points[0].loc);
+//	            		OutputStream.Append (hoge);
+//	            		hoge.color = float4(1,1,1,1);
+//	            		hoge.vertex = UnityObjectToClipPos(points[2].loc);
+//	            		OutputStream.Append (hoge);
+//	            		hoge.color = float4(1,1,1,1);
+//	            		hoge.vertex = UnityObjectToClipPos(points[3].loc);
+//	            		OutputStream.Append (hoge);
+//	            		OutputStream.RestartStrip();
+//
+//	            		hoge.color = float4(0,0,0,0);
+//	            		hoge.vertex = UnityObjectToClipPos(points[0].loc);
+//	            		OutputStream.Append (hoge);
+//	            		hoge.color = float4(1,1,1,1);
+//	            		hoge.vertex = UnityObjectToClipPos(points[3].loc);
+//	            		OutputStream.Append (hoge);
+//	            		hoge.color = float4(1,1,1,1);
+//	            		hoge.vertex = UnityObjectToClipPos(points[1].loc);
+//	            		OutputStream.Append (hoge);
+//	            		OutputStream.RestartStrip();
+//
+//	            		hoge.color = float4(1,1,1,1);
+//	            		hoge.vertex = UnityObjectToClipPos(points[1].loc);
+//	            		OutputStream.Append (hoge);
+//	            		hoge.color = float4(1,1,1,1);
+//	            		hoge.vertex = UnityObjectToClipPos(points[2].loc);
+//	            		OutputStream.Append (hoge);
+//	            		hoge.color = float4(1,1,1,1);
+//	            		hoge.vertex = UnityObjectToClipPos(points[3].loc);
+//	            		OutputStream.Append (hoge);
+//	            		OutputStream.RestartStrip();
+//            		}
 
 
-//                float3 normal = normalize(cross(input[1].worldPosition.xyz - input[0].worldPosition.xyz, input[2].worldPosition.xyz - input[0].worldPosition.xyz));
-//                for(int i = 0; i < 3; i++)
-//                {
-//                    test.normal = normal;
-//                    test.vertex = input[i].vertex;
-//                    test.uv = input[i].uv;
-//                    OutputStream.Append(test);
-//                }
-            }
+				
+			}
            
             fixed4 frag (v2f i) : SV_Target
             {
-                // sample the texture
-//                fixed4 col = tex2D(_MainTex, i.uv);
-// 
-//                float3 lightDir = float3(1, 1, 0);
-//                float ndotl = dot(i.normal, normalize(lightDir));
-// 
-//                return col * ndotl;
-				//return float4(i.vertex.rg * 0.001, 0, 1);
 //				float4 col = float4(1,1,1,1);
-				return i.color;
 //				return col;
-           }
+				return i.color;
 
-           ENDCG
+			}
+
+			ENDCG
         }
     }
 }

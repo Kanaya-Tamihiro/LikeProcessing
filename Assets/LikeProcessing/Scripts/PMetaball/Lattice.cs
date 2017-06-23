@@ -103,17 +103,19 @@ namespace LikeProcessing.PMetaball
 //                    material.SetBuffer("_Points", computeBuffer);
 //					material.SetFloatArray("_Points", points);
 					material.SetVector("latticeWorldPosition", gameObject.transform.localPosition);
-					Vector4[] coreLocs = new Vector4[affectedCores.Count];
+					Vector4[] coreLocs = new Vector4[50];
 					int index = 0;
 					foreach (Core core in affectedCores) {
 						coreLocs [index] = core.coreLocalPosition;
+						index++;
 					}
 					if (index > 0) {
-						material.SetVectorArray ("_Cores", coreLocs);	
+						material.SetVectorArray ("_Cores", coreLocs);
+//						Debug.Log (PUtil.VerticesToString(coreLocs));
 					}
 					material.SetInt ("_CoreCount", coreLocs.Length);
                     material.SetPass (0);
-					Graphics.DrawProcedural (MeshTopology.Points, cubeCount * 6, 0);
+					Graphics.DrawProcedural (MeshTopology.Points, cubeCount, 0);
 				}
 			}
 		}
@@ -165,8 +167,8 @@ namespace LikeProcessing.PMetaball
 			SetEdge ();
 			SetCube ();
             //			DrawPoints ();
-            //			DrawEdges ();
-            DrawEdge2();
+            //DrawEdges ();
+//            DrawEdge2();
             //			DrawCubes ();
             latticeReady = true;
         }
