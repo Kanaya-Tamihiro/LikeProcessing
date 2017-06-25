@@ -119,7 +119,7 @@ namespace LikeProcessing.PMetaball
 //						Debug.Log(index);
 						material.SetInt ("_CoreCount", index);
 						material.SetPass (0);
-						Graphics.DrawProcedural (MeshTopology.Points, cubeCount, 0);
+						Graphics.DrawProcedural (MeshTopology.Points, cubeCount * 6, 0);
 					}
 
 				}
