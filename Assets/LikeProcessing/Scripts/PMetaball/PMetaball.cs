@@ -71,13 +71,13 @@ namespace LikeProcessing.PMetaball
 			int dx = position.x > latticePosition.x ? 1 : -1;
 			int dy = position.y > latticePosition.y ? 1 : -1;
 			int dz = position.z > latticePosition.z ? 1 : -1;
-			AddLatticeIfNone (x + dx, y, z, core);
-			AddLatticeIfNone (x, y + dy, z, core);
-			AddLatticeIfNone (x, y, z + dz, core);
-			AddLatticeIfNone (x + dx, y + dy, z, core);
-			AddLatticeIfNone (x, y + dy, z + dz, core);
-			AddLatticeIfNone (x + dx, y, z + dz, core);
-			AddLatticeIfNone (x + dx, y + dy, z + dz, core);
+//			AddLatticeIfNone (x + dx, y, z, core);
+//			AddLatticeIfNone (x, y + dy, z, core);
+//			AddLatticeIfNone (x, y, z + dz, core);
+//			AddLatticeIfNone (x + dx, y + dy, z, core);
+//			AddLatticeIfNone (x, y + dy, z + dz, core);
+//			AddLatticeIfNone (x + dx, y, z + dz, core);
+//			AddLatticeIfNone (x + dx, y + dy, z + dz, core);
 			cores.Add (core);
 		}
 

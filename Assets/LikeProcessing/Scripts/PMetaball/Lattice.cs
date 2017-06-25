@@ -109,13 +109,19 @@ namespace LikeProcessing.PMetaball
 						coreLocs [index] = core.coreLocalPosition;
 						index++;
 					}
+//					if (index == 0) {
+//						Debug.Log (211);
+//						return;
+//					}
 					if (index > 0) {
 						material.SetVectorArray ("_Cores", coreLocs);
 //						Debug.Log (PUtil.VerticesToString(coreLocs));
+//						Debug.Log(index);
+						material.SetInt ("_CoreCount", index);
+						material.SetPass (0);
+						Graphics.DrawProcedural (MeshTopology.Points, cubeCount, 0);
 					}
-					material.SetInt ("_CoreCount", coreLocs.Length);
-                    material.SetPass (0);
-					Graphics.DrawProcedural (MeshTopology.Points, cubeCount, 0);
+
 				}
 			}
 		}
@@ -168,7 +174,7 @@ namespace LikeProcessing.PMetaball
 			SetCube ();
             //			DrawPoints ();
             //DrawEdges ();
-//            DrawEdge2();
+            DrawEdge2();
             //			DrawCubes ();
             latticeReady = true;
         }

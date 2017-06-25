@@ -12,6 +12,8 @@
  
         Pass
 		{
+			Cull Off
+
 	        CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
@@ -105,37 +107,154 @@
 
             float3 LinearInterpolation (float isoLevel, Point p1, Point p2)
 			{
+				Point pp1 = p1;
+				Point pp2 = p2;
 				if (lessThan (p2.loc, p1.loc)) {
-					Point temp = (Point)0;
-					temp = p1;
-					p1 = p2;
-					p2 = temp;    
+//					Point temp = (Point)0;
+//					temp = p1;
+					pp1 = p2;
+					pp2 = p1;    
 				}
-				float3 intersection;
-				if (abs (p1.isoValue - p2.isoValue) > 0.00001) {
-					intersection = p1.loc + ((p2.loc - p1.loc) / (p2.isoValue - p1.isoValue)) * (isoLevel - p1.isoValue);
+				float3 intersection = 0;
+				if (abs (pp1.isoValue - pp2.isoValue) > 0.00001) {
+					intersection = pp1.loc + (pp2.loc - pp1.loc) / (pp2.isoValue - pp1.isoValue) * (isoLevel - pp1.isoValue);
 					//intersectionNormal = p1.normal + (p2.normal - p1.normal) / (p2.isoValue - p1.isoValue) * (isoLevel - p1.isoValue);
 				} else {
-					intersection = p1.loc;
+					intersection = pp1.loc;
 					//intersectionNormal = p1.normal;
 				}
 				return intersection;
 			}
 
+			void drawCenter(Point cubePoints[8], inout TriangleStream<v2f> OutputStream) {
+				float3 center = (cubePoints[3].loc + cubePoints[5].loc) / 2.0;
+				float hl = 0.02;
+				float3 leftDown = center + float3(-hl, -hl, 0);
+				float3 leftUp = center + float3(-hl, hl, 0);
+				float3 rightUp = center + float3(hl, hl, 0);
+				float3 rightDown = center + float3(hl, -hl, 0);
+				v2f o = (v2f)0;
+				o.color = float4(1, 100.0/255.0, 100.0/255.0, 1);
+				o.vertex = UnityObjectToClipPos(leftDown);
+				OutputStream.Append (o);
+				o.vertex = UnityObjectToClipPos(leftUp);
+				OutputStream.Append (o);
+				o.vertex = UnityObjectToClipPos(rightDown);
+				OutputStream.Append (o);
+				o.vertex = UnityObjectToClipPos(rightUp);
+				OutputStream.Append (o);
+				OutputStream.RestartStrip();
+			}
+
+			void drawCube(float3 p, float width, inout TriangleStream<v2f> OutputStream) {
+				float hw = width / 2.0;
+				float3 leftDownBack   = p + float3(-hw, -hw, -hw);
+				float3 rightDownBack  = p + float3( hw, -hw, -hw);
+				float3 rightDownFront = p + float3( hw, -hw,  hw);
+				float3 leftDownFront  = p + float3(-hw, -hw,  hw);
+				float3 leftUpBack     = p + float3(-hw,  hw, -hw);
+				float3 rightUpBack    = p + float3( hw,  hw, -hw);
+				float3 rightUpFront   = p + float3( hw,  hw,  hw);
+				float3 leftUpFront    = p + float3(-hw,  hw,  hw);
+
+				v2f o = (v2f)0;
+				o.color = float4(100.0/255.0, 150.0/255.0, 255.0/255.0, 1);
+				o.vertex = UnityObjectToClipPos(leftDownBack);
+				OutputStream.Append (o);
+				o.vertex = UnityObjectToClipPos(leftDownFront);
+				OutputStream.Append (o);
+				o.vertex = UnityObjectToClipPos(rightDownBack);
+				OutputStream.Append (o);
+				o.vertex = UnityObjectToClipPos(rightDownFront);
+				OutputStream.Append (o);
+				OutputStream.RestartStrip();
+
+				o.vertex = UnityObjectToClipPos(leftUpBack);
+				OutputStream.Append (o);
+				o.vertex = UnityObjectToClipPos(leftUpFront);
+				OutputStream.Append (o);
+				o.vertex = UnityObjectToClipPos(rightUpBack);
+				OutputStream.Append (o);
+				o.vertex = UnityObjectToClipPos(rightUpFront);
+				OutputStream.Append (o);
+				OutputStream.RestartStrip();
+
+				o.vertex = UnityObjectToClipPos(leftDownBack);
+				OutputStream.Append (o);
+				o.vertex = UnityObjectToClipPos(leftUpBack);
+				OutputStream.Append (o);
+				o.vertex = UnityObjectToClipPos(leftDownFront);
+				OutputStream.Append (o);
+				o.vertex = UnityObjectToClipPos(leftUpFront);
+				OutputStream.Append (o);
+				OutputStream.RestartStrip();
+
+				o.vertex = UnityObjectToClipPos(rightDownBack);
+				OutputStream.Append (o);
+				o.vertex = UnityObjectToClipPos(rightUpBack);
+				OutputStream.Append (o);
+				o.vertex = UnityObjectToClipPos(rightDownFront);
+				OutputStream.Append (o);
+				o.vertex = UnityObjectToClipPos(rightUpFront);
+				OutputStream.Append (o);
+				OutputStream.RestartStrip();
+			}
+
+			void drawInterpolation(int nTriangle, Triangle triangles[2], inout TriangleStream<v2f>  OutputStream) {
+				for (int i = 0; i < nTriangle; i++) {
+					Triangle tri = triangles[i];
+					for (int j = 0; j < 3; j++) {
+						drawCube(tri.vertices[j], 0.02, OutputStream);
+					}
+				}
+			}
+
+			void drawInterpolationDebug(int tetraIndex, int nTriangle, Triangle triangles[2], inout TriangleStream<v2f>  OutputStream) {
+				float count = 0;
+//				if (tetraIndex != 0) {
+//					return;
+//				}
+				float ft = (float) tetraIndex;
+				for (int i = 0; i < nTriangle; i++) {
+					Triangle tri = triangles[i];
+					for (int j = 0; j < 3; j++) {
+						float3 v = tri.vertices[j];
+						float limit = 0.001;
+						if (v.x < limit && v.y < limit && v.z < limit) {
+							float fj = (float)j;
+							float3 vv = v + float3(count* 0.03, ft * 0.1, 0); 
+							drawCube(vv, 0.02, OutputStream);
+							count += 1.0;
+						}
+					}
+				}
+			}
+
+			void drawCore(inout TriangleStream<v2f>  OutputStream) {
+				for (int j=0; j<_CoreCount; j++) {
+        			float3 c = float3(_Cores[j].x, _Cores[j].y, _Cores[j].z);
+        			drawCube(c, 0.02, OutputStream);
+        		}
+			}
+
 
  
-            [maxvertexcount(12)]
+            [maxvertexcount(128)]
             void geom(point v2f input[1], uint primitiveId : SV_PrimitiveID, inout TriangleStream<v2f> OutputStream)
             {
-				int cubeIndex = primitiveId & 0xffff;
-            	int z = cubeIndex / (detail * detail);
-            	int y = (cubeIndex % (detail * detail)) / detail;
-            	int x = (cubeIndex % (detail * detail)) % detail;
+            	int cubeIndex = primitiveId & 0xffff;
+            	int iz = cubeIndex / (detail * detail);
+            	int iy = (cubeIndex % (detail * detail)) / detail;
+            	int ix = (cubeIndex % (detail * detail)) % detail;
+
+            	float fz = (float)iz;
+            	float fy = (float)iy;
+            	float fx = (float)ix;
 
             	float3 leftDown = float3(
-            		-size + x*deltaLen + latticeWorldPosition.x,
-            		-size + y*deltaLen + latticeWorldPosition.y,
-            		-size + z*deltaLen + latticeWorldPosition.z);
+            		-size + fx * deltaLen + latticeWorldPosition.x,
+            		-size + fy * deltaLen + latticeWorldPosition.y,
+            		-size + fz * deltaLen + latticeWorldPosition.z);
 
             	Point cubePoints[8] = {(Point)0, (Point)0, (Point)0, (Point)0, (Point)0, (Point)0, (Point)0, (Point)0};
 
@@ -148,13 +267,23 @@
             	cubePoints[6].loc = leftDown + float3(deltaLen, deltaLen, 0);	//right back up
             	cubePoints[7].loc = leftDown + float3(0, deltaLen, 0);	//left back up
 
+//            	drawCenter(cubePoints, OutputStream);
+//				drawCube(cubePoints[0].loc, 0.02, OutputStream);
+//				drawCore(OutputStream);
+
             	int pointTable[6][4] = {
-            		{0, 2, 3, 7},
-            		{0, 2, 6, 7},
-            		{0, 4, 6, 7},
-            		{0, 6, 1, 2},
-            		{0, 6, 1, 4},
-            		{5, 6, 1, 4}
+//            		{0, 2, 3, 7},
+//            		{0, 2, 6, 7},
+//            		{0, 4, 6, 7},
+//            		{0, 6, 1, 2},
+//            		{0, 6, 1, 4},
+//            		{5, 6, 1, 4}
+            		{0, 2, 3, 6},
+            		{0, 1, 2, 6},
+            		{0, 1, 5, 6},
+            		{0, 3, 6, 7},
+            		{0, 4, 5, 6},
+            		{0, 4, 6, 7}
             	};
 
             	for (int i=0; i<8; i++) {
@@ -165,23 +294,6 @@
             		cubePoints[i] = p;
             	}
 
-//            	float len = deltaLen / 1.0;
-//				v2f test = (v2f)0;
-//            	test.vertex = UnityObjectToClipPos(leftDown);
-//            	OutputStream.Append (test);
-//            	test.vertex = UnityObjectToClipPos(leftDown + float4(0, len, 0, 0));
-//            	OutputStream.Append (test);
-//            	test.vertex = UnityObjectToClipPos(leftDown + float4(len, len, 0, 0));
-//            	OutputStream.Append (test);
-//		      	OutputStream.RestartStrip();
-//		      	test.vertex = UnityObjectToClipPos(leftDown + float4(len, len, 0, 0));
-//            	OutputStream.Append (test);
-//            	test.vertex = UnityObjectToClipPos(leftDown + float4(len, 0, 0, 0));
-//            	OutputStream.Append (test);
-//            	test.vertex = UnityObjectToClipPos(leftDown);
-//            	OutputStream.Append (test);
-//            	OutputStream.RestartStrip();
-
             	for (int tetraIndex=0; tetraIndex<6; tetraIndex++) {
 	            	Point points[4] = {(Point)0, (Point)0, (Point)0, (Point)0};
 	            	for (int j=0; j<4; j++) {
@@ -190,13 +302,13 @@
 
           			float isoLevel = 0.15;
 	            	int triIndex = 0;
-					if (points[0].isoValue > isoLevel)
+					if (points[0].isoValue < isoLevel)
 						triIndex |= 1;
-					if (points [1].isoValue > isoLevel)
+					if (points [1].isoValue < isoLevel)
 						triIndex |= 2;
-					if (points [2].isoValue > isoLevel)
+					if (points [2].isoValue < isoLevel)
 						triIndex |= 4;
-					if (points [3].isoValue > isoLevel)
+					if (points [3].isoValue < isoLevel)
 						triIndex |= 8;
 
 					Triangle triangles[2] = {(Triangle)0, (Triangle)0};
@@ -268,29 +380,13 @@
 					      break;
 					}
 
+//					drawInterpolation(nTriangle, triangles, OutputStream);
+//					drawInterpolationDebug(tetraIndex, nTriangle, triangles, OutputStream);
+
+
 				    v2f test = (v2f)0;
 				    float c = triIndex / 15.0;
 				    test.color = float4(c,c,c,c);
-//		               for (int i=0; i<nTriangle; i++) {
-//		            		Triangle tri = triangles[i];
-//		            		test.vertex = UnityObjectToClipPos(float4(0,1,tetraIndex,1));
-//		            		OutputStream.Append (test);
-//		            		test.vertex = UnityObjectToClipPos(float4(1,-1,tetraIndex,1));
-//		            		OutputStream.Append (test);
-//		            		test.vertex = UnityObjectToClipPos(float4(-1,0,tetraIndex,1));
-//		            		OutputStream.Append (test);
-//		            		OutputStream.RestartStrip();
-//		               }
-//					for (int i=0; i<nTriangle; i++) {
-//						Triangle tri = triangles[i];
-//						test.vertex = UnityObjectToClipPos(float4(0,1,tetraIndex,1));
-//						OutputStream.Append (test);
-//						test.vertex = UnityObjectToClipPos(float4(1,-1,tetraIndex,1));
-//						OutputStream.Append (test);
-//						test.vertex = UnityObjectToClipPos(float4(-1,0,tetraIndex,1));
-//						OutputStream.Append (test);
-//						OutputStream.RestartStrip();
-//					}
 					for (int i=0; i<nTriangle; i++) {
 	            		Triangle tri = triangles[i];
 	            		test.vertex = UnityObjectToClipPos(tri.vertices[2]);
@@ -301,89 +397,7 @@
 	            		OutputStream.Append (test);
 	            		OutputStream.RestartStrip();
             		}
-//					c = float4(1,1,1,1);
-//					test.color = c;
-//					for (int i=0; i<1; i++) {
-//	            		Triangle tri = triangles[i];
-//	            		test.vertex = UnityObjectToClipPos(cubePoints[7].loc);
-//	            		OutputStream.Append (test);
-//	            		test.vertex = UnityObjectToClipPos(cubePoints[6].loc);
-//	            		OutputStream.Append (test);
-//	            		test.vertex = UnityObjectToClipPos(cubePoints[3].loc);
-//	            		OutputStream.Append (test);
-//	            		OutputStream.RestartStrip();
-
-//	            		Triangle tri = triangles[i];
-//	            		test.vertex = UnityObjectToClipPos(points[0].loc);
-//	            		OutputStream.Append (test);
-//	            		test.vertex = UnityObjectToClipPos(points[1].loc);
-//	            		OutputStream.Append (test);
-//	            		test.vertex = UnityObjectToClipPos(points[2].loc);
-//	            		OutputStream.Append (test);
-//	            		OutputStream.RestartStrip();
-
-//	            		c = float4(0.5,0.5,0.5,1);
-//	            		test.color = c;
-//	            		test.vertex = UnityObjectToClipPos(cubePoints[0].loc);
-//	            		OutputStream.Append (test);
-//	            		test.vertex = UnityObjectToClipPos(cubePoints[5].loc);
-//	            		OutputStream.Append (test);
-//	            		test.vertex = UnityObjectToClipPos(cubePoints[1].loc);
-//	            		OutputStream.Append (test);
-//	            		OutputStream.RestartStrip();
-//            		}
 				}
-
-            	//				    v2f hoge = (v2f)0;
-//				    hoge.color = float4(1,1,1,1);
-//	                if (tetraIndex == 0) {
-//	                	hoge.color = float4(0,0,0,0);
-//	                	hoge.vertex = UnityObjectToClipPos(points[0].loc);
-//	            		OutputStream.Append (hoge);
-//	            		hoge.color = float4(1,1,1,1);
-//	            		hoge.vertex = UnityObjectToClipPos(points[1].loc);
-//	            		OutputStream.Append (hoge);
-//	            		hoge.color = float4(1,1,1,1);
-//	            		hoge.vertex = UnityObjectToClipPos(points[2].loc);
-//	            		OutputStream.Append (hoge);
-//	            		OutputStream.RestartStrip();
-//
-//	            		hoge.color = float4(0,0,0,0);
-//	            		hoge.vertex = UnityObjectToClipPos(points[0].loc);
-//	            		OutputStream.Append (hoge);
-//	            		hoge.color = float4(1,1,1,1);
-//	            		hoge.vertex = UnityObjectToClipPos(points[2].loc);
-//	            		OutputStream.Append (hoge);
-//	            		hoge.color = float4(1,1,1,1);
-//	            		hoge.vertex = UnityObjectToClipPos(points[3].loc);
-//	            		OutputStream.Append (hoge);
-//	            		OutputStream.RestartStrip();
-//
-//	            		hoge.color = float4(0,0,0,0);
-//	            		hoge.vertex = UnityObjectToClipPos(points[0].loc);
-//	            		OutputStream.Append (hoge);
-//	            		hoge.color = float4(1,1,1,1);
-//	            		hoge.vertex = UnityObjectToClipPos(points[3].loc);
-//	            		OutputStream.Append (hoge);
-//	            		hoge.color = float4(1,1,1,1);
-//	            		hoge.vertex = UnityObjectToClipPos(points[1].loc);
-//	            		OutputStream.Append (hoge);
-//	            		OutputStream.RestartStrip();
-//
-//	            		hoge.color = float4(1,1,1,1);
-//	            		hoge.vertex = UnityObjectToClipPos(points[1].loc);
-//	            		OutputStream.Append (hoge);
-//	            		hoge.color = float4(1,1,1,1);
-//	            		hoge.vertex = UnityObjectToClipPos(points[2].loc);
-//	            		OutputStream.Append (hoge);
-//	            		hoge.color = float4(1,1,1,1);
-//	            		hoge.vertex = UnityObjectToClipPos(points[3].loc);
-//	            		OutputStream.Append (hoge);
-//	            		OutputStream.RestartStrip();
-//            		}
-
-
-				
 			}
            
             fixed4 frag (v2f i) : SV_Target
