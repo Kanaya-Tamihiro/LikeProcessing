@@ -1,4 +1,6 @@
-﻿Shader "LikeProcessing/VertexColor" {
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "LikeProcessing/VertexColor" {
 	Properties
     {
         // we have removed support for texture tiling/offset,
@@ -37,7 +39,7 @@
                 v2f o;
                 // transform position to clip space
                 // (multiply with model*view*projection matrix)
-                o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.vertex = UnityObjectToClipPos(v.vertex);
                 o.color = v.color;
                 // just pass the texture coordinate
                 //o.uv = v.uv;

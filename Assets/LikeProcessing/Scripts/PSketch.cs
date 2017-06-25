@@ -130,7 +130,7 @@ namespace LikeProcessing
 		}
 
 		public void Screenshot() {
-			Application.CaptureScreenshot($"screenshots/{Time.time}.png");
+			Application.CaptureScreenshot("screenshots/" + Time.time + ".png");
 		}
 
 		public void ToggleRecording() {

@@ -115,9 +115,11 @@
 					pp1 = p2;
 					pp2 = p1;    
 				}
-				float3 intersection = 0;
+				float3 intersection;
 				if (abs (pp1.isoValue - pp2.isoValue) > 0.00001) {
-					intersection = pp1.loc + (pp2.loc - pp1.loc) / (pp2.isoValue - pp1.isoValue) * (isoLevel - pp1.isoValue);
+					intersection.x = pp1.loc.x + (pp2.loc.x - pp1.loc.x) / (pp2.isoValue - pp1.isoValue) * (isoLevel - pp1.isoValue);
+					intersection.y = pp1.loc.y + (pp2.loc.y - pp1.loc.y) / (pp2.isoValue - pp1.isoValue) * (isoLevel - pp1.isoValue);
+					intersection.z = pp1.loc.z + (pp2.loc.z - pp1.loc.z) / (pp2.isoValue - pp1.isoValue) * (isoLevel - pp1.isoValue);
 					//intersectionNormal = p1.normal + (p2.normal - p1.normal) / (p2.isoValue - p1.isoValue) * (isoLevel - p1.isoValue);
 				} else {
 					intersection = pp1.loc;
@@ -144,6 +146,61 @@
 				o.vertex = UnityObjectToClipPos(rightUp);
 				OutputStream.Append (o);
 				OutputStream.RestartStrip();
+			}
+
+			void drawTriangle(float3 p1, float3 p2, float3 p3, float4 color, inout TriangleStream<v2f> OutputStream) {
+				v2f o = (v2f)0;
+				//o.color = float4(100.0/255.0, 150.0/255.0, 255.0/255.0, 1);
+				o.color = color;
+				o.vertex = UnityObjectToClipPos(p1);
+				OutputStream.Append (o);
+				o.vertex = UnityObjectToClipPos(p2);
+				OutputStream.Append (o);
+				o.vertex = UnityObjectToClipPos(p3);
+				OutputStream.Append (o);
+				OutputStream.RestartStrip();
+			}
+
+			void drawTetra(Point points[4], inout TriangleStream<v2f> OutputStream) {
+				for (int i=0; i<4; i++) {
+					float color = float4(100.0/255.0, 150.0/255.0, 255.0/255.0, 1);
+					drawTriangle(points[0].loc, points[1].loc, points[2].loc, color, OutputStream);
+					color = float4(120.0/255.0, 150.0/255.0, 255.0/255.0, 1);
+					drawTriangle(points[0].loc, points[2].loc, points[3].loc, color, OutputStream);
+					color = float4(140.0/255.0, 180.0/255.0, 255.0/255.0, 1);
+					drawTriangle(points[0].loc, points[3].loc, points[1].loc, color, OutputStream);
+					color = float4(160.0/255.0, 150.0/255.0, 255.0/255.0, 1);
+					drawTriangle(points[1].loc, points[2].loc, points[3].loc, color, OutputStream);
+				}
+			}
+
+			void drawLine(float3 p1, float p2, float width, inout TriangleStream<v2f> OutputStream) {
+				float hl = width / 2.0;
+				float3 leftDown = p1 + float3(0, -hl, 0);
+				float3 leftUp = p1 + float3(0, hl, 0);
+				float3 rightUp = p2 + float3(0, hl, 0);
+				float3 rightDown = p2 + float3(0, -hl, 0);
+				v2f o = (v2f)0;
+				o.color = float4(1, 100.0/255.0, 100.0/255.0, 1);
+				o.vertex = UnityObjectToClipPos(leftDown);
+				OutputStream.Append (o);
+				o.vertex = UnityObjectToClipPos(leftUp);
+				OutputStream.Append (o);
+				o.vertex = UnityObjectToClipPos(rightDown);
+				OutputStream.Append (o);
+				o.vertex = UnityObjectToClipPos(rightUp);
+				OutputStream.Append (o);
+				OutputStream.RestartStrip();
+			}
+
+			void drawTetraLines(Point points[4], inout TriangleStream<v2f> OutputStream) {
+				float w = 0.05;
+				drawLine(points[0].loc, points[1].loc, w, OutputStream);
+				drawLine(points[0].loc, points[2].loc, w, OutputStream);
+				drawLine(points[0].loc, points[3].loc, w, OutputStream);
+				drawLine(points[1].loc, points[2].loc, w, OutputStream);
+				drawLine(points[2].loc, points[3].loc, w, OutputStream);
+				drawLine(points[3].loc, points[1].loc, w, OutputStream);
 			}
 
 			void drawCube(float3 p, float width, inout TriangleStream<v2f> OutputStream) {
@@ -200,11 +257,18 @@
 				OutputStream.RestartStrip();
 			}
 
+			void drawIsoValues(Point cubePoints[8], inout TriangleStream<v2f> OutputStream) {
+				for (int i=0; i<8; i++) {
+					Point p = cubePoints[i];
+					drawCube(p.loc, p.isoValue * 1.0, OutputStream);
+				}
+			}
+
 			void drawInterpolation(int nTriangle, Triangle triangles[2], inout TriangleStream<v2f>  OutputStream) {
 				for (int i = 0; i < nTriangle; i++) {
 					Triangle tri = triangles[i];
 					for (int j = 0; j < 3; j++) {
-						drawCube(tri.vertices[j], 0.02, OutputStream);
+						drawCube(tri.vertices[j], 0.06, OutputStream);
 					}
 				}
 			}
@@ -242,7 +306,8 @@
             [maxvertexcount(128)]
             void geom(point v2f input[1], uint primitiveId : SV_PrimitiveID, inout TriangleStream<v2f> OutputStream)
             {
-            	int cubeIndex = primitiveId & 0xffff;
+            	int cubeIndex = (primitiveId & 0xffff) / 6;
+            	int localIndex = (primitiveId & 0xffff) - cubeIndex * 6;
             	int iz = cubeIndex / (detail * detail);
             	int iy = (cubeIndex % (detail * detail)) / detail;
             	int ix = (cubeIndex % (detail * detail)) % detail;
@@ -278,7 +343,7 @@
 //            		{0, 6, 1, 2},
 //            		{0, 6, 1, 4},
 //            		{5, 6, 1, 4}
-            		{0, 2, 3, 6},
+            		{2, 3, 0, 6},
             		{0, 1, 2, 6},
             		{0, 1, 5, 6},
             		{0, 3, 6, 7},
@@ -294,21 +359,35 @@
             		cubePoints[i] = p;
             	}
 
+            	//drawIsoValues(cubePoints, OutputStream);
+
             	for (int tetraIndex=0; tetraIndex<6; tetraIndex++) {
+            		if (tetraIndex != localIndex) {
+            			continue;
+            		}
 	            	Point points[4] = {(Point)0, (Point)0, (Point)0, (Point)0};
 	            	for (int j=0; j<4; j++) {
 	            		points[j] = cubePoints[pointTable[tetraIndex][j]];
 	            	}
+	            	if (localIndex == 0 && cubeIndex == 0) {
+	            		//drawTetraLines(points, OutputStream);
+//	            		drawTetra(points, OutputStream);
+	            	}
+
+//	            	if (tetraIndex == 5) {
+//	            		drawTetra(points, OutputStream);
+//	            	}
+	            	//drawTetra(points, OutputStream);
 
           			float isoLevel = 0.15;
 	            	int triIndex = 0;
-					if (points[0].isoValue < isoLevel)
+					if (points[0].isoValue > isoLevel)
 						triIndex |= 1;
-					if (points [1].isoValue < isoLevel)
+					if (points [1].isoValue > isoLevel)
 						triIndex |= 2;
-					if (points [2].isoValue < isoLevel)
+					if (points [2].isoValue > isoLevel)
 						triIndex |= 4;
-					if (points [3].isoValue < isoLevel)
+					if (points [3].isoValue > isoLevel)
 						triIndex |= 8;
 
 					Triangle triangles[2] = {(Triangle)0, (Triangle)0};
@@ -385,8 +464,9 @@
 
 
 				    v2f test = (v2f)0;
-				    float c = triIndex / 15.0;
+				    float c = triIndex / 10.0;
 				    test.color = float4(c,c,c,c);
+//				    test.color = float4(1,1,1,1	);
 					for (int i=0; i<nTriangle; i++) {
 	            		Triangle tri = triangles[i];
 	            		test.vertex = UnityObjectToClipPos(tri.vertices[2]);

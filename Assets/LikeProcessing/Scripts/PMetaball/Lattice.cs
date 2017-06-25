@@ -62,7 +62,7 @@ namespace LikeProcessing.PMetaball
 //                computeBuffer.SetData(points);
 				material.SetInt("detail", lattice.metaball.detail);
 				float size = lattice.metaball.size;
-				float delta = (size * 2) / detail;
+				float delta = (size * 2.0f) / detail;
 				material.SetFloat ("deltaLen", delta);
 				material.SetFloat ("size", size);
 			}
@@ -119,7 +119,7 @@ namespace LikeProcessing.PMetaball
 //						Debug.Log(index);
 						material.SetInt ("_CoreCount", index);
 						material.SetPass (0);
-						Graphics.DrawProcedural (MeshTopology.Points, cubeCount, 0);
+						Graphics.DrawProcedural (MeshTopology.Points, cubeCount * 6, 0);
 					}
 
 				}
@@ -174,7 +174,7 @@ namespace LikeProcessing.PMetaball
 			SetCube ();
             //			DrawPoints ();
             //DrawEdges ();
-            DrawEdge2();
+//            DrawEdge2();
             //			DrawCubes ();
             latticeReady = true;
         }
