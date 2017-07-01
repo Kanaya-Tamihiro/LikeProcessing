@@ -37,7 +37,7 @@ namespace LikeProcessig.Examples {
 //			plineSimple.gameObject.GetComponent<MeshRenderer> ().material = new Material (Shader.Find("Standard"));
 
 			pmetaball = new PMetaball();
-			pmetaball.detail = 20;
+			pmetaball.detail = 4;
 			pmetaball.size = 2.0f;
 			pmetaball.isoPower = .2f;
 			pmetaball.isoValuesAddictive = true;
@@ -51,7 +51,7 @@ namespace LikeProcessig.Examples {
 //			pmetaball.AddCore (new PMetaball.CoreLine(new Vector3 (-1.0f,-1.0f,0), new Vector3 (1.0f,1.0f,0)));
 //			pmetaball.AddMetaball (new Vector3 (0.25f,1,0));
 //			pmetaball.Update ();
-			pmetaball.AddCore (new Core(pmetaball, new Vector3(2,2,2)));
+//			pmetaball.AddCore (new Core(pmetaball, new Vector3(2,2,2)));
 		}
 
 //		void Update () {
@@ -73,16 +73,16 @@ namespace LikeProcessig.Examples {
 
 		void Update() {
 
-//            if (Input.GetMouseButtonDown(1))
-//            {
-//                RaycastHit hit;
-//                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-//
-//                if (Physics.Raycast(ray, out hit))
-//                {
-//                    dragCore = hit.collider.gameObject.GetComponent<Core.CoreMono>().core;
-//                }
-//            }
+            if (Input.GetMouseButtonDown(1))
+            {
+                RaycastHit hit;
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+                if (Physics.Raycast(ray, out hit))
+                {
+                    dragCore = hit.collider.gameObject.GetComponent<Core.CoreMono>().core;
+                }
+            }
 
             if (Input.GetMouseButtonUp(1))
             {
@@ -94,20 +94,20 @@ namespace LikeProcessig.Examples {
                 pmetaball.MoveCore(dragCore, dragCore.gameObject.transform.localPosition + new Vector3(0.1f, 0, 0));
             }
 
-//            if (Input.GetMouseButtonDown (0)) {
-//
-//				RaycastHit hit;
-//				Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-//
-//				if (Physics.Raycast (ray, out hit)) {
-//					pmetaball.AddCore (new Core(pmetaball, hit.point));
-//				} else {
-//					Vector3 v3 = Input.mousePosition;
-//					v3.z = 7.0f;
-//					v3 = Camera.main.ScreenToWorldPoint(v3);
-//					pmetaball.AddCore (new Core(pmetaball, v3));
-//				}
-//			}
+            if (Input.GetMouseButtonDown (0)) {
+
+				RaycastHit hit;
+				Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+				if (Physics.Raycast (ray, out hit)) {
+					pmetaball.AddCore (new Core(pmetaball, hit.point));
+				} else {
+					Vector3 v3 = Input.mousePosition;
+					v3.z = 7.0f;
+					v3 = Camera.main.ScreenToWorldPoint(v3);
+					pmetaball.AddCore (new Core(pmetaball, v3));
+				}
+			}
 			pmetaball.Update ();
 		}
 	}

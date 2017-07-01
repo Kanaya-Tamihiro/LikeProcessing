@@ -52,19 +52,21 @@ namespace LikeProcessing.PMetaball
 			Material material;
 
 			void Start () {
-				material = new Material(Shader.Find("LikeProcessing/GeometryMetaballShader"));
-				//commandBuffer = new CommandBuffer ();
-//				SetPoints ();
-				int detail = lattice.metaball.detail;
-				cubeCount = detail * detail * detail;
-//                material.SetVectorArray ("_Points", points);
-//                computeBuffer = new ComputeBuffer(points.Length, 12);
-//                computeBuffer.SetData(points);
-				material.SetInt("detail", lattice.metaball.detail);
-				float size = lattice.metaball.size;
-				float delta = (size * 2.0f) / detail;
-				material.SetFloat ("deltaLen", delta);
-				material.SetFloat ("size", size);
+				if (lattice.metaball.useGeometryShader == true) {
+					material = new Material (Shader.Find ("LikeProcessing/GeometryMetaballShader"));
+					//commandBuffer = new CommandBuffer ();
+					//				SetPoints ();
+					int detail = lattice.metaball.detail;
+					cubeCount = detail * detail * detail;
+					//                material.SetVectorArray ("_Points", points);
+					//                computeBuffer = new ComputeBuffer(points.Length, 12);
+					//                computeBuffer.SetData(points);
+					material.SetInt ("detail", lattice.metaball.detail);
+					float size = lattice.metaball.size;
+					float delta = (size * 2.0f) / detail;
+					material.SetFloat ("deltaLen", delta);
+					material.SetFloat ("size", size);
+				}
 			}
 
 //            void OnDisable() {
@@ -119,7 +121,7 @@ namespace LikeProcessing.PMetaball
 //						Debug.Log(index);
 						material.SetInt ("_CoreCount", index);
 						material.SetPass (0);
-						Graphics.DrawProcedural (MeshTopology.Points, cubeCount * 6, 0);
+						Graphics.DrawProcedural (MeshTopology.Points, cubeCount * 6 * 4, 0);
 					}
 
 				}
@@ -186,14 +188,14 @@ namespace LikeProcessing.PMetaball
             //updating = true;
 
 //			Debug.Log (gameObject.name + " Update called");
-//			if (metaball.isoValuesAddictive == true)
-//				CulcIsoValuesAdd ();
-//			else
-//				CulcIsoValuesMax ();
-//			//			ClearEdges ();
-//			CulcCubeVertices ();
+			if (metaball.isoValuesAddictive == true)
+				CulcIsoValuesAdd ();
+			else
+				CulcIsoValuesMax ();
+			//			ClearEdges ();
+			CulcCubeVertices ();
             //			DrawIntersectionPoints ();
-            //SetMesh ();
+            SetMesh ();
 
             updating = false;
             updateReady = true;

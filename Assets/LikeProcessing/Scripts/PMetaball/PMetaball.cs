@@ -71,13 +71,13 @@ namespace LikeProcessing.PMetaball
 			int dx = position.x > latticePosition.x ? 1 : -1;
 			int dy = position.y > latticePosition.y ? 1 : -1;
 			int dz = position.z > latticePosition.z ? 1 : -1;
-//			AddLatticeIfNone (x + dx, y, z, core);
-//			AddLatticeIfNone (x, y + dy, z, core);
-//			AddLatticeIfNone (x, y, z + dz, core);
-//			AddLatticeIfNone (x + dx, y + dy, z, core);
-//			AddLatticeIfNone (x, y + dy, z + dz, core);
-//			AddLatticeIfNone (x + dx, y, z + dz, core);
-//			AddLatticeIfNone (x + dx, y + dy, z + dz, core);
+			AddLatticeIfNone (x + dx, y, z, core);
+			AddLatticeIfNone (x, y + dy, z, core);
+			AddLatticeIfNone (x, y, z + dz, core);
+			AddLatticeIfNone (x + dx, y + dy, z, core);
+			AddLatticeIfNone (x, y + dy, z + dz, core);
+			AddLatticeIfNone (x + dx, y, z + dz, core);
+			AddLatticeIfNone (x + dx, y + dy, z + dz, core);
 			cores.Add (core);
 		}
 
@@ -99,24 +99,26 @@ namespace LikeProcessing.PMetaball
 
 		public void Update ()
 		{
-            shouldUpdateLattices.RemoveWhere(lattice => {
-                if (lattice.updateReady == true) {
-                    lattice.SetMesh();
-                    return true;
-                }
-                return false;
-            });
-			foreach (Lattice lattice in shouldUpdateLattices) {
-                if (lattice.latticeReady == true && lattice.updating == false) {
-                    lattice.updating = true;
-					if (Application.platform == RuntimePlatform.WindowsPlayer) {
-						ThreadPool.QueueUserWorkItem (o => lattice.Update ());
-					} else {
-						lattice.Update ();
-					}
-                }
+			if (!useGeometryShader) {
+	            shouldUpdateLattices.RemoveWhere(lattice => {
+	                if (lattice.updateReady == true) {
+	                    lattice.SetMesh();
+	                    return true;
+	                }
+	                return false;
+	            });
+				foreach (Lattice lattice in shouldUpdateLattices) {
+	                if (lattice.latticeReady == true && lattice.updating == false) {
+	                    lattice.updating = true;
+						if (Application.platform == RuntimePlatform.WindowsPlayer) {
+							ThreadPool.QueueUserWorkItem (o => lattice.Update ());
+						} else {
+							lattice.Update ();
+						}
+	                }
+				}
+				//shouldUpdateLattices.Clear ();
 			}
-			//shouldUpdateLattices.Clear ();
 		}
 
 		public void destory ()

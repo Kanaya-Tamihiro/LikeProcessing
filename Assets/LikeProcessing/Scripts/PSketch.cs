@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
 using UnityStandardAssets.ImageEffects;
 using UnityEngine.PostProcessing;
+using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace LikeProcessing
 {
     public class PSketch : MonoBehaviour
     {
+		public static PSketch singleton;
 
         protected GameObject cameraObj;
         protected GameObject lightObj;
@@ -18,8 +21,29 @@ namespace LikeProcessing
 		float recordInterval = 1.0f / 10.0f;
 		private float recordDeltaTime = 0.0f;
 
-        void Awake()
+		[DllImport("RenderingPlugin")]
+		private static extern System.IntPtr GetRenderEventFunc();
+
+		private bool pluginRenderLoopStarted = false;
+
+		public IEnumerator StartPluginRenderLoop() {
+			if (pluginRenderLoopStarted == false) {
+				pluginRenderLoopStarted = true;
+				yield return StartCoroutine("CallPluginAtEndOfFrames");
+			}
+		}
+
+		private IEnumerator CallPluginAtEndOfFrames()
+		{
+			while (true) {
+				yield return new WaitForEndOfFrame();
+				GL.IssuePluginEvent(GetRenderEventFunc(), 1);
+			}
+		}
+
+		void Awake()
         {
+			singleton = this;
             Application.runInBackground = true;
 
             cameraObj = new GameObject("PSketch MainCamera");
@@ -43,7 +67,7 @@ namespace LikeProcessing
             light.type = LightType.Directional;
             lightObj.transform.Rotate(15, 15, 0);
 			light.shadows = LightShadows.Soft;
-            light.intensity = 0.5f;
+            light.intensity = 0.9f;
 
 			material = new Material (Shader.Find("Standard"));
 			material.SetFloat ("_Metallic", 0.1f);

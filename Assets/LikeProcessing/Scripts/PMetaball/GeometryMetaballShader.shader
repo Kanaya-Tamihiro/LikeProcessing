@@ -12,7 +12,7 @@
  
         Pass
 		{
-			Cull Off
+//			Cull Off
 
 	        CGPROGRAM
             #pragma vertex vert
@@ -306,8 +306,9 @@
             [maxvertexcount(128)]
             void geom(point v2f input[1], uint primitiveId : SV_PrimitiveID, inout TriangleStream<v2f> OutputStream)
             {
-            	int cubeIndex = (primitiveId & 0xffff) / 6;
-            	int localIndex = (primitiveId & 0xffff) - cubeIndex * 6;
+            	int cubeIndex = (primitiveId & 0xffff) / (6 * 4);
+            	int tetraHedronIndex = ((primitiveId & 0xffff) - cubeIndex * (6 * 4)) / 4;
+            	int localTetraIndex = (primitiveId & 0xffff) - cubeIndex * (6 * 4) - tetraHedronIndex * 4;
             	int iz = cubeIndex / (detail * detail);
             	int iy = (cubeIndex % (detail * detail)) / detail;
             	int ix = (cubeIndex % (detail * detail)) % detail;
@@ -362,14 +363,14 @@
             	//drawIsoValues(cubePoints, OutputStream);
 
             	for (int tetraIndex=0; tetraIndex<6; tetraIndex++) {
-            		if (tetraIndex != localIndex) {
+            		if (tetraIndex != tetraHedronIndex) {
             			continue;
             		}
 	            	Point points[4] = {(Point)0, (Point)0, (Point)0, (Point)0};
 	            	for (int j=0; j<4; j++) {
 	            		points[j] = cubePoints[pointTable[tetraIndex][j]];
 	            	}
-	            	if (localIndex == 0 && cubeIndex == 0) {
+	            	if (tetraHedronIndex == 0 && cubeIndex == 0) {
 	            		//drawTetraLines(points, OutputStream);
 //	            		drawTetra(points, OutputStream);
 	            	}
