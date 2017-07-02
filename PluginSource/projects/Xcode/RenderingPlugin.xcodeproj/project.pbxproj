@@ -17,18 +17,19 @@
 		2BC2A8D5144C433D00D5EF79 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC2A8D4144C433D00D5EF79 /* OpenGL.framework */; };
 		611D55BD1F039C070059E79E /* libjvm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 611D55BC1F039C070059E79E /* libjvm.dylib */; };
 		613E393A1F08AB4900B59FD3 /* ofApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613E39381F08AB4900B59FD3 /* ofApp.cpp */; };
-		613E39401F08AFBA00B59FD3 /* CoreOF.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 613E393F1F08AFBA00B59FD3 /* CoreOF.xcconfig */; };
-		613E39441F08AFCA00B59FD3 /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 613E39431F08AFBA00B59FD3 /* openFrameworksDebug.a */; };
 		614C772C1F061DB6006116A2 /* Processing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 614C77281F061DB6006116A2 /* Processing.cpp */; };
 		614C772D1F061DB6006116A2 /* ProcessingTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 614C772A1F061DB6006116A2 /* ProcessingTexture.cpp */; };
+		6172CD361F09371E0059754B /* ofUnityWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6172CD341F09371E0059754B /* ofUnityWindow.cpp */; };
 		61C230601F08990800838D4B /* Project.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 61C2305F1F08990800838D4B /* Project.xcconfig */; };
+		61F465401F08B9DA0099C1B1 /* CoreOF.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 61F4653C1F08B9DA0099C1B1 /* CoreOF.xcconfig */; };
+		61F465441F08BA0C0099C1B1 /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 61F465431F08B9DA0099C1B1 /* openFrameworksDebug.a */; };
 		8D576314048677EA00EA77CD /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AA1909FFE8422F4C02AAC07 /* CoreFoundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		613E39421F08AFBA00B59FD3 /* PBXContainerItemProxy */ = {
+		61F465421F08B9DA0099C1B1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 613E393C1F08AFBA00B59FD3 /* openFrameworksLib.xcodeproj */;
+			containerPortal = 61F4653D1F08B9DA0099C1B1 /* openFrameworksLib.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = E4B27C1510CBEB8E00536013;
 			remoteInfo = openFrameworks;
@@ -39,7 +40,7 @@
 		2B6899C81CF83D6200C4BA4F /* Copy Bundle into Unity project */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = ../../../LikeProcessing/Assets/Plugins;
+			dstPath = ../../../Assets/Plugins;
 			dstSubfolderSpec = 16;
 			files = (
 				2B6899C91CF83DB000C4BA4F /* RenderingPlugin.bundle in Copy Bundle into Unity project */,
@@ -75,14 +76,16 @@
 		611D55BC1F039C070059E79E /* libjvm.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libjvm.dylib; path = ../../../../../../../../Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/server/libjvm.dylib; sourceTree = "<group>"; };
 		613E39381F08AB4900B59FD3 /* ofApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofApp.cpp; path = ../../source/ofApp.cpp; sourceTree = "<group>"; };
 		613E39391F08AB4900B59FD3 /* ofApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofApp.h; path = ../../source/ofApp.h; sourceTree = "<group>"; };
-		613E393C1F08AFBA00B59FD3 /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../openFrameworks/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = "<group>"; };
-		613E393F1F08AFBA00B59FD3 /* CoreOF.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = CoreOF.xcconfig; path = ../../../openFrameworks/libs/openFrameworksCompiled/project/osx/CoreOF.xcconfig; sourceTree = "<group>"; };
 		614C77281F061DB6006116A2 /* Processing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Processing.cpp; path = ../../source/Processing.cpp; sourceTree = "<group>"; };
 		614C77291F061DB6006116A2 /* Processing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Processing.h; path = ../../source/Processing.h; sourceTree = "<group>"; };
 		614C772A1F061DB6006116A2 /* ProcessingTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProcessingTexture.cpp; path = ../../source/ProcessingTexture.cpp; sourceTree = "<group>"; };
 		614C772B1F061DB6006116A2 /* ProcessingTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProcessingTexture.h; path = ../../source/ProcessingTexture.h; sourceTree = "<group>"; };
 		614C772E1F067D92006116A2 /* RenderingPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RenderingPlugin.h; path = ../../source/RenderingPlugin.h; sourceTree = "<group>"; };
+		6172CD341F09371E0059754B /* ofUnityWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofUnityWindow.cpp; path = ../../source/ofUnityWindow.cpp; sourceTree = "<group>"; };
+		6172CD351F09371E0059754B /* ofUnityWindow.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ofUnityWindow.hpp; path = ../../source/ofUnityWindow.hpp; sourceTree = "<group>"; };
 		61C2305F1F08990800838D4B /* Project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Project.xcconfig; sourceTree = "<group>"; };
+		61F4653C1F08B9DA0099C1B1 /* CoreOF.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = CoreOF.xcconfig; path = ../../../openframeworks/libs/openFrameworksCompiled/project/osx/CoreOF.xcconfig; sourceTree = "<group>"; };
+		61F4653D1F08B9DA0099C1B1 /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../openframeworks/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = "<group>"; };
 		8D576316048677EA00EA77CD /* RenderingPlugin.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RenderingPlugin.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D576317048677EA00EA77CD /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -92,7 +95,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				613E39441F08AFCA00B59FD3 /* openFrameworksDebug.a in Frameworks */,
+				61F465441F08BA0C0099C1B1 /* openFrameworksDebug.a in Frameworks */,
 				611D55BD1F039C070059E79E /* libjvm.dylib in Frameworks */,
 				8D576314048677EA00EA77CD /* CoreFoundation.framework in Frameworks */,
 				2BC2A8D5144C433D00D5EF79 /* OpenGL.framework in Frameworks */,
@@ -155,6 +158,8 @@
 				614C772B1F061DB6006116A2 /* ProcessingTexture.h */,
 				613E39381F08AB4900B59FD3 /* ofApp.cpp */,
 				613E39391F08AB4900B59FD3 /* ofApp.h */,
+				6172CD341F09371E0059754B /* ofUnityWindow.cpp */,
+				6172CD351F09371E0059754B /* ofUnityWindow.hpp */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -199,21 +204,21 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		613E393D1F08AFBA00B59FD3 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				613E39431F08AFBA00B59FD3 /* openFrameworksDebug.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		61C230521F0896FA00838D4B /* openFrameworks */ = {
 			isa = PBXGroup;
 			children = (
-				613E393C1F08AFBA00B59FD3 /* openFrameworksLib.xcodeproj */,
-				613E393F1F08AFBA00B59FD3 /* CoreOF.xcconfig */,
+				61F4653C1F08B9DA0099C1B1 /* CoreOF.xcconfig */,
+				61F4653D1F08B9DA0099C1B1 /* openFrameworksLib.xcodeproj */,
 			);
 			name = openFrameworks;
+			sourceTree = "<group>";
+		};
+		61F4653E1F08B9DA0099C1B1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				61F465431F08B9DA0099C1B1 /* openFrameworksDebug.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -260,8 +265,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 613E393D1F08AFBA00B59FD3 /* Products */;
-					ProjectRef = 613E393C1F08AFBA00B59FD3 /* openFrameworksLib.xcodeproj */;
+					ProductGroup = 61F4653E1F08B9DA0099C1B1 /* Products */;
+					ProjectRef = 61F4653D1F08B9DA0099C1B1 /* openFrameworksLib.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -272,11 +277,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		613E39431F08AFBA00B59FD3 /* openFrameworksDebug.a */ = {
+		61F465431F08B9DA0099C1B1 /* openFrameworksDebug.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = openFrameworksDebug.a;
-			remoteRef = 613E39421F08AFBA00B59FD3 /* PBXContainerItemProxy */;
+			remoteRef = 61F465421F08B9DA0099C1B1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -286,7 +291,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				613E39401F08AFBA00B59FD3 /* CoreOF.xcconfig in Resources */,
+				61F465401F08B9DA0099C1B1 /* CoreOF.xcconfig in Resources */,
 				61C230601F08990800838D4B /* Project.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -298,6 +303,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6172CD361F09371E0059754B /* ofUnityWindow.cpp in Sources */,
 				2B6899BA1CF8396700C4BA4F /* RenderingPlugin.cpp in Sources */,
 				2B6899B81CF8396700C4BA4F /* RenderAPI_OpenGLCoreES.cpp in Sources */,
 				2B6899B91CF8396700C4BA4F /* RenderAPI.cpp in Sources */,

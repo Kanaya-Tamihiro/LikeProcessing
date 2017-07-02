@@ -9,6 +9,8 @@
 #include <vector>
 #include <jni.h>
 #include "ofMain.h"
+#include "ofAppNoWindow.h"
+#include "ofUnityWindow.hpp"
 
 JNIEnv *env;
 JavaVM *jvm;
@@ -31,6 +33,8 @@ extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetTimeFromUnity (flo
 static void* g_TextureHandle = NULL;
 static int   g_TextureWidth  = 0;
 static int   g_TextureHeight = 0;
+
+static ofUnityWindow* g_ofWindow;
 
 extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetTextureFromUnity(void* textureHandle, int w, int h)
 {
@@ -114,7 +118,7 @@ extern "C" void	UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API UnityPluginLoad(IUnit
     /*
      * /opt/blackdown-jdk-1.4.2/がJavaのルートディレクトリの場合
      */
-    options[0].optionString = (char *)  "-Djava.class.path=.:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/rt.jar:/Applications/Processing.app/Contents/Java/core/library/core.jar:/Users/tamichan/projects/java/called_from_c:/Users/tamichan/projects/Unity/LikeProcessingProject/Processing2DinUnity/bin";
+    options[0].optionString = (char *)  "-Djava.class.path=.:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/rt.jar:/Applications/Processing.app/Contents/Java/core/library/core.jar:/Users/tamichan/projects/java/called_from_c:/Users/tamichan/projects/Unity/LikeProcessing/Processing2DinUnity/bin";
     options[1].optionString = (char *)  "-Djava.compiler=NONE";
     options[2].optionString = (char *)  "-Djava.awt.headless=true";
     vm_args.version = JNI_VERSION_1_6;
@@ -138,6 +142,9 @@ extern "C" void	UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API UnityPluginLoad(IUnit
 //    
 //    jobject buffer = (jobject)env->CallStaticObjectMethod(cls, mid, NULL);
 //    buf = (int *)env->GetDirectBufferAddress(buffer);
+    
+    
+//    ofSetupOpenGL(g_ofWindow, 512,512, OF_WINDOW);
 }
 
 extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API UnityPluginUnload()
@@ -384,7 +391,7 @@ static void UNITY_INTERFACE_API OnRenderEvent(int eventID)
 	// Unknown / unsupported graphics device type? Do nothing
 	if (s_CurrentAPI == NULL)
 		return;
-
+//    ofDrawEllipse(0, 0, 100, 100);
 //	DrawColoredTriangle();
 	//ModifyTexturePixels();
 //    ModifyTexturePixelsProcessing();

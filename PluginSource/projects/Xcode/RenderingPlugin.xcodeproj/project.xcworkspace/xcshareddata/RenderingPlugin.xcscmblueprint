@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "94F9D894ABFEA39A338518C1DC184615D47EE67B",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "94F9D894ABFEA39A338518C1DC184615D47EE67B" : 9223372036854775807,
+    "2DE9C8846D9375EAACFABA8963120E8E7719BAF5" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "BDF93C41-CD58-4421-96EE-A02D73576E13",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "94F9D894ABFEA39A338518C1DC184615D47EE67B" : "LikeProcessing\/",
+    "2DE9C8846D9375EAACFABA8963120E8E7719BAF5" : "LikeProcessing\/openframeworks\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "RenderingPlugin",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "PluginSource\/projects\/Xcode\/RenderingPlugin.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/openframeworks\/openFrameworks.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "2DE9C8846D9375EAACFABA8963120E8E7719BAF5"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/tamichang\/LikeProcessing.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "94F9D894ABFEA39A338518C1DC184615D47EE67B"
+    }
+  ]
+}
