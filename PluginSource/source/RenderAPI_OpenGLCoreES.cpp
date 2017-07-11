@@ -35,6 +35,8 @@ public:
 
 	virtual void* BeginModifyVertexBuffer(void* bufferHandle, size_t* outBufferSize);
 	virtual void EndModifyVertexBuffer(void* bufferHandle);
+	
+	virtual void GetGlVersion(int* major, int* minor);
 
 private:
 	void CreateResources();
@@ -291,3 +293,8 @@ void RenderAPI_OpenGLCoreES::EndModifyVertexBuffer(void* bufferHandle)
 }
 
 #endif // #if SUPPORT_OPENGL_UNIFIED
+
+void RenderAPI_OpenGLCoreES::GetGlVersion(int* major, int* minor) {
+	glGetIntegerv(GL_MAJOR_VERSION, major);
+	glGetIntegerv(GL_MINOR_VERSION, minor);
+}

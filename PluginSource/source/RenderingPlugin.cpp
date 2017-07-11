@@ -9,7 +9,6 @@
 #include <vector>
 #include <jni.h>
 #include "ofMain.h"
-#include "ofAppNoWindow.h"
 #include "ofUnityWindow.hpp"
 
 JNIEnv *env;
@@ -34,7 +33,12 @@ static void* g_TextureHandle = NULL;
 static int   g_TextureWidth  = 0;
 static int   g_TextureHeight = 0;
 
-static ofUnityWindow* g_ofWindow;
+//static ofUnityWindow* g_ofWindow;
+shared_ptr<ofUnityWindow> unityWindow = NULL;
+
+static RenderAPI* s_CurrentAPI = NULL;
+static UnityGfxRenderer s_DeviceType = kUnityGfxRendererNull;
+
 
 extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetTextureFromUnity(void* textureHandle, int w, int h)
 {
@@ -92,6 +96,59 @@ extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetMeshBuffersFromUni
 	}
 }
 
+void initJavaVM() {
+	JavaVMInitArgs vm_args;
+	JavaVMOption options[4];
+	printf("beginning execution...?n");
+	
+	/*
+	 * /opt/blackdown-jdk-1.4.2/がJavaのルートディレクトリの場合
+	 */
+	options[0].optionString = (char *)  "-Djava.class.path=.:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/rt.jar:/Applications/Processing.app/Contents/Java/core/library/core.jar:/Users/tamichan/projects/java/called_from_c:/Users/tamichan/projects/Unity/LikeProcessing/Processing2DinUnity/bin";
+	options[1].optionString = (char *)  "-Djava.compiler=NONE";
+	options[2].optionString = (char *)  "-Djava.awt.headless=true";
+	vm_args.version = JNI_VERSION_1_6;
+	vm_args.options = options;
+	vm_args.nOptions = 3;
+	vm_args.ignoreUnrecognized = JNI_FALSE;
+	
+	JNI_CreateJavaVM(&jvm,(void **)&env,&vm_args);
+	
+	//    cls = env->FindClass("Test");
+	//    if (cls == 0) {
+	//        printf("cannot found Test?n");
+	//        exit(1);
+	//    }
+	//
+	//    mid = env->GetStaticMethodID(cls, "nakid2d", "()Ljava/nio/ByteBuffer;");
+	//    if (mid == 0) {
+	//        printf("Could not locate method texture with signature ()Ljava/nio/ByteBuffer;");
+	//        exit(1);
+	//    }
+	//
+	//    jobject buffer = (jobject)env->CallStaticObjectMethod(cls, mid, NULL);
+	//    buf = (int *)env->GetDirectBufferAddress(buffer);
+}
+
+void initOpenFrameworks() {
+//	ofSetLogLevel(OF_LOG_VERBOSE);
+	unityWindow = shared_ptr<ofUnityWindow>(new ofUnityWindow());
+	ofInit();
+	auto settings = unityWindow->getSettings();
+	settings.width = 512;
+	settings.height = 512;
+	int major;
+	int minor;
+	s_CurrentAPI->GetGlVersion(&major, &minor);
+	settings.setGLVersion(major, minor);
+	settings.windowMode = OF_WINDOW;
+	ofGetMainLoop()->addWindow(unityWindow);
+	unityWindow->setup(settings);
+	
+	//	ofBackground(ofFloatColor::fromHsb(179/359.0, 77/100.0, 99/100.0));
+	ofSetBackgroundAuto(false);
+	ofSetLineWidth(2);
+}
 
 
 // --------------------------------------------------------------------------
@@ -111,40 +168,8 @@ extern "C" void	UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API UnityPluginLoad(IUnit
 	// Run OnGraphicsDeviceEvent(initialize) manually on plugin load
 	OnGraphicsDeviceEvent(kUnityGfxDeviceEventInitialize);
     
-    JavaVMInitArgs vm_args;
-    JavaVMOption options[4];
-    printf("beginning execution...?n");
-    
-    /*
-     * /opt/blackdown-jdk-1.4.2/がJavaのルートディレクトリの場合
-     */
-    options[0].optionString = (char *)  "-Djava.class.path=.:/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/rt.jar:/Applications/Processing.app/Contents/Java/core/library/core.jar:/Users/tamichan/projects/java/called_from_c:/Users/tamichan/projects/Unity/LikeProcessing/Processing2DinUnity/bin";
-    options[1].optionString = (char *)  "-Djava.compiler=NONE";
-    options[2].optionString = (char *)  "-Djava.awt.headless=true";
-    vm_args.version = JNI_VERSION_1_6;
-    vm_args.options = options;
-    vm_args.nOptions = 3;
-    vm_args.ignoreUnrecognized = JNI_FALSE;
-    
-    JNI_CreateJavaVM(&jvm,(void **)&env,&vm_args);
-    
-//    cls = env->FindClass("Test");
-//    if (cls == 0) {
-//        printf("cannot found Test?n");
-//        exit(1);
-//    }
-//    
-//    mid = env->GetStaticMethodID(cls, "nakid2d", "()Ljava/nio/ByteBuffer;");
-//    if (mid == 0) {
-//        printf("Could not locate method texture with signature ()Ljava/nio/ByteBuffer;");
-//        exit(1);
-//    }
-//    
-//    jobject buffer = (jobject)env->CallStaticObjectMethod(cls, mid, NULL);
-//    buf = (int *)env->GetDirectBufferAddress(buffer);
-    
-    
-//    ofSetupOpenGL(g_ofWindow, 512,512, OF_WINDOW);
+	initJavaVM();
+	initOpenFrameworks();
 }
 
 extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API UnityPluginUnload()
@@ -169,8 +194,7 @@ extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API RegisterPlugin()
 // GraphicsDeviceEvent
 
 
-static RenderAPI* s_CurrentAPI = NULL;
-static UnityGfxRenderer s_DeviceType = kUnityGfxRendererNull;
+
 
 RenderAPI* getCurrentAPI() {
     return s_CurrentAPI;
@@ -290,62 +314,6 @@ static void ModifyTexturePixels()
 	s_CurrentAPI->EndModifyTexture(textureHandle, width, height, textureRowPitch, textureDataPtr);
 }
 
-//static void ModifyTexturePixelsProcessing()
-//{
-//    void* textureHandle = g_TextureHandle;
-//    int width = g_TextureWidth;
-//    int height = g_TextureHeight;
-//    if (!textureHandle)
-//        return;
-//    
-//    int textureRowPitch;
-//    void* textureDataPtr = s_CurrentAPI->BeginModifyTexture(textureHandle, width, height, &textureRowPitch);
-//    if (!textureDataPtr)
-//        return;
-//    
-//    const float t = g_Time * 4.0f;
-//    
-//    unsigned char* dst = (unsigned char*)textureDataPtr;
-//    for (int y = 0; y < height; ++y)
-//    {
-//        unsigned char* ptr = dst;
-//        for (int x = 0; x < width; ++x)
-//        {
-////            // Simple "plasma effect": several combined sine waves
-////            int vv = int(
-////                         (127.0f + (127.0f * sinf(x / 7.0f + t))) +
-////                         (127.0f + (127.0f * sinf(y / 5.0f - t))) +
-////                         (127.0f + (127.0f * sinf((x + y) / 6.0f - t))) +
-////                         (127.0f + (127.0f * sinf(sqrtf(float(x*x + y*y)) / 4.0f - t)))
-////                         ) / 4;
-////            
-////            // Write the texture pixel
-////            ptr[0] = vv;
-////            ptr[1] = vv;
-////            ptr[2] = vv;
-////            ptr[3] = vv;
-////            
-////            // To next pixel (our pixels are 4 bpp)
-//            // ARGB -> RGBA
-//            // A -> 8 * 3
-//            // R -> 8 * 2
-//            // G -> 8 * 1
-//            // B -> 8 * 0
-//            int argb = buf[y*height+x];
-//            ptr[0] = (unsigned char) (argb >> 8 * 2);
-//            ptr[1] = (unsigned char) (argb >> 8 * 1);
-//            ptr[2] = (unsigned char) (argb >> 8 * 0);
-//            ptr[3] = (unsigned char) (argb >> 8 * 3);
-//            ptr += 4;
-//        }
-//        
-//        // To next image row
-//        dst += textureRowPitch;
-//    }
-//    
-//    s_CurrentAPI->EndModifyTexture(textureHandle, width, height, textureRowPitch, textureDataPtr);
-//}
-
 
 static void ModifyVertexBuffer()
 {
@@ -396,11 +364,11 @@ static void UNITY_INTERFACE_API OnRenderEvent(int eventID)
 	//ModifyTexturePixels();
 //    ModifyTexturePixelsProcessing();
 //	ModifyVertexBuffer();
-//    if (ptexture) {
-//        ptexture->updateTexturePixels();
-//        ptexture = nullptr;
-//    }
-//    if (eventID == 1) {
+	
+	if (unityWindow != NULL) {
+		unityWindow->draw();
+	}
+	
     for(auto it = processingTextures.begin(); it != processingTextures.end(); ++it) {
         (*it)->updateTexturePixels();
     }
@@ -444,4 +412,31 @@ extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API ProcessingTextureUpda
     processingTexture->updateCurrentBufferId();
     processingTextures.push_back(processingTexture);
 }
+
+extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetScreenSizeToMyPlugin (int width, int height)
+{
+	unityWindow->setWindowShape(width, height);
+}
+
+extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API UpdateCameraPosition (float posX, float posY, float posZ)
+{
+	unityWindow->updateCameraPosition(posX, posY, posZ);
+}
+
+extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API UpdateCameraRotMat (float m00, float m01, float m02, float m03,
+																				 float m10, float m11, float m12, float m13,
+																				 float m20, float m21, float m22, float m23,
+																				 float m30, float m31, float m32, float m33)
+{
+	unityWindow->updateCameraRotMat(m00, m01, m02, m03,
+									  m10, m11, m22, m33,
+									  m20, m21, m22, m33,
+									  m30, m31, m22, m33);
+}
+
+extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API UpdateCameraRotQuat (float qx, float qy, float qz, float qw)
+{
+	unityWindow->updateCameraRotQuat(qx, qy, qz, qw);
+}
+
 

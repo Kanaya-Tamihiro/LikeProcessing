@@ -23,12 +23,15 @@ namespace LikeProcessing
 
 		[DllImport("RenderingPlugin")]
 		private static extern System.IntPtr GetRenderEventFunc();
+		[DllImport ("RenderingPlugin")]
+		private static extern void SetScreenSizeToMyPlugin (int width, int height);
 
-		private bool pluginRenderLoopStarted = false;
+		private System.IntPtr myPluginRenderEventFuncPtr = System.IntPtr.Zero;
 
 		public IEnumerator StartPluginRenderLoop() {
-			if (pluginRenderLoopStarted == false) {
-				pluginRenderLoopStarted = true;
+			if (myPluginRenderEventFuncPtr == System.IntPtr.Zero) {
+				myPluginRenderEventFuncPtr = GetRenderEventFunc();
+				SetScreenSizeToMyPlugin (Screen.width, Screen.height);
 				yield return StartCoroutine("CallPluginAtEndOfFrames");
 			}
 		}
@@ -37,7 +40,7 @@ namespace LikeProcessing
 		{
 			while (true) {
 				yield return new WaitForEndOfFrame();
-				GL.IssuePluginEvent(GetRenderEventFunc(), 1);
+				GL.IssuePluginEvent(myPluginRenderEventFuncPtr, 1);
 			}
 		}
 
