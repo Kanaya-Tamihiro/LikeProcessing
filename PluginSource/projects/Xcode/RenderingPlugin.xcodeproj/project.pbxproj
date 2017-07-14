@@ -17,9 +17,11 @@
 		2BC2A8D5144C433D00D5EF79 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC2A8D4144C433D00D5EF79 /* OpenGL.framework */; };
 		611D55BD1F039C070059E79E /* libjvm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 611D55BC1F039C070059E79E /* libjvm.dylib */; };
 		613E393A1F08AB4900B59FD3 /* ofApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 613E39381F08AB4900B59FD3 /* ofApp.cpp */; };
+		614940541F18663400E2E67D /* ofUnityLoggerChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 614940521F18663400E2E67D /* ofUnityLoggerChannel.cpp */; };
 		614C772C1F061DB6006116A2 /* Processing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 614C77281F061DB6006116A2 /* Processing.cpp */; };
 		614C772D1F061DB6006116A2 /* ProcessingTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 614C772A1F061DB6006116A2 /* ProcessingTexture.cpp */; };
 		6172CD361F09371E0059754B /* ofUnityWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6172CD341F09371E0059754B /* ofUnityWindow.cpp */; };
+		618B345D1F18F10F00870B67 /* ofUnityGraphic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 618B345C1F18F10F00870B67 /* ofUnityGraphic.cpp */; };
 		61C230601F08990800838D4B /* Project.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 61C2305F1F08990800838D4B /* Project.xcconfig */; };
 		61F465401F08B9DA0099C1B1 /* CoreOF.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 61F4653C1F08B9DA0099C1B1 /* CoreOF.xcconfig */; };
 		61F465441F08BA0C0099C1B1 /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 61F465431F08B9DA0099C1B1 /* openFrameworksDebug.a */; };
@@ -65,17 +67,13 @@
 		2B6899BE1CF8399700C4BA4F /* glew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glew.h; path = ../../source/GLEW/glew.h; sourceTree = "<group>"; };
 		2B6899BF1CF8399700C4BA4F /* glxew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = glxew.h; path = ../../source/GLEW/glxew.h; sourceTree = "<group>"; };
 		2B6899C01CF8399700C4BA4F /* wglew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wglew.h; path = ../../source/GLEW/wglew.h; sourceTree = "<group>"; };
-		2B6899C21CF839A600C4BA4F /* IUnityGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IUnityGraphics.h; path = ../../source/Unity/IUnityGraphics.h; sourceTree = "<group>"; };
-		2B6899C31CF839A600C4BA4F /* IUnityGraphicsD3D9.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IUnityGraphicsD3D9.h; path = ../../source/Unity/IUnityGraphicsD3D9.h; sourceTree = "<group>"; };
-		2B6899C41CF839A600C4BA4F /* IUnityGraphicsD3D11.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IUnityGraphicsD3D11.h; path = ../../source/Unity/IUnityGraphicsD3D11.h; sourceTree = "<group>"; };
-		2B6899C51CF839A600C4BA4F /* IUnityGraphicsD3D12.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IUnityGraphicsD3D12.h; path = ../../source/Unity/IUnityGraphicsD3D12.h; sourceTree = "<group>"; };
-		2B6899C61CF839A600C4BA4F /* IUnityGraphicsMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IUnityGraphicsMetal.h; path = ../../source/Unity/IUnityGraphicsMetal.h; sourceTree = "<group>"; };
-		2B6899C71CF839A600C4BA4F /* IUnityInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IUnityInterface.h; path = ../../source/Unity/IUnityInterface.h; sourceTree = "<group>"; };
 		2B6899CA1CF8409A00C4BA4F /* RenderAPI_Metal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RenderAPI_Metal.mm; path = ../../source/RenderAPI_Metal.mm; sourceTree = "<group>"; };
 		2BC2A8D4144C433D00D5EF79 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		611D55BC1F039C070059E79E /* libjvm.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libjvm.dylib; path = ../../../../../../../../Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home/jre/lib/server/libjvm.dylib; sourceTree = "<group>"; };
 		613E39381F08AB4900B59FD3 /* ofApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofApp.cpp; path = ../../source/ofApp.cpp; sourceTree = "<group>"; };
 		613E39391F08AB4900B59FD3 /* ofApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofApp.h; path = ../../source/ofApp.h; sourceTree = "<group>"; };
+		614940521F18663400E2E67D /* ofUnityLoggerChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofUnityLoggerChannel.cpp; path = ../../source/ofUnityLoggerChannel.cpp; sourceTree = "<group>"; };
+		614940531F18663400E2E67D /* ofUnityLoggerChannel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ofUnityLoggerChannel.hpp; path = ../../source/ofUnityLoggerChannel.hpp; sourceTree = "<group>"; };
 		614C77281F061DB6006116A2 /* Processing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Processing.cpp; path = ../../source/Processing.cpp; sourceTree = "<group>"; };
 		614C77291F061DB6006116A2 /* Processing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Processing.h; path = ../../source/Processing.h; sourceTree = "<group>"; };
 		614C772A1F061DB6006116A2 /* ProcessingTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProcessingTexture.cpp; path = ../../source/ProcessingTexture.cpp; sourceTree = "<group>"; };
@@ -83,6 +81,7 @@
 		614C772E1F067D92006116A2 /* RenderingPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RenderingPlugin.h; path = ../../source/RenderingPlugin.h; sourceTree = "<group>"; };
 		6172CD341F09371E0059754B /* ofUnityWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofUnityWindow.cpp; path = ../../source/ofUnityWindow.cpp; sourceTree = "<group>"; };
 		6172CD351F09371E0059754B /* ofUnityWindow.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = ofUnityWindow.hpp; path = ../../source/ofUnityWindow.hpp; sourceTree = "<group>"; };
+		618B345C1F18F10F00870B67 /* ofUnityGraphic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofUnityGraphic.cpp; path = ../../source/ofUnityGraphic.cpp; sourceTree = "<group>"; };
 		61C2305F1F08990800838D4B /* Project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Project.xcconfig; sourceTree = "<group>"; };
 		61F4653C1F08B9DA0099C1B1 /* CoreOF.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = CoreOF.xcconfig; path = ../../../openframeworks/libs/openFrameworksCompiled/project/osx/CoreOF.xcconfig; sourceTree = "<group>"; };
 		61F4653D1F08B9DA0099C1B1 /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../openframeworks/libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = "<group>"; };
@@ -140,7 +139,6 @@
 			isa = PBXGroup;
 			children = (
 				2B6899BB1CF8397C00C4BA4F /* GLEW */,
-				2B6899BC1CF8398200C4BA4F /* Unity */,
 				2B6899AB1CF8396700C4BA4F /* PlatformBase.h */,
 				2B6899AC1CF8396700C4BA4F /* RenderAPI_D3D9.cpp */,
 				2B6899AD1CF8396700C4BA4F /* RenderAPI_D3D11.cpp */,
@@ -160,6 +158,9 @@
 				613E39391F08AB4900B59FD3 /* ofApp.h */,
 				6172CD341F09371E0059754B /* ofUnityWindow.cpp */,
 				6172CD351F09371E0059754B /* ofUnityWindow.hpp */,
+				614940521F18663400E2E67D /* ofUnityLoggerChannel.cpp */,
+				614940531F18663400E2E67D /* ofUnityLoggerChannel.hpp */,
+				618B345C1F18F10F00870B67 /* ofUnityGraphic.cpp */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -181,19 +182,6 @@
 				2B6899C01CF8399700C4BA4F /* wglew.h */,
 			);
 			name = GLEW;
-			sourceTree = "<group>";
-		};
-		2B6899BC1CF8398200C4BA4F /* Unity */ = {
-			isa = PBXGroup;
-			children = (
-				2B6899C21CF839A600C4BA4F /* IUnityGraphics.h */,
-				2B6899C31CF839A600C4BA4F /* IUnityGraphicsD3D9.h */,
-				2B6899C41CF839A600C4BA4F /* IUnityGraphicsD3D11.h */,
-				2B6899C51CF839A600C4BA4F /* IUnityGraphicsD3D12.h */,
-				2B6899C61CF839A600C4BA4F /* IUnityGraphicsMetal.h */,
-				2B6899C71CF839A600C4BA4F /* IUnityInterface.h */,
-			);
-			name = Unity;
 			sourceTree = "<group>";
 		};
 		611D55BB1F039C060059E79E /* Frameworks */ = {
@@ -304,7 +292,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				6172CD361F09371E0059754B /* ofUnityWindow.cpp in Sources */,
+				614940541F18663400E2E67D /* ofUnityLoggerChannel.cpp in Sources */,
 				2B6899BA1CF8396700C4BA4F /* RenderingPlugin.cpp in Sources */,
+				618B345D1F18F10F00870B67 /* ofUnityGraphic.cpp in Sources */,
 				2B6899B81CF8396700C4BA4F /* RenderAPI_OpenGLCoreES.cpp in Sources */,
 				2B6899B91CF8396700C4BA4F /* RenderAPI.cpp in Sources */,
 				2B6899B71CF8396700C4BA4F /* RenderAPI_OpenGL2.cpp in Sources */,
@@ -331,6 +321,7 @@
 					"$(OF_CORE_HEADERS)",
 					../,
 					/System/Library/Frameworks/JavaVM.framework/Headers/,
+					/usr/local/include,
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
@@ -355,6 +346,7 @@
 					"$(OF_CORE_HEADERS)",
 					../,
 					/System/Library/Frameworks/JavaVM.framework/Headers/,
+					/usr/local/include,
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Bundles";

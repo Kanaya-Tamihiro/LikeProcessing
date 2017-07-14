@@ -7,7 +7,9 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
+	float len = 300.0f;
+	ofDrawLine(ofRandom(-len, 0),ofRandom(-len, 0),ofRandom(-len, 0),
+			   ofRandom(0, len),ofRandom(0, len),ofRandom(0, len));
 }
 
 //--------------------------------------------------------------

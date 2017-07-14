@@ -8,8 +8,9 @@
 #include <math.h>
 #include <vector>
 #include <jni.h>
-#include "ofMain.h"
+//#include "ofMain.h"
 #include "ofUnityWindow.hpp"
+#include "ofUnityLoggerChannel.hpp"
 
 JNIEnv *env;
 JavaVM *jvm;
@@ -35,6 +36,7 @@ static int   g_TextureHeight = 0;
 
 //static ofUnityWindow* g_ofWindow;
 shared_ptr<ofUnityWindow> unityWindow = NULL;
+shared_ptr<ofUnityLoggerChannel> unityLoggerChannel = NULL;
 
 static RenderAPI* s_CurrentAPI = NULL;
 static UnityGfxRenderer s_DeviceType = kUnityGfxRendererNull;
@@ -132,6 +134,8 @@ void initJavaVM() {
 
 void initOpenFrameworks() {
 //	ofSetLogLevel(OF_LOG_VERBOSE);
+	unityLoggerChannel = shared_ptr<ofUnityLoggerChannel>(new ofUnityLoggerChannel());
+	ofLog::setChannel(unityLoggerChannel);
 	unityWindow = shared_ptr<ofUnityWindow>(new ofUnityWindow());
 	ofInit();
 	auto settings = unityWindow->getSettings();
@@ -438,5 +442,28 @@ extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API UpdateCameraRotQuat (
 {
 	unityWindow->updateCameraRotQuat(qx, qy, qz, qw);
 }
+
+extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetDebugLogFunc (void* func)
+{
+	unityLoggerChannel->setDebugLogFunc(func);
+}
+
+extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API FreeDebugLogStrPtr (void* ptr)
+{
+	char* arr = (char*) ptr;
+	free(arr);
+}
+
+extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API RegistOfRenderMethod (void* func)
+{
+	unityWindow->setRenderFunc(func);
+}
+
+//extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API RegistOfApp (void* ptr)
+//{
+//	unityWindow->registOfApp(ptr);
+//}
+
+
 
 

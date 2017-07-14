@@ -46,7 +46,9 @@ class ofUnityWindowSettings: public ofGLESWindowSettings{
 		bool multiMonitorFullScreen = false;
 		shared_ptr<ofAppBaseWindow> shareContextWith;
 	};
-	
+
+	typedef void (*RenderInManaged)();
+
 #ifdef TARGET_OPENGLES
 	class ofUnityWindow : public ofAppBaseGLESWindow{
 #else
@@ -173,7 +175,10 @@ class ofUnityWindowSettings: public ofGLESWindowSettings{
 //			HGLRC 		getWGLContext();
 //			HWND 		getWin32Window();
 //#endif
-			
+			void setRenderFunc(void* func);
+			void uofDrawBox(float size);
+//			void uofDrawLine (float x1, float y1, float z1, float x2, float y2, float z2);
+
 		private:
 //			static ofAppGLFWWindow * setCurrent(GLFWwindow* windowP);
 //			static void 	mouse_cb(GLFWwindow* windowP_, int button, int state, int mods);
@@ -229,6 +234,12 @@ class ofUnityWindowSettings: public ofGLESWindowSettings{
 //#ifdef TARGET_WIN32
 //			LONG lExStyle, lStyle;
 //#endif // TARGET_WIN32
+			
+			std::vector<RenderInManaged> renderMethods;
+			
+			ofBaseApp* app;
+			
+			bool firstDraw = true;
 		};
 		
 		

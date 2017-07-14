@@ -6,6 +6,7 @@
 #include "ofGLProgrammableRenderer.h"
 #include "ofAppRunner.h"
 #include "ofFileUtils.h"
+#include "ofApp.h"
 
 //#ifdef TARGET_LINUX
 //#include "ofIcon.h"
@@ -50,6 +51,7 @@ ofUnityWindow::ofUnityWindow(){
 	windowH = 0;
 	
 //	glfwSetErrorCallback(error_cb);
+	app = new ofApp();
 }
 
 ofUnityWindow::~ofUnityWindow(){
@@ -358,6 +360,14 @@ void ofUnityWindow::close(){
 //			}
 //		}
 	}
+		
+		void ofUnityWindow::uofDrawBox(float size) {
+			ofDrawBox(size);
+		}
+	
+//		void ofUnityWindow::uofDrawLine (float x1, float y1, float z1, float x2, float y2, float z2) {
+//			ofDrawLine (x1, y1, z1, x2, y2, z2);
+//		}
 	
 	//--------------------------------------------
 	void ofUnityWindow::draw(){
@@ -381,6 +391,11 @@ void ofUnityWindow::close(){
 			camera.setTransformMatrix(_m);
 		}
 		
+		if (firstDraw) {
+			firstDraw = false;
+			app->setup();
+		}
+		
 		camera.begin();
 		
 //		float x = ofRandom(ofGetWindowSize().x);
@@ -393,7 +408,17 @@ void ofUnityWindow::close(){
 //		ofDrawEllipse(x, y, 100, 100);
 		
 //		ofDrawEllipse(0, 0, -200, windowH, windowH);
-		ofDrawBox(100);
+//		ofDrawBox(100);
+//		ofLog(OF_LOG_NOTICE, "the number is " + ofToString(10));
+//		ofLogNotice() << "a regular notice print";
+		
+		for(auto it = renderMethods.begin(); it != renderMethods.end(); ++it) {
+			(*it)();
+		}
+		
+		app->update();
+		app->draw();
+		
 		
 		camera.end();
 		
@@ -1374,3 +1399,10 @@ void ofUnityWindow::close(){
 //	}
 //	
 //#endif
+
+
+		void ofUnityWindow::setRenderFunc(void *func) {
+			renderMethods.push_back((RenderInManaged) func);
+		}
+
+
