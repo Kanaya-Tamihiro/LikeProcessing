@@ -6,23 +6,23 @@ namespace LikeProcessing
 {
 	public class OFApp
 	{
-		[DllImport ("RenderingPlugin")]
+//		[DllImport ("RenderingPlugin")]
 		private static extern void RegistOfRenderMethod (System.IntPtr ptr);
 
-		[DllImport ("RenderingPlugin")]
+//		[DllImport ("RenderingPlugin")]
 		protected static extern void uofDrawBox (float width);
 
-		[DllImport ("RenderingPlugin")]
+//		[DllImport ("RenderingPlugin")]
 		protected static extern void uofDrawLine (float x1, float y1, float z1, float x2, float y2, float z2);
-		[DllImport ("RenderingPlugin")]
+//		[DllImport ("RenderingPlugin")]
 		protected static extern void uofFill ();
-		[DllImport ("RenderingPlugin")]
+//		[DllImport ("RenderingPlugin")]
 		protected static extern void uofNoFill ();
 
-		[DllImport ("RenderingPlugin")]
+//		[DllImport ("RenderingPlugin")]
 		protected static extern void uofSetColor (int r, int g, int b, int a);
 
-		[DllImport ("RenderingPlugin")]
+//		[DllImport ("RenderingPlugin")]
 		protected static extern void uofSetLineWidth (float lineWidth);
 
 		protected delegate void OfRenderDelegate ();

@@ -21,16 +21,16 @@ namespace LikeProcessing
 		float recordInterval = 1.0f / 10.0f;
 		private float recordDeltaTime = 0.0f;
 
-		[DllImport ("RenderingPlugin")]
+//		[DllImport ("RenderingPlugin")]
 		private static extern System.IntPtr GetRenderEventFunc ();
 
-		[DllImport ("RenderingPlugin")]
+//		[DllImport ("RenderingPlugin")]
 		private static extern void SetScreenSizeToMyPlugin (int width, int height);
 
-		[DllImport ("RenderingPlugin")]
+//		[DllImport ("RenderingPlugin")]
 		private static extern void SetDebugLogFunc (System.IntPtr func);
 
-		[DllImport ("RenderingPlugin")]
+//		[DllImport ("RenderingPlugin")]
 		private static extern void FreeDebugLogStrPtr (System.IntPtr strPtr);
 
 		public delegate void ofDebugLogDelegate (System.IntPtr strPtr);

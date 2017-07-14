@@ -26,16 +26,16 @@ namespace LikeProcessing
 
 		private Vector3 preMousePos;
 
-		[DllImport ("RenderingPlugin")]
+//		[DllImport ("RenderingPlugin")]
 		private static extern void UpdateCameraPosition (float posX, float posY, float posZ);
 
-		[DllImport ("RenderingPlugin")]
+//		[DllImport ("RenderingPlugin")]
 		private static extern void UpdateCameraRotMat (float m00, float m01, float m02, float m03,
 		                                                 float m10, float m11, float m12, float m13,
 		                                                 float m20, float m21, float m22, float m23,
 		                                                 float m30, float m31, float m32, float m33);
 
-		[DllImport ("RenderingPlugin")]
+//		[DllImport ("RenderingPlugin")]
 		private static extern void UpdateCameraRotQuat (float qx, float qy, float qz, float qw);
 
 		private void Update ()
@@ -70,7 +70,7 @@ namespace LikeProcessing
 		private void MouseWheel (float delta)
 		{
 			transform.position += transform.forward * delta * wheelSpeed;
-			UpdatePluginCamera ();
+//			UpdatePluginCamera ();
 		}
 
 		private void MouseDrag (Vector3 mousePos)
@@ -86,7 +86,7 @@ namespace LikeProcessing
 				CameraRotate (new Vector2 (-diff.y, diff.x) * rotateSpeed);
 
 			preMousePos = mousePos;
-			UpdatePluginCamera ();
+//			UpdatePluginCamera ();
 		}
 
 		public void CameraRotate (Vector2 angle)

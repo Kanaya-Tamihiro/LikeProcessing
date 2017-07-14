@@ -12,10 +12,10 @@ namespace LikeProcessing
 		IntPtr processingTexturePtr;
 		string fullyQualifiedClassName;
 
-		[DllImport ("RenderingPlugin")]
+//		[DllImport ("RenderingPlugin")]
 		private static extern IntPtr CreateProcessingTexture (IntPtr texturePtr, string fullyQualifiedClassName, int width, int height);
 
-		[DllImport ("RenderingPlugin")]
+//		[DllImport ("RenderingPlugin")]
 		private static extern void ProcessingTextureUpdate (IntPtr processingTexturePtr);
 
 
