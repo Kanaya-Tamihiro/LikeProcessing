@@ -34,7 +34,7 @@ namespace LikeProcessing.PMetaball
 		}
 
 
-		Lattice SetUpLattice (int x, int y, int z) {
+		public Lattice SetUpLattice (int x, int y, int z) {
 			IntVector v = new IntVector (x-latticeLen,y-latticeLen,z-latticeLen);
 			Lattice lattice = new Lattice (this, v);
 			latticeDict[x,y,z] = lattice;

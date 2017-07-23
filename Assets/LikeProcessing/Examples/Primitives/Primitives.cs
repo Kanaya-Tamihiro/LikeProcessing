@@ -37,8 +37,8 @@ namespace LikeProcessig.Examples {
 //			plineSimple.gameObject.GetComponent<MeshRenderer> ().material = new Material (Shader.Find("Standard"));
 
 			pmetaball = new PMetaball();
-			pmetaball.detail = 4;
-			pmetaball.size = 2.0f;
+			pmetaball.detail = 2;
+			pmetaball.size = 1.0f;
 			pmetaball.isoPower = .2f;
 			pmetaball.isoValuesAddictive = true;
 			pmetaball.isHardEdge = false;
@@ -91,7 +91,7 @@ namespace LikeProcessig.Examples {
 
             if (dragCore != null)
             {
-                pmetaball.MoveCore(dragCore, dragCore.gameObject.transform.localPosition + new Vector3(0.1f, 0, 0));
+//                pmetaball.MoveCore(dragCore, dragCore.gameObject.transform.localPosition + new Vector3(0.1f, 0, 0));
             }
 
             if (Input.GetMouseButtonDown (0)) {
