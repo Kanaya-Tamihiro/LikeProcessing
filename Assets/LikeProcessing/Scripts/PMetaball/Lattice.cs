@@ -149,7 +149,8 @@ namespace LikeProcessing.PMetaball
 			blob.AddComponent<MeshFilter> ().mesh.MarkDynamic ();
 			// gameObject.AddComponent<MeshRenderer> ().material = new Material(Shader.Find("LikeProcessing/VertexColor"));
 			gameObject.AddComponent<MeshRenderer> ().material = PSketch.material;
-			blob.AddComponent<MeshRenderer> ().material = PSketch.material;
+//			blob.AddComponent<MeshRenderer> ().material = PSketch.material;
+			blob.AddComponent<MeshRenderer> ().material = new Material(Shader.Find("LikeProcessing/VertexColor"));
 			Mesh mesh = blob.GetComponent<MeshFilter> ().mesh;
 
 			vertices = new Vector3[PMetaball.maxVertexCount];
@@ -214,6 +215,13 @@ namespace LikeProcessing.PMetaball
 				mesh.RecalculateNormals ();
 			}
             mesh.RecalculateBounds();
+
+			Color[] colors = new Color[vertices.Length];
+			for (int i = 0; i < colors.Length; i = i + 1) {
+				Vector3 v = mesh.vertices[i];
+				colors[i] = Color.HSVToRGB (UnityEngine.Random.value, 0.8f, 1.0f);
+			}
+			mesh.colors = colors;
 
             updateReady = false;
         }
