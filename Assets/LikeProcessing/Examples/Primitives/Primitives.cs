@@ -37,7 +37,7 @@ namespace LikeProcessig.Examples {
 //			plineSimple.gameObject.GetComponent<MeshRenderer> ().material = new Material (Shader.Find("Standard"));
 
 			pmetaball = new PMetaball();
-			pmetaball.detail = 2;
+			pmetaball.detail = 10;
 			pmetaball.size = 1.0f;
 			pmetaball.isoPower = .2f;
 			pmetaball.isoValuesAddictive = true;

@@ -185,7 +185,7 @@ namespace LikeProcessing.PMetaball
 		public void Update ()
 		{
             //if (latticeReady == false || updating == true) { return; }
-            //updating = true;
+            updating = true;
 
 //			Debug.Log (gameObject.name + " Update called");
 			if (metaball.isoValuesAddictive == true)
@@ -195,7 +195,7 @@ namespace LikeProcessing.PMetaball
 			//			ClearEdges ();
 			CulcCubeVertices ();
             //			DrawIntersectionPoints ();
-            SetMesh ();
+//            SetMesh ();
 
             updating = false;
             updateReady = true;

@@ -14,11 +14,10 @@ namespace LikeProcessing.PMetaball
 		public float isoPower = 0.4f;
 		public bool isoValuesAddictive = true;
 		public bool isHardEdge = false;
-		public bool useGeometryShader = true;
+		public bool useGeometryShader = false;
 
 		public HashSet<Lattice> shouldUpdateLattices = new HashSet<Lattice>();
 
-		//Dictionary<IntVector, Lattice> latticeDict = new Dictionary<IntVector, Lattice> ();
 		static readonly int latticeLen = 50;
 		Lattice[,,] latticeDict = new Lattice[latticeLen*2,latticeLen*2,latticeLen*2];
 
@@ -32,7 +31,6 @@ namespace LikeProcessing.PMetaball
 			gameObject = new GameObject ();
 			gameObject.name = "PMetaballs";
 		}
-
 
 		public Lattice SetUpLattice (int x, int y, int z) {
 			IntVector v = new IntVector (x-latticeLen,y-latticeLen,z-latticeLen);
@@ -60,7 +58,6 @@ namespace LikeProcessing.PMetaball
 
 		public void AddCore (Core core)
 		{
-//			core.gameObject.transform.SetParent (gameObject.transform);
 			Vector3 position = core.gameObject.transform.localPosition;
 			float len = size * 2;
 			int x = Mathf.FloorToInt (position.x / len) + latticeLen;
