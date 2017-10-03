@@ -22,8 +22,8 @@ namespace LikeProcessing
 			isHardEdge = _isHardEdge;
 			gameObject = new GameObject ("PGeodesicDome");
 			gameObject.AddComponent<MeshFilter> ();
-			gameObject.AddComponent<MeshRenderer> ().material = new Material(Shader.Find("LikeProcessing/VertexColor"));
-//			gameObject.AddComponent<MeshRenderer> ().material = PSketch.material;
+//			gameObject.AddComponent<MeshRenderer> ().material = new Material(Shader.Find("LikeProcessing/VertexColor"));
+			gameObject.AddComponent<MeshRenderer> ().material = PSketch.material;
 			SetUp ();
 			SetMesh ();
 		}
@@ -195,14 +195,14 @@ namespace LikeProcessing
 			mesh.triangles = pvertices.Triangles ();
 			mesh.RecalculateNormals ();
 
-			Color[] colors = new Color[mesh.vertices.Length];
-			for (int i=0; i<colors.Length; i=i+1) {
-				Color color = Color.HSVToRGB (Random.value, 0.8f, 1.0f);
-				colors [i] = color;
+//			Color[] colors = new Color[mesh.vertices.Length];
+//			for (int i=0; i<colors.Length; i=i+3) {
+//				Color color = Color.HSVToRGB (Random.value, 0.5f, 1.0f);
+//				colors [i] = color;
 //				colors [i+1] = color;
 //				colors [i+2] = color;
-			}
-			mesh.colors = colors;
+//			}
+//			mesh.colors = colors;
 		}
 
 	}

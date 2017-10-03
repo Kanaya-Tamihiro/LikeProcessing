@@ -41,7 +41,7 @@ namespace LikeProcessig.Examples {
 			pmetaball.size = 1.0f;
 			pmetaball.isoPower = .2f;
 			pmetaball.isoValuesAddictive = true;
-			pmetaball.isHardEdge = true;
+			pmetaball.isHardEdge = false;
 			pmetaball.gameObject.transform.position = new Vector3 (0,0,0);
 //			pmetaball.SetUpLattice ();
 //			core1 = new Core (pmetaball, new Vector3 (3, 3, 3));
