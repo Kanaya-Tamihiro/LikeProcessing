@@ -5,14 +5,14 @@ using LikeProcessing;
 using LikeProcessing.PMetaball;
 using UnityEngine.VR;
 
-namespace LikeProcessig.Examples {
+namespace LikeProcessing.Examples {
 	
 	public class Primitives : PSketch {
 
 		PGeodesicDomeImproved pgeodesicDomeImproved;
 		PGeodesicDome pgeodesicDome;
 		PLineSimple plineSimple;
-		public PMetaball pmetaball;
+		public PMetaball.PMetaball pmetaball;
 
 		float deltaTime = 0f;
 
@@ -36,11 +36,11 @@ namespace LikeProcessig.Examples {
 //			plineSimple = new PLineSimple(new Vector3(0, 0, 0), new Vector3(1, 2, 0));
 //			plineSimple.gameObject.GetComponent<MeshRenderer> ().material = new Material (Shader.Find("Standard"));
 
-			pmetaball = new PMetaball();
-			pmetaball.detail = 10;
-			pmetaball.size = 1.0f;
+			pmetaball = new PMetaball.PMetaball();
+			pmetaball.detail = 30;
+			pmetaball.size = 3.0f;
 			pmetaball.isoPower = .2f;
-			pmetaball.isoValuesAddictive = true;
+//			pmetaball.isoValuesAddictive = false;
 			pmetaball.isHardEdge = false;
 			pmetaball.gameObject.transform.position = new Vector3 (0,0,0);
 //			pmetaball.SetUpLattice ();

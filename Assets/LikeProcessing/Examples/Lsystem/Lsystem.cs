@@ -8,7 +8,7 @@ namespace LikeProcessing.Examples
 		PLsystem lsystem;
 
 		void Start() {
-			StartA ();
+			StartAA ();
 			this.lightObj.GetComponent<Light> ().intensity = 0.6f;
 		}
 
@@ -25,19 +25,21 @@ namespace LikeProcessing.Examples
 			lsystem.Render();
 		}
 
-//		void StartAA()
-//		{
-//			//background(Color.black);
-//			Rule[] ruleset = new Rule[1];
-////			ruleset[0] = new Rule('F', "FF[+F][-F][*F][/F]");
-////			ruleset[0] = new Rule('F', "FF+[+F-F-F]-[-F+F+F]*[*F/F/F]/");
-//			ruleset[0] = new Rule('F', "FF+[*+F-F-F]-[/-F+F+F]");
-//			lsystem = new PLsystem("F", ruleset);
-//			lsystem.generate(3);
-//			turtle = new Turtle(lsystem.getSentence(), 0.15f, Mathf.Deg2Rad*110, Vector3.down*0);
-//			turtle.render();
-//		}
-//
+		void StartAA()
+		{
+			//background(Color.black);
+			PRule rule = new PRule();
+//			ruleset[0] = new Rule('F', "FF[+F][-F][*F][/F]");
+//			ruleset[0] = new Rule('F', "FF+[+F-F-F]-[-F+F+F]*[*F/F/F]/");
+			rule.AddRule('F', "FF+[*+F-F-F]-[/-F+F+F]");
+			lsystem = new PLsystem("F", rule);
+			lsystem.Generate(3);
+			rule.len = 0.15f;
+			rule.theta = Mathf.Deg2Rad * 110;
+			lsystem.gameObject.transform.position = Vector3.down*0;
+			lsystem.Render();
+		}
+
 //		void StartB() {
 //			background(Color.cyan);
 //			Rule[] ruleset = new Rule[5];

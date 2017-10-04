@@ -5,7 +5,7 @@ using LikeProcessing;
 using LikeProcessing.PMetaball;
 using UnityEngine.VR;
 
-namespace LikeProcessig.Examples
+namespace LikeProcessing.Examples
 {
 
     public class MetaballVRController : MonoBehaviour {

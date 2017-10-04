@@ -74,7 +74,8 @@ namespace LikeProcessing
 			Camera camera = cameraObj.AddComponent<Camera> ();
 			camera.tag = "MainCamera";
 			camera.clearFlags = CameraClearFlags.SolidColor;
-			camera.backgroundColor = Color.HSVToRGB (241.0f / 359.0f, 40.0f / 100.0f, 20.0f / 100.0f);
+//			camera.backgroundColor = Color.HSVToRGB (241.0f / 359.0f, 40.0f / 100.0f, 20.0f / 100.0f);
+			camera.backgroundColor = Color.black;
 			//camera.farClipPlane = (Screen.height / 10.0f) / 2.0f * 10;
 			camera.hdr = true;
 			camera.renderingPath = RenderingPath.DeferredShading;

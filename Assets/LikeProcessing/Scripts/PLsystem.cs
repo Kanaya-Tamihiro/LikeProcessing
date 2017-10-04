@@ -54,11 +54,11 @@ namespace LikeProcessing.Lsystem {
 	}
 
 	public class PRule {
-		List<KeyValuePair<char, string>> rules = new List<KeyValuePair<char, string>> ();
+		protected List<KeyValuePair<char, string>> rules = new List<KeyValuePair<char, string>> ();
 		public float len = 0.2f;
 		public float theta = Mathf.Deg2Rad*30;
-		PMatrix matrix;
-		Stack<PMatrix> matrixes;
+		protected PMatrix matrix;
+		protected Stack<PMatrix> matrixes;
 
 		public PRule() {
 			ResetMatrix ();
@@ -83,7 +83,7 @@ namespace LikeProcessing.Lsystem {
 			matrixes = new Stack<PMatrix> ();
 		}
 
-		public void Render(GameObject gameObject, char c) {
+		public virtual void Render(GameObject gameObject, char c) {
 			if (c == 'F') {
 				Vector3 from = matrix.m.MultiplyPoint3x4 (Vector3.zero);
 				Vector3 to = matrix.m.MultiplyPoint3x4 (Vector3.up * len);

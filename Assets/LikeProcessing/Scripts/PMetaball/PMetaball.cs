@@ -10,7 +10,7 @@ namespace LikeProcessing.PMetaball
 		public GameObject gameObject;
 		public float size = 3.0f;
 		public int detail = 30;
-		public float isoLevel = 0.15f;
+		public float isoLevel = 0.5f;
 		public float isoPower = 0.4f;
 		public bool isoValuesAddictive = true;
 		public bool isHardEdge = false;
