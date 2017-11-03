@@ -29,31 +29,33 @@ namespace LikeProcessing.Examples
 		{
 			//background(Color.black);
 			PRule rule = new PRule();
-//			ruleset[0] = new Rule('F', "FF[+F][-F][*F][/F]");
-//			ruleset[0] = new Rule('F', "FF+[+F-F-F]-[-F+F+F]*[*F/F/F]/");
-			rule.AddRule('F', "FF+[*+F-F-F]-[/-F+F+F]");
+			rule.AddRule('F', "FF[+F][-F][*F][/F]");
+//			rule.AddRule('F', "FF+[+F-F-F]-[-F+F+F]*[*F/F/F]/");
+//			rule.AddRule('F', "FF+[*+F-F-F]-[/-F+F+F]");
 			lsystem = new PLsystem("F", rule);
-			lsystem.Generate(3);
+			lsystem.Generate(4);
 			rule.len = 0.15f;
 			rule.theta = Mathf.Deg2Rad * 110;
 			lsystem.gameObject.transform.position = Vector3.down*0;
 			lsystem.Render();
 		}
 
-//		void StartB() {
-//			background(Color.cyan);
-//			Rule[] ruleset = new Rule[5];
-//			ruleset[0] = new Rule('F', "F+F-F");
-//			ruleset[1] = new Rule('W', "YF++ZF4-XF[-YF4-WF]++");
-//			ruleset[2] = new Rule('X', "+YF--ZF[3-WF--XF]+");
-//			ruleset[3] = new Rule('Y', "-WF++XF[+++YF++ZF]-");
-//			ruleset[4] = new Rule('Z', "--YF++++WF[+ZF++++");
-//			lsystem = new PLsystem("[X]++[X]++[X]++[X]++[X]", ruleset);
-//			lsystem.generate(2);
-//			turtle = new Turtle(lsystem.getSentence(), 0.15f, Mathf.Deg2Rad*36, Vector3.down*2);
-//			turtle.render();
-//		}
-//
+		void StartB() {
+			background(Color.cyan);
+			PRule rule = new PRule();
+			rule.AddRule('F', "F+F-F");
+			rule.AddRule('W', "YF++ZF4-XF[-YF4-WF]++");
+			rule.AddRule('X', "+YF--ZF[3-WF--XF]+");
+			rule.AddRule('Y', "-WF++XF[+++YF++ZF]-");
+			rule.AddRule('Z', "--YF++++WF[+ZF++++");
+			lsystem = new PLsystem("[X]++[X]++[X]++[X]++[X]", rule);
+			rule.len = .15f;
+			rule.theta = Mathf.Deg2Rad * 36;
+			lsystem.Generate(4);
+			lsystem.gameObject.transform.position = Vector3.down*2;
+			lsystem.Render();
+		}
+
 //		void StartKoch() {
 //			background(Color.black);
 //			Rule[] ruleset = new Rule[1];

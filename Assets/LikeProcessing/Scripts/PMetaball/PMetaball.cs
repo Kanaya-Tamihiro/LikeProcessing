@@ -12,7 +12,7 @@ namespace LikeProcessing.PMetaball
 		public int detail = 30;
 		public float isoLevel = 0.5f;
 		public float isoPower = 0.4f;
-		public bool isoValuesAddictive = true;
+		public bool isoValuesAddictive = false;
 		public bool isHardEdge = false;
 		public bool useGeometryShader = false;
 
@@ -23,7 +23,7 @@ namespace LikeProcessing.PMetaball
 
 		public List<Core> cores = new List<Core> ();
 
-		public static readonly int maxVertexCount = 12000;
+		public static int maxVertexCount = 51000;
 		public static readonly string CoreTag = "MetaballCore";
 
 		public PMetaball ()

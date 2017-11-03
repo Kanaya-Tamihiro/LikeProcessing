@@ -16,7 +16,7 @@ namespace LikeProcessing.Examples
 		// Use this for initialization
 
 		void Start () {
-			StartB ();
+			StartA ();
 		}
 
 		void StartA ()
@@ -24,8 +24,8 @@ namespace LikeProcessing.Examples
 			rule = new MetaballRule ();
 			rule.AddRule('F', "FF+[+F-F-F]-[-F+F+F]");
 			lsystem = new PLsystem("F", rule);
-			lsystem.Generate(2);
-			rule.len = 1.0f;
+			lsystem.Generate(3);
+			rule.len = .5f;
 			rule.theta = Mathf.Deg2Rad * 25;
 			lsystem.gameObject.transform.position = Vector3.down*0;
 			lsystem.Render();
@@ -37,8 +37,8 @@ namespace LikeProcessing.Examples
 			rule = new MetaballRule ();
 			rule.AddRule('F', "FF+[*+F-F-F]-[/-F+F+F]");
 			lsystem = new PLsystem("F", rule);
-			lsystem.Generate(2);
-			rule.len = 2.0f;
+			lsystem.Generate(3);
+			rule.len = 1.3f;
 			rule.theta = Mathf.Deg2Rad * 110;
 			lsystem.gameObject.transform.position = Vector3.down*0;
 			lsystem.Render();
@@ -55,6 +55,8 @@ namespace LikeProcessing.Examples
 
 			public MetaballRule () {
 				metaball = new PMetaball.PMetaball();
+				metaball.isHardEdge = true;
+				metaball.isoValuesAddictive = true;
 //				metaball.isoLevel = 3.2f;
 //				Core core1 = new Core (metaball, new Vector3 (3, 3, 3));
 //				metaball.AddCore (core1);
