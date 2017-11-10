@@ -18,7 +18,7 @@ namespace LikeProcessing.Examples
 			ThreadPool.GetMinThreads(out workMin, out ioMin);
 
 			Debug.Log("MinThreads work=" + workMin + ", i/o=" + ioMin);
-            VRSettings.enabled = false;
+            UnityEngine.XR.XRSettings.enabled = false;
             background(Color.black);
 //            GameObject obj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 //            obj.transform.localScale = new Vector3(1, 1, 1);

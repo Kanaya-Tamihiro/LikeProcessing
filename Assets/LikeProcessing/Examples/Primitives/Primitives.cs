@@ -22,7 +22,7 @@ namespace LikeProcessing.Examples {
 
 
 		void Start () {
-            VRSettings.enabled = false;
+            UnityEngine.XR.XRSettings.enabled = false;
             lightObj.GetComponent<Light> ().intensity = 0.8f;
 
 //			pgeodesicDomeImproved = new PGeodesicDomeImproved(3, false);
