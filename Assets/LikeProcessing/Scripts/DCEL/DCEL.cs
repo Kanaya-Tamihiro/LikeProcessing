@@ -25,7 +25,15 @@ namespace LikeProcessing
 
     public class DCEL
     {
+		public Vector3[] vertices;
+		public int[] indeces;
+		public List<HalfEdge> halfEdgeList = new List<HalfEdge>();
 
+		public DCEL (Vector3[] _vertices, int[] _indeces) {
+			for (int i=0; i<_indeces.Length; i+=3) {
+				
+			}
+		}
         
     }
 }
